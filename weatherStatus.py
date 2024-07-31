@@ -9,11 +9,7 @@ import shutil
 import subprocess
 
 def runningOnServer():
-  if platform.uname().node == 'macbookpro14.home':
-    return False
-  else:
-    print(platform.uname().node)
-    return True
+  return platform.uname().node == '91-143-83-61'
 
 def generateData(locationName):
   location = locationData.locations[locationName]
@@ -63,64 +59,22 @@ def generateData(locationName):
       text('Darkness Info')
     with tag('table'):
       with tag('tr'):
-        with tag('th'):
-          text('Sunset')
-        with tag('th'):
-          text('Twilight')
-        with tag('th'):
-          text('Nautical Dark')
-        with tag('th'):
-          text('Astronomical Dark')
-        with tag('th'):
-          text('Astronomical Dark')
-        with tag('th'):
-          text('Nautical Dark')
-        with tag('th'):
-          text('Twilight')
-        with tag('th'):
-          text('Sunrise')
+        for title in 'Sunset', 'Twilight', 'Nautical Dark', 'Astronomical Dark','Astronomical Dark', 'Nautical Dark','Twilight','Sunrise':
+          with tag('th'):
+            text(title)
       with tag('tr'):
-        with tag('td'):
-          text(sunData['set'].strftime("%H:%M"))
-        with tag('td'):
-          text(sunData['twilightset'].strftime("%H:%M"))
-        with tag('td'):
-          text(sunData['nauticalset'].strftime("%H:%M"))
-        with tag('td'):
-          text(sunData['astronomicalset'].strftime("%H:%M"))
-        with tag('td'):
-          text(sunData['astronomicalrise'].strftime("%H:%M"))
-        with tag('td'):
-          text(sunData['nauticalrise'].strftime("%H:%M"))
-        with tag('td'):
-          text(sunData['twilightrise'].strftime("%H:%M"))
-        with tag('td'):
-          text(sunData['rise'].strftime("%H:%M"))
-
+        for data in 'set','twilightset','nauticalset','astronomicalset','astronomicalrise','nauticalrise','twilightrise','rise' :
+          with tag('td'):
+            text(sunData[data].strftime("%H:%M"))
   with tag('section'):
     doc.attr( id="content", klass="body" )
     with tag('h2'):
       text('Current Weather')
     with tag('table'):
       with tag('tr'):
-        with tag('th'):
-          text('Local Time')
-        with tag('th'):
-          text('Cloud Cover')
-        with tag('th'):
-          text('High Clouds')
-        with tag('th'):
-          text('Mid Clouds')
-        with tag('th'):
-          text('Low Clouds')
-        with tag('th'):
-          text('Temperature')
-        with tag('th'):
-          text('Dew Point')
-        with tag('th'):
-          text('Wind Speed')
-        with tag('th'):
-          text('Wind Gust')
+        for title in 'Local Time','Cloud Cover','High Clouds','Mid Clouds','Low Clouds','Temperature','Dew Point','Wind Speed','Wind Gust':
+          with tag('th'):
+            text(title)
       with tag('tr'):
         with tag('td'):
           text(weatherData["currentWeather"]["asOf"].strftime("%H:%M"))
@@ -185,12 +139,12 @@ def generateData(locationName):
     print("Uploaded {0.local} to {0.remote}".format(result))
     result = Connection('temp.michael-ring.org',user="root",connect_kwargs={ "key_filename": "/Users/tgdrimi9/.ssh/id_rsa",} ).put(locationData.locations[locationName]['locationcode']+'_bg.png', remote='/var/www/html/slt-observatory.space/theme/images/')
     print("Uploaded {0.local} to {0.remote}".format(result))
-    result = Connection('temp.michael-ring.org', user="root",connect_kwargs={"key_filename": "/Users/tgdrimi9/.ssh/id_rsa", }).run('/root/devel/patchhtml.py')
+    result = Connection('temp.michael-ring.org', user="root",connect_kwargs={"key_filename": "/Users/tgdrimi9/.ssh/id_rsa", }).run('/root/devel/slt-observatoryMonitoring/patchhtml.py')
     print(result)
   else:
     shutil.copy(index,Path("/var/www/html/slt-observatory.space/pages/"))
     shutil.copy(locationData.locations[locationName]['locationcode']+'_bg.png', Path("/var/www/html/slt-observatory.space/theme/images/"))
-    subprocess.run(["/root/devel/patchhtml.py"])
+    subprocess.run(["/root/devel/slt-observatoryMonitoring/patchhtml.py"])
 generateData('Gantrisch')
 generateData('Starfront Observatory')
 generateData('Prairie Skies Astro Ranch')

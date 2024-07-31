@@ -161,10 +161,7 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-cdk14_bg.png
-gantrisch_bg.png
-starfront_bg.png
-weatherkitToken.py
-wetter-cdk14.include
-wetter-gantrisch.include
-wetter-starfront.include
+*_bg.png
+*.include
+config.py
+schedulerdb.sqlite

@@ -3,41 +3,16 @@ from dateutil import tz
 from datetime import datetime,timedelta,time
 import requests
 import ephem
+import sys
 
-locations = {
-  'Gantrisch' : {
-    'latitude': "46.73196228867647",
-    'longitude': "7.446461671486496",
-    'country': "CH",
-    'timezone': ("CH/Zurich"),
-    'language': "en",
-    'elevation': 1650,
-    'locationcode': "gantrisch"
-  },
-  'Starfront Observatory' : {
-    'latitude': "31.547485160577963",
-    'longitude': "-99.38248464510205",
-    'country': "US",
-    'timezone': ("US/Central"),
-    'language': "en",
-    'elevation': 850,
-    'locationcode': "starfront"
-  },
-  'Prairie Skies Astro Ranch': {
-    'latitude': "31.57472",
-    'longitude': "-96.44027",
-    'country': "US",
-    'timezone': ("US/Central"),
-    'language': "en",
-    'elevation': 173,
-    'locationcode': "cdk14"
-  }
-}
-
+try:
+  from config import locations
+except:
+  print("location configuration is missing in config.py")
+  sys.exit(1)
 
 def getLocationDateTime(location):
   return datetime.now(tz=tz.gettz('UTC')).astimezone(tz.gettz(location['timezone']))
-
 
 def getSunData(location, overrideDateTime=None):
   sunData={}
@@ -76,9 +51,11 @@ def getSunData(location, overrideDateTime=None):
 
 def getWeatherdata(location):
   try:
-    from weatherkitToken import weatherkitToken
+    from config import weatherkit
   except:
-    weatherkitToken = ""
+    print("weatherkit configuration is missing in config.py")
+    sys.exit(1)
+
   datasets = "currentWeather,forecastDaily,forecastHourly,forecastNextHour"
 
   sunData = getSunData(location)
@@ -89,7 +66,7 @@ def getWeatherdata(location):
   else:
     start_utc = (datetime.combine(locationDateTime, time(hour=12, minute=0, second=0,tzinfo=locationDateTime.tzinfo)) - timedelta(hours=-24)).astimezone(tz.gettz('UTC')).strftime("%Y-%m-%dT%H:%M:%SZ")
   url = f"https://weatherkit.apple.com/api/v1/weather/{location['language']}/{location['latitude']}/{location['longitude']}?dataSets={datasets}&countryCode={location['country']}&timezone={location['timezone']}&hourlyStart={start_utc}"
-  response = requests.get(url, headers={'Authorization': f'Bearer {weatherkitToken}'})
+  response = requests.get(url, headers={'Authorization': f'Bearer {weatherkit['token']}'})
   weatherdata=response.json()
   weatherdata['currentWeather']['asOf'] = datetime.strptime(weatherdata['currentWeather']['asOf'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=tz.gettz('UTC')).astimezone(tz.gettz(location['timezone']))
 
