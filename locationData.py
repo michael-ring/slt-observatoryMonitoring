@@ -8,7 +8,7 @@ import sys
 try:
   from config import locations
 except:
-  print("location configuration is missing in config.py")
+  print("locations configuration is missing in config.py")
   sys.exit(1)
 
 def getLocationDateTime(location):
