@@ -8,6 +8,6 @@ for source in basedir.glob('*.include'):
   additionalContent=source.read_text()
   start=content.find(f'<!-- begin include {source.name} -->')
   end=content.find(f'<!-- end include {source.name} -->')
-  end=end+len('<!-- end include {source.name} -->')
+  end=end+len(f'<!-- end include {source.name} -->')
   content = content[:start]+additionalContent+content[end:]
   target.write_text(content)
