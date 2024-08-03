@@ -1,18 +1,37 @@
 #!/usr/bin/env python3
 from fits2image import conversions
-import boto3
+#import boto3
 import sys
-
-conversions.fits_to_jpg("/Users/tgdrimi9/Desktop/2024-07-28/Crescent Nebula/SkyEye24AC_Askar ACL200_HaOiii_158_300.00_2024-07-29_03-47-44_-0.10°C.fits",
-                       "/Users/tgdrimi9/Desktop/test.jpg",width=2000,height=2000)
+from pathlib import Path
+import re
+import itertools
 
 try:
-  from config import idrive
+  from config import rootserver
 except:
-  print("idrive configuration is missing in config.py")
+  print("rootserver configuration is missing in config.py")
   sys.exit(1)
 
-client = boto3.client("s3", endpoint_url=idrive['endpoint'], aws_access_key_id=idrive['accessKeyId'], aws_secret_access_key=idrive['secretAccessKey'])
+try:
+  from config import telescope
+except:
+  print("telescope configuration is missing in config.py")
+  sys.exit(1)
 
-objects = client.list_objects(Bucket=idrive['bucket'],Prefix="previews/")
-print(objects)
+def findMostRecentFitsFiles(count=50):
+  fileset=dict()
+  basedir = Path(telescope['imagebasedir'])
+  files=basedir.glob('????-??-??/**/*.fits')
+  for file in files:
+    fileDateRegex=re.compile(r"\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}")
+    results=fileDateRegex.findall(file.name)
+    if len(results) != 1:
+      print(f"Either date/time pattern not found in {file.name} or too many hits")
+      sys.exit(1)
+    fileset[results[0]] = { "filename" : file }
+  fileset=dict(sorted(fileset.items(), reverse=True))
+  fileset=dict(itertools.islice(fileset.items(), count))
+  return fileset
+
+def convertFitsToJPG(fitsFile,jpgFile):
+  conversions.fits_to_jpg(fitsFile,jpgFile,width=2000,height=2000)

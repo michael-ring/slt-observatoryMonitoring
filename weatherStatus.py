@@ -8,6 +8,18 @@ import platform
 import shutil
 import subprocess
 
+try:
+  from config import rootserver
+except:
+  print("rootserver configuration is missing in config.py")
+  sys.exit(1)
+
+try:
+  from config import telescope
+except:
+  print("telescope configuration is missing in config.py")
+  sys.exit(1)
+
 def runningOnServer():
   return platform.uname().node == '91-143-83-61'
 
@@ -135,16 +147,16 @@ def generateData(locationName):
   index.write_text(doc.getvalue())
 
   if runningOnServer() == False:
-    result = Connection('temp.michael-ring.org',user="root",connect_kwargs={ "key_filename": "/Users/tgdrimi9/.ssh/id_rsa",} ).put(f'wetter-{locationData.locations[locationName]['locationcode']}.include', remote=f'/var/www/html/slt-observatory.space/pages/')
+    result = Connection(rootserver['name'],user=rootserver['username'],connect_kwargs={ "key_filename": telescope["sshkey"],} ).put(f'wetter-{locationData.locations[locationName]['locationcode']}.include', remote=f'{rootserver["basedir"]}/pages/')
     print("Uploaded {0.local} to {0.remote}".format(result))
-    result = Connection('temp.michael-ring.org',user="root",connect_kwargs={ "key_filename": "/Users/tgdrimi9/.ssh/id_rsa",} ).put(locationData.locations[locationName]['locationcode']+'_bg.png', remote='/var/www/html/slt-observatory.space/theme/images/')
+    result = Connection(rootserver['name'],user=rootserver['username'],connect_kwargs={ "key_filename": telescope["sshkey"],} ).put(locationData.locations[locationName]['locationcode']+'_bg.png', remote=f'{rootserver["basedir"]}/theme/images/')
     print("Uploaded {0.local} to {0.remote}".format(result))
-    result = Connection('temp.michael-ring.org', user="root",connect_kwargs={"key_filename": "/Users/tgdrimi9/.ssh/id_rsa", }).run('/root/devel/slt-observatoryMonitoring/patchhtml.py')
+    result = Connection(rootserver['name'], user=rootserver['username'],connect_kwargs={"key_filename": telescope["sshkey"], }).run(f'rootserver["gitdir"]/patchhtml.py')
     print(result)
   else:
-    shutil.copy(index,Path("/var/www/html/slt-observatory.space/pages/"))
-    shutil.copy(locationData.locations[locationName]['locationcode']+'_bg.png', Path("/var/www/html/slt-observatory.space/theme/images/"))
-    subprocess.run(["/root/devel/slt-observatoryMonitoring/patchhtml.py"])
+    shutil.copy(index,Path(f"{rootserver["basedir"]}/pages/"))
+    shutil.copy(locationData.locations[locationName]['locationcode']+'_bg.png', Path(f"/{rootserver["basedir"]}/theme/images/"))
+    subprocess.run([f'rootserver["gitdir"]/patchhtml.py'])
 generateData('Gantrisch')
 generateData('Starfront Observatory')
 generateData('Prairie Skies Astro Ranch')
