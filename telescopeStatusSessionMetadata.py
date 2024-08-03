@@ -22,7 +22,7 @@ except:
 def generateData():
   lastImages = SessionMetadataData.targetStatus()
   doc, tag, text = Doc().tagtext()
-  doc.asis(f'<!-- begin include status-{telescope['shortname']}.include -->')
+  doc.asis(f'<!-- begin include status-{telescope["shortname"]}.include -->')
 
   with tag('section'):
     doc.attr(id="content", klass="body")
