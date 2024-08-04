@@ -59,8 +59,8 @@ def generateData():
       text("Last recorded Frame")
     with tag('img'):
       #latest=next(iter(lastImages))
-      doc.attr(src=f"images/frames-{telescope['shortname']}/{Path(lastImages[0]['FileName']).stem}.jpg")
-      doc.attr(alt=f"{Path(lastImages[0]['FileName']).stem}.jpg")
+      doc.attr(src=f"images/frames-{telescope['shortname']}/{Path(lastImages[0]['FileName']).stem.replace("°C","")}.jpg")
+      doc.attr(alt=f"{Path(lastImages[0]['FileName']).stem.replace("°C","")}.jpg")
 
   with tag('section'):
     doc.attr( id='content', klass='body' )
@@ -100,7 +100,7 @@ def generateData():
     if not ( Path(image['FileName']).with_suffix('.jpg').name in list):
       if Path(image['FileName']).exists():
         imageData.convertFitsToJPG(Path(image['FileName']),Path(image['FileName']).with_suffix('.jpg'))
-        result = c.put(Path(image['FileName']).with_suffix('.jpg'),remote=f"{rootserver['basedir']}/images/frames-{telescope["shortname"]}/")
+        result = c.put(Path(image['FileName']).with_suffix('.jpg'),remote=f"{rootserver['basedir']}/images/frames-{telescope["shortname"]}/{Path(image['FileName']).stem.replace("°C","")}.jpg")
         print("Uploaded {0.local} to {0.remote}".format(result))
         Path(image['FileName']).with_suffix('.jpg').unlink()
 
