@@ -98,9 +98,10 @@ def generateData():
   sftp.close()
   for image in lastImages:
     if not ( Path(image['FileName']).with_suffix('.jpg').name in list):
-      imageData.convertFitsToJPG(Path(image['FileName']),Path(image['FileName']).with_suffix('.jpg'))
-      result = c.put(Path(image['FileName']).with_suffix('.jpg'),remote=f"{rootserver['basedir']}/images/frames-{telescope["shortname"]}/")
-      print("Uploaded {0.local} to {0.remote}".format(result))
-      Path(image['FileName']).with_suffix('.jpg').unlink()
+      if Path(image['FileName']).exists():
+        imageData.convertFitsToJPG(Path(image['FileName']),Path(image['FileName']).with_suffix('.jpg'))
+        result = c.put(Path(image['FileName']).with_suffix('.jpg'),remote=f"{rootserver['basedir']}/images/frames-{telescope["shortname"]}/")
+        print("Uploaded {0.local} to {0.remote}".format(result))
+        Path(image['FileName']).with_suffix('.jpg').unlink()
 
 generateData()
