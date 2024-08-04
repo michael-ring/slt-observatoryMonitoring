@@ -4,6 +4,9 @@ from yattag import Doc
 import platform
 import targetSchedulerData
 from pathlib import Path
+import warnings
+from cryptography.utils import CryptographyDeprecationWarning
+warnings.filterwarnings(action="ignore", category=CryptographyDeprecationWarning)
 from fabric import Connection
 import imageData
 
@@ -69,12 +72,12 @@ def generateData():
     with tag('table'):
       doc.attr(width='1000px')
       with tag('tr'):
-        for title in "Date","Project","Target","Filter","Stars","Guiding","GuidingRA","GuidingDEC","HFR","FWHM","Eccentricity":
+        for title in "Date","Target","Filter","Gain","Duration","Stars","Guiding","GuidingRA","GuidingDEC","HFR","FWHM","Eccentricity":
           with tag('th'):
             text(title)
       for image in lastImages:
         with tag('tr'):
-          for field in "acquireddate","projectname","targetname","FilterName","DetectedStars","GuidingRMSArcSec","GuidingRMSRAArcSec","GuidingRMSDECArcSec","HFR","FWHM","Eccentricity" :
+          for field in "acquireddate","targetname","FilterName","Gain","ExposureDuration","DetectedStars","GuidingRMSArcSec","GuidingRMSRAArcSec","GuidingRMSDECArcSec","HFR","FWHM","Eccentricity" :
             with tag('td'):
               text(image[field])
 

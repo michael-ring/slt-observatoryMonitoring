@@ -4,6 +4,9 @@ from yattag import Doc
 import platform
 import sessionMetadataData
 from pathlib import Path
+import warnings
+from cryptography.utils import CryptographyDeprecationWarning
+warnings.filterwarnings(action="ignore", category=CryptographyDeprecationWarning)
 from fabric import Connection
 import imageData
 import roofData

@@ -2,6 +2,9 @@
 import locationData
 from yattag import Doc
 from pathlib import Path
+import warnings
+from cryptography.utils import CryptographyDeprecationWarning
+warnings.filterwarnings(action="ignore", category=CryptographyDeprecationWarning)
 from fabric import Connection
 from PIL import Image
 import platform
