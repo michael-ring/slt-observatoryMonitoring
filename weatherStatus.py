@@ -61,14 +61,14 @@ def generateData(locationName):
   im.save(locationData.locations[locationName]['locationcode']+'_bg.png')
 
   doc, tag, text = Doc().tagtext()
-  doc.asis(f'<!-- begin include wetter-{locationData.locations[locationName]['locationcode']}.include -->')
+  doc.asis(f"<!-- begin include wetter-{locationData.locations[locationName]['locationcode']}.include -->")
   with tag('section'):
-    doc.attr(id="content", klass="body")
+    doc.attr(id='content', klass='body')
 
   with tag('section'):
-    doc.attr( id="content", klass="body" )
+    doc.attr( id='content', klass='body' )
     with tag('h2'):
-      text('Darkness Info')
+      text("Darkness Info")
     with tag('table'):
       with tag('tr'):
         for title in 'Sunset', 'Twilight', 'Nautical Dark', 'Astronomical Dark','Astronomical Dark', 'Nautical Dark','Twilight','Sunrise':
@@ -79,9 +79,9 @@ def generateData(locationName):
           with tag('td'):
             text(sunData[data].strftime("%H:%M"))
   with tag('section'):
-    doc.attr( id="content", klass="body" )
+    doc.attr( id='content', klass='body' )
     with tag('h2'):
-      text('Current Weather')
+      text("Current Weather")
     with tag('table'):
       with tag('tr'):
         for title in 'Local Time','Cloud Cover','High Clouds','Mid Clouds','Low Clouds','Temperature','Dew Point','Wind Speed','Wind Gust':
@@ -89,74 +89,74 @@ def generateData(locationName):
             text(title)
       with tag('tr'):
         with tag('td'):
-          text(weatherData["currentWeather"]["asOf"].strftime("%H:%M"))
+          text(weatherData['currentWeather']['asOf'].strftime("%H:%M"))
         with tag('td'):
-          text(f"{int(weatherData["currentWeather"]["cloudCover"]*100)}%")
+          text(f"{int(weatherData['currentWeather']['cloudCover']*100)}%")
         with tag('td'):
-          text(f"{int(weatherData["currentWeather"]["cloudCoverHighAltPct"]*100)}%")
+          text(f"{int(weatherData['currentWeather']['cloudCoverHighAltPct']*100)}%")
         with tag('td'):
-          text(f"{int(weatherData["currentWeather"]["cloudCoverMidAltPct"] * 100)}%")
+          text(f"{int(weatherData['currentWeather']['cloudCoverMidAltPct'] * 100)}%")
         with tag('td'):
-          text(f"{int(weatherData["currentWeather"]["cloudCoverLowAltPct"] * 100)}%")
+          text(f"{int(weatherData['currentWeather']['cloudCoverLowAltPct'] * 100)}%")
         with tag('td'):
-          text(f"{round(weatherData["currentWeather"]["temperature"])}°C")
+          text(f"{round(weatherData['currentWeather']['temperature'])}°C")
         with tag('td'):
-          text(f"{round(weatherData["currentWeather"]["temperatureDewPoint"])}°C")
+          text(f"{round(weatherData['currentWeather']['temperatureDewPoint'])}°C")
         with tag('td'):
-          text(f"{round(weatherData["currentWeather"]["windSpeed"])}km/h")
+          text(f"{round(weatherData['currentWeather']['windSpeed'])}km/h")
         with tag('td'):
-          text(f"{round(weatherData["currentWeather"]["windGust"])}km/h")
+          text(f"{round(weatherData['currentWeather']['windGust'])}km/h")
 
   with tag('section'):
-    doc.attr( id="content", klass="body" )
+    doc.attr( id='content', klass='body' )
     with tag('h2'):
-      text('Hourly Forecast')
+      text("Hourly Forecast")
     with tag('table'):
-      doc.attr(width="1000px")
+      doc.attr(width='1000px')
       with tag('tr'):
         with tag('th'):
           doc.attr(style="width: 40px; padding: 0px; vertical-align: middle; text-align: center")
           text("")
         for hours in range(24):
-          forecastHourly = weatherData["forecastHourly"]["hours"][0 + hours]
+          forecastHourly = weatherData['forecastHourly']['hours'][0 + hours]
           with tag('th'):
             doc.attr(style="width: 40px; padding: 0px; vertical-align: middle; text-align: center")
-            text(forecastHourly["forecastStart"].strftime('%H'))
+            text(forecastHourly['forecastStart'].strftime("%H"))
       for days in range(7):
         with tag('tr'):
           doc.attr(style=f"background-image: url('/theme/images/{locationData.locations[locationName]['locationcode']}_bg.png'")
           with tag('td'):
             doc.attr(style="width: 40px; padding: 0px; vertical-align: middle; text-align: center")
-            forecastHourly = weatherData["forecastHourly"]["hours"][days * 24]
-            text(f"{forecastHourly["forecastStart"].strftime('%a')}")
+            forecastHourly = weatherData['forecastHourly']['hours'][days * 24]
+            text(f"{forecastHourly['forecastStart'].strftime("%a")}")
           for hours in range(24):
             with tag('td'):
               doc.attr(style="padding: 0px")
-              forecastHourly = weatherData["forecastHourly"]["hours"][days*24 + hours]
-              title = forecastHourly["conditionCode"]+" Cover: "+str(int(forecastHourly["cloudCover"]*100))+"% Visibility: "+str(int(forecastHourly["visibility"]/1000))+"km"
-              if forecastHourly["daylight"] == True:
-                fileName = f'/theme/icons/{forecastHourly["conditionCode"].lower()}-day.svg'
+              forecastHourly = weatherData['forecastHourly']['hours'][days*24 + hours]
+              title = forecastHourly['conditionCode']+" Cover: "+str(int(forecastHourly['cloudCover']*100))+"% Visibility: "+str(int(forecastHourly['visibility']/1000))+"km"
+              if forecastHourly['daylight'] == True:
+                fileName = f"/theme/icons/{forecastHourly['conditionCode'].lower()}-day.svg"
               else:
-                fileName = f'/theme/icons/{forecastHourly["conditionCode"].lower()}-night.svg'
+                fileName = f"/theme/icons/{forecastHourly['conditionCode'].lower()}-night.svg"
               with tag('img'):
-                doc.attr(src=f"{fileName}", alt=forecastHourly["conditionCode"], width="40px", height="40px")
+                doc.attr(src=f"{fileName}", alt=forecastHourly['conditionCode'], width="40px", height="40px")
                 doc.attr(('title',f"{title}"))
 
-  doc.asis(f'<!-- end include wetter-{locationData.locations[locationName]['locationcode']}.include -->')
+  doc.asis(f"<!-- end include wetter-{locationData.locations[locationName]['locationcode']}.include -->")
   index=Path(f"wetter-{locationData.locations[locationName]['locationcode']}.include")
   index.write_text(doc.getvalue())
 
   if runningOnServer() == False:
-    result = Connection(rootserver['name'],user=rootserver['username'],connect_kwargs={ "key_filename": telescope["sshkey"],} ).put(f'wetter-{locationData.locations[locationName]['locationcode']}.include', remote=f'{rootserver["basedir"]}/pages/')
+    result = Connection(rootserver['name'],user=rootserver['username'],connect_kwargs={ 'key_filename': telescope['sshkey'],} ).put(f"wetter-{locationData.locations[locationName]['locationcode']}.include", remote=f"{rootserver['basedir']}/pages/")
     print("Uploaded {0.local} to {0.remote}".format(result))
-    result = Connection(rootserver['name'],user=rootserver['username'],connect_kwargs={ "key_filename": telescope["sshkey"],} ).put(locationData.locations[locationName]['locationcode']+'_bg.png', remote=f'{rootserver["basedir"]}/theme/images/')
+    result = Connection(rootserver['name'],user=rootserver['username'],connect_kwargs={ 'key_filename': telescope['sshkey'],} ).put(locationData.locations[locationName]['locationcode']+"_bg.png", remote=f"{rootserver['basedir']}/theme/images/")
     print("Uploaded {0.local} to {0.remote}".format(result))
-    result = Connection(rootserver['name'], user=rootserver['username'],connect_kwargs={"key_filename": telescope["sshkey"], }).run(f'rootserver["gitdir"]/patchhtml.py')
+    result = Connection(rootserver['name'], user=rootserver['username'],connect_kwargs={'key_filename': telescope['sshkey'], }).run(f"rootserver['gitdir']/patchhtml.py")
     print(result)
   else:
-    shutil.copy(index,Path(f"{rootserver["basedir"]}/pages/"))
-    shutil.copy(locationData.locations[locationName]['locationcode']+'_bg.png', Path(f"/{rootserver["basedir"]}/theme/images/"))
-    subprocess.run([f'rootserver["gitdir"]/patchhtml.py'])
+    shutil.copy(index,Path(f"{rootserver['basedir']}/pages/"))
+    shutil.copy(locationData.locations[locationName]['locationcode']+"_bg.png", Path(f"/{rootserver['basedir']}/theme/images/"))
+    subprocess.run([f"rootserver['gitdir']/patchhtml.py"])
 generateData('Gantrisch')
 generateData('Starfront Observatory')
 generateData('Prairie Skies Astro Ranch')

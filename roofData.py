@@ -10,7 +10,7 @@ except:
 
 def getRoofStatus():
   roofStatus = "closed"
-  roofDataFile = Path(telescope['statusfiles']) / 'RoofStatusFile.txt'
+  roofDataFile = Path(telescope['statusfiles']) / "RoofStatusFile.txt"
   if roofDataFile.exists():
     content=roofDataFile.read_text()
     if content.find("CLOSED") != -1:

@@ -13,7 +13,7 @@ def findMostRecentAllSkyFile():
   fileset=dict()
   basedir = Path(telescope['allskybasedir'])
   today=datetime.date.today().strftime("%m-%d-%Y")
-  files=basedir.glob(f'{today}/*.jpg')
+  files=basedir.glob(f"{today}/*.jpg")
   ctime=0
   latestFile=None
   for file in files:

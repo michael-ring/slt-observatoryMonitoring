@@ -30,7 +30,7 @@ def addMetaData(data):
       sys.exit(1)
     metadataRecords = json.load(metaDataFilePath.open())
     for metadataRecord in metadataRecords:
-      if Path(metadataRecord["FilePath"]).name == Path(data[fileinfo]['filename']).name:
+      if Path(metadataRecord['FilePath']).name == Path(data[fileinfo]['filename']).name:
         for key in activeKeys:
           if key in metadataRecord.keys():
             data[fileinfo][key] = metadataRecord[key]

@@ -21,7 +21,7 @@ except:
 def findMostRecentFitsFiles(count=50):
   fileset=dict()
   basedir = Path(telescope['imagebasedir'])
-  files=basedir.glob('????-??-??/**/*.fits')
+  files=basedir.glob("????-??-??/**/*.fits")
   for file in files:
     fileDateRegex=re.compile(r"\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}")
     results=fileDateRegex.findall(file.name)

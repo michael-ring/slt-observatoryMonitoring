@@ -55,6 +55,6 @@ ORDER BY
         row[meta] = f"{metadata[meta]:.2f}"
       else:
         row[meta] = metadata[meta]
-    row["acquireddate"] = datetime.fromtimestamp(row["acquireddate"]).strftime('%Y-%m-%d %H:%M:%S')
+    row['acquireddate'] = datetime.fromtimestamp(row['acquireddate']).strftime('%Y-%m-%d %H:%M:%S')
     row.pop('metadata')
   return(data)
