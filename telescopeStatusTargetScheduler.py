@@ -69,12 +69,12 @@ def generateData():
     with tag('table'):
       doc.attr(width='1000px')
       with tag('tr'):
-        for title in "Date","Project","Target","Filter","Stars","Guiding","GuidingRA","GuidingDEC","HFR","Eccentricity","Accepted","Reject Reason":
+        for title in "Date","Project","Target","Filter","Stars","Guiding","GuidingRA","GuidingDEC","HFR","FWHM","Eccentricity":
           with tag('th'):
             text(title)
       for image in lastImages:
         with tag('tr'):
-          for field in "acquireddate","projectname","targetname","FilterName","DetectedStars","GuidingRMS","GuidingRMSRA","GuidingRMSDEC","HFR","Eccentricity","accepted","rejectreason" :
+          for field in "acquireddate","projectname","targetname","FilterName","DetectedStars","GuidingRMSArcSec","GuidingRMSRAArcSec","GuidingRMSDECArcSec","HFR","FWHM","Eccentricity" :
             with tag('td'):
               text(image[field])
 
