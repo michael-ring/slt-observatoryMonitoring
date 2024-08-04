@@ -58,9 +58,9 @@ def generateData():
     with tag('h2'):
       text("Last recorded Frame")
     with tag('img'):
-      latest=next(iter(lastImages))
-      doc.attr(src=f"images/frames-{telescope['shortname']}/{lastImages[latest]['filename'].stem}.jpg")
-      doc.attr(alt=f"{lastImages[latest]['filename'].stem}.jpg")
+      #latest=next(iter(lastImages))
+      doc.attr(src=f"images/frames-{telescope['shortname']}/{Path(lastImages[0]['FileName']).stem}.jpg")
+      doc.attr(alt=f"{Path(lastImages[0]['FileName']).stem}.jpg")
 
   with tag('section'):
     doc.attr( id='content', klass='body' )
@@ -90,17 +90,17 @@ def generateData():
   c = Connection('slt-observatory.space',
                       user=sshuser,
                       connect_kwargs={'key_filename': telescope['sshkey'], })
-  result = c.put(f"status-{telescope['shortname']}.include",remote=f"{rootserver['basedir']}/pages/includes-{telescope['shortname']}/")
+  result = c.put(f"status-{telescope['shortname']}.include",remote=f"{rootserver['basedir']}/pages/")
   print("Uploaded {0.local} to {0.remote}".format(result))
   print(result)
   sftp = c.client.open_sftp()
-  list = sftp.listdir(f"{rootserver['basedir']}/themes/images/frames-{telescope['shortname']}")
+  list = sftp.listdir(f"{rootserver['basedir']}theme/images/frames-{telescope['shortname']}")
   sftp.close()
   for image in lastImages:
-    if not ( Path(lastImages[image]['filename']).with_suffix('.jpg').name in list):
-      imageData.convertFitsToJPG(lastImages[image]['filename'],lastImages[image]['filename'].with_suffix('.jpg'))
-      result = c.put(lastImages[image]['filename'].with_suffix('.jpg'),remote=f"{rootserver['basedir']}/themes/images/frames-{telescope["shortname"]}/")
+    if not ( Path(image['FileName']).with_suffix('.jpg').name in list):
+      imageData.convertFitsToJPG(Path(image['FileName']),Path(image['FileName']).with_suffix('.jpg'))
+      result = c.put(Path(image['FileName']).with_suffix('.jpg'),remote=f"{rootserver['basedir']}/images/frames-{telescope["shortname"]}/")
       print("Uploaded {0.local} to {0.remote}".format(result))
-      lastImages[image]['filename'].with_suffix('.jpg').unlink()
+      Path(image['FileName']).with_suffix('.jpg').unlink()
 
 generateData()
