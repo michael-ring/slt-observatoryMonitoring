@@ -155,7 +155,6 @@ def generateData(locationName):
     result = Connection(rootserver['name'],user=rootserver['username'],connect_kwargs={ 'key_filename': telescope['sshkey'],} ).put(locationData.locations[locationName]['locationcode']+"_bg.png", remote=f"{rootserver['basedir']}/theme/images/")
     print("Uploaded {0.local} to {0.remote}".format(result))
     result = Connection(rootserver['name'], user=rootserver['username'],connect_kwargs={'key_filename': telescope['sshkey'], }).run(f"rootserver['gitdir']/patchhtml.py")
-    print(result)
   else:
     shutil.copy(index,Path(f"{rootserver['basedir']}/pages/"))
     shutil.copy(locationData.locations[locationName]['locationcode']+"_bg.png", Path(f"/{rootserver['basedir']}/theme/images/"))

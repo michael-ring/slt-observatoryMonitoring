@@ -80,9 +80,11 @@ def generateData():
 
   result = c.put(f"status-{telescope['shortname']}.include",remote=f"includes-{telescope['shortname']}/")
   print("Uploaded {0.local} to {0.remote}".format(result))
+
   sftp = c.client.open_sftp()
   list = sftp.listdir(f"frames-{telescope['shortname']}")
   sftp.close()
+
   for image in lastImages:
     if not ( Path(lastImages[image]['filename']).with_suffix('.jpg').name in list):
       imageData.convertFitsToJPG(lastImages[image]['filename'],lastImages[image]['filename'].with_suffix('.jpg'))
@@ -98,5 +100,4 @@ def generateData():
     result = c.put(allSkyFile,remote=f"allsky-{telescope['shortname']}/allsky-{ctime}.jpg")
     print("Uploaded {0.local} to {0.remote}".format(result))
   c.close()
-  print(result)
 generateData()

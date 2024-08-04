@@ -95,7 +95,7 @@ def generateData():
                       connect_kwargs={'key_filename': telescope['sshkey'], })
   result = c.put(f"status-{telescope['shortname']}.include",remote=f"{rootserver['basedir']}/pages/")
   print("Uploaded {0.local} to {0.remote}".format(result))
-  print(result)
+
   sftp = c.client.open_sftp()
   list = sftp.listdir(f"{rootserver['basedir']}theme/images/frames-{telescope['shortname']}")
   sftp.close()
