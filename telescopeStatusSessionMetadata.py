@@ -100,4 +100,4 @@ def generateData():
     result = c.put(allSkyFile,remote=f"allsky-{telescope['shortname']}/allsky-{ctime}.jpg")
     print("Uploaded {0.local} to {0.remote}".format(result))
   c.close()
-generateData()
+StgenerateData()

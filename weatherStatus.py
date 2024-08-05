@@ -10,6 +10,7 @@ from PIL import Image
 import platform
 import shutil
 import subprocess
+import sys
 
 try:
   from config import rootserver
@@ -24,7 +25,7 @@ except:
   sys.exit(1)
 
 def runningOnServer():
-  return platform.uname().node == '91-143-83-61'
+  return platform.uname().node == rootserver['nodename']
 
 def generateData(locationName):
   location = locationData.locations[locationName]
