@@ -5,6 +5,7 @@ import json
 from datetime import datetime
 
 try:
+  sys.path.append('..')
   from config import telescope
 except:
   print("telescope configuration is missing in config.py")
@@ -46,7 +47,7 @@ WHERE
   p.Id = a.projectId and t.Id = a.targetId
 ORDER BY
   a.acquireddate desc
-  LIMIT 50
+  LIMIT 200
 """)
   for row in data:
     metadata=json.loads(row['metadata'])

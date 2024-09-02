@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import locationData
+from Common import locationData
 from yattag import Doc
 from pathlib import Path
 import warnings
@@ -31,6 +31,7 @@ def generateData(locationName):
   location = locationData.locations[locationName]
   weatherData = locationData.getWeatherdata(location)
   sunData = locationData.getSunData(location)
+  moonData = locationData.getMoonData(location)
 
   width, height = 960, 40
   im = Image.new('RGB', (width+40, height))
@@ -62,7 +63,7 @@ def generateData(locationName):
     for y in range(40):
       ld[x, y] = 128,128,255
 
-  im.save(locationData.locations[locationName]['locationcode']+'_bg.png')
+  im.save(locationData.locations[locationName]['locationcode'] + '_bg.png')
 
   doc, tag, text = Doc().tagtext()
   doc.asis(f"<!-- begin include wetter-{locationData.locations[locationName]['locationcode']}.include -->")
@@ -82,6 +83,23 @@ def generateData(locationName):
         for data in 'set','twilightset','nauticalset','astronomicalset','astronomicalrise','nauticalrise','twilightrise','rise' :
           with tag('td'):
             text(sunData[data].strftime("%H:%M"))
+  with tag('section'):
+    doc.attr( id='content', klass='body' )
+    with tag('h2'):
+      text("Moon Info")
+    with tag('table'):
+      with tag('tr'):
+        for title in 'Previous MoonRise', 'MoonSet', 'MoonRise', 'Next Moonset','Phase', 'Magnitude':
+          with tag('th'):
+            text(title)
+      with tag('tr'):
+        for data in 'previousrise','set','rise','nextset' :
+          with tag('td'):
+            text(moonData[data].strftime("%d.%m %H:%M"))
+        for data in 'phase','mag' :
+          with tag('td'):
+            text(f"{moonData[data]:4.1f}")
+
   with tag('section'):
     doc.attr( id='content', klass='body' )
     with tag('h2'):
@@ -153,12 +171,13 @@ def generateData(locationName):
   if runningOnServer() == False:
     result = Connection(rootserver['name'],user=rootserver['username'],connect_kwargs={ 'key_filename': telescope['sshkey'],} ).put(f"wetter-{locationData.locations[locationName]['locationcode']}.include", remote=f"{rootserver['basedir']}/pages/")
     print("Uploaded {0.local} to {0.remote}".format(result))
-    result = Connection(rootserver['name'],user=rootserver['username'],connect_kwargs={ 'key_filename': telescope['sshkey'],} ).put(locationData.locations[locationName]['locationcode']+"_bg.png", remote=f"{rootserver['basedir']}/theme/images/")
+    result = Connection(rootserver['name'],user=rootserver['username'],connect_kwargs={ 'key_filename': telescope['sshkey'],} ).put(
+      locationData.locations[locationName]['locationcode'] + "_bg.png", remote=f"{rootserver['basedir']}/theme/images/")
     print("Uploaded {0.local} to {0.remote}".format(result))
-    result = Connection(rootserver['name'], user=rootserver['username'],connect_kwargs={'key_filename': telescope['sshkey'], }).run(f"rootserver['gitdir']/patchhtml.py")
+    result = Connection(rootserver['name'], user=rootserver['username'],connect_kwargs={'key_filename': telescope['sshkey'], }).run(f"{rootserver['gitdir']}/patchhtml.py")
   else:
     shutil.copy(index,Path(f"{rootserver['basedir']}/pages/"))
-    shutil.copy(locationData.locations[locationName]['locationcode']+"_bg.png", Path(f"/{rootserver['basedir']}/theme/images/"))
+    shutil.copy(locationData.locations[locationName]['locationcode'] + "_bg.png", Path(f"/{rootserver['basedir']}/theme/images/"))
     subprocess.run([f"rootserver['gitdir']/patchhtml.py"])
 generateData('Gantrisch')
 generateData('Starfront Observatory')

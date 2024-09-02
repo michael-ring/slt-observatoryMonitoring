@@ -3,6 +3,7 @@ import sys
 from pathlib import Path
 
 try:
+  sys.path.append('..')
   from config import telescope
 except:
   print("telescope configuration is missing in config.py")

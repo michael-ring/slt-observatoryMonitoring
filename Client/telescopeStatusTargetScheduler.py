@@ -1,16 +1,12 @@
 #!/usr/bin/env python3
 import sys
 from yattag import Doc
-import platform
-import targetSchedulerData
+from Client import targetSchedulerData
 from pathlib import Path
-import warnings
-from cryptography.utils import CryptographyDeprecationWarning
-warnings.filterwarnings(action="ignore", category=CryptographyDeprecationWarning)
-from fabric import Connection
-import imageData
+from Common import uploadData
 
 try:
+  sys.path.append('..')
   from config import telescope
 except:
   print("telescope configuration is missing in config.py")
@@ -21,6 +17,10 @@ try:
 except:
   print("rootserver configuration is missing in config.py")
   sys.exit(1)
+
+def generateJson():
+  status = targetSchedulerData.targetStatus()
+  lastImages = targetSchedulerData.lastImages()
 
 def generateData():
   status = targetSchedulerData.targetStatus()
@@ -84,27 +84,7 @@ def generateData():
   doc.asis(f"<!-- end include status-{telescope['shortname']}.include -->")
   index=Path(f"status-{telescope['shortname']}.include")
   index.write_text(doc.getvalue())
-
-  if 'sshuser' in telescope.keys():
-    sshuser=telescope['sshuser']
-  else:
-    sshuser=rootserver['username']
-
-  c = Connection('slt-observatory.space',
-                      user=sshuser,
-                      connect_kwargs={'key_filename': telescope['sshkey'], })
-  result = c.put(f"status-{telescope['shortname']}.include",remote=f"{rootserver['basedir']}/pages/")
-  print("Uploaded {0.local} to {0.remote}".format(result))
-
-  sftp = c.client.open_sftp()
-  list = sftp.listdir(f"{rootserver['basedir']}theme/images/frames-{telescope['shortname']}")
-  sftp.close()
-  for image in lastImages:
-    if not ( Path(image['FileName']).with_suffix('.jpg').name.replace("°C","")  in list):
-      if Path(image['FileName']).exists():
-        imageData.convertFitsToJPG(Path(image['FileName']),Path(image['FileName']).with_suffix('.jpg'))
-        result = c.put(Path(image['FileName']).with_suffix('.jpg'),remote=f"{rootserver['basedir']}/theme/images/frames-{telescope["shortname"]}/{Path(image['FileName']).stem.replace("°C","")}.jpg")
-        print("Uploaded {0.local} to {0.remote}".format(result))
-        Path(image['FileName']).with_suffix('.jpg').unlink()
+  uploadData.uploadData(index)
 
 generateData()
+generateJson()

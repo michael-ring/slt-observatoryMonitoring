@@ -1,28 +1,35 @@
 #!/usr/bin/env python3
+import json
 import sys
+
 from yattag import Doc
-import platform
-import sessionMetadataData
 from pathlib import Path
-import warnings
-from cryptography.utils import CryptographyDeprecationWarning
-warnings.filterwarnings(action="ignore", category=CryptographyDeprecationWarning)
-from fabric import Connection
-import imageData
-import roofData
-import allskyData
+from Client import allskyData, roofData, sessionMetadataData,phd2Data
+from Common import uploadData
 
 try:
+  sys.path.append('..')
   from config import telescope
 except:
   print("telescope configuration is missing in config.py")
   sys.exit(1)
 
-try:
-  from config import rootserver
-except:
-  print("rootserver configuration is missing in config.py")
-  sys.exit(1)
+def uploadJson():
+  allSkyJson = allskyData.generateJson()
+  uploadFiles = allskyData.findMostRecentAllSkyFiles()
+  allSkyJsonFile = Path(__file__).parent.parent / 'Temp' / 'allSkyFiles.json'
+  allSkyJsonFile.write_text(json.dumps(allSkyJson, indent=2))
+
+  lastImages = sessionMetadataData.generateJson()
+  lastImagesJsonFile = Path(__file__).parent.parent / 'Temp' / 'lastImages.json'
+  lastImagesJsonFile.write_text(json.dumps(lastImages, indent=2))
+  for lastImage in lastImages:
+    uploadFiles.append(Path(lastImages[lastImage]['filename']))
+  phdStatus = phd2Data.generateJson()
+  phdStatusJsonFile = Path(__file__).parent.parent / 'Temp' / 'phdStatus.json'
+  phdStatusJsonFile.write_text(json.dumps(phdStatus, indent=2))
+  uploadData.uploadData([lastImagesJsonFile,allSkyJsonFile,phdStatusJsonFile], uploadFiles)
+  pass
 
 def generateData():
   lastImages = sessionMetadataData.targetStatus()
@@ -34,7 +41,7 @@ def generateData():
     with tag('h2'):
       text("Current Roof/All Sky Camera Status")
     text(f"Roof is {roofData.getRoofStatus()}")
-    allSkyFile=allskyData.findMostRecentAllSkyFile()
+    allSkyFile= allskyData.findMostRecentAllSkyFile()
     if allSkyFile != None:
       ctime=allSkyFile.stat().st_ctime
       with tag('img'):
@@ -70,34 +77,5 @@ def generateData():
   index=Path(f"status-{telescope['shortname']}.include")
   index.write_text(doc.getvalue())
 
-  if 'sshuser' in telescope.keys():
-    sshuser=telescope['sshuser']
-  else:
-    sshuser=rootserver['username']
-  c = Connection('slt-observatory.space',
-                      user=sshuser,
-                      connect_kwargs={'key_filename': telescope['sshkey'], })
-
-  result = c.put(f"status-{telescope['shortname']}.include",remote=f"includes-{telescope['shortname']}/")
-  print("Uploaded {0.local} to {0.remote}".format(result))
-
-  sftp = c.client.open_sftp()
-  list = sftp.listdir(f"frames-{telescope['shortname']}")
-  sftp.close()
-
-  for image in lastImages:
-    if not ( Path(lastImages[image]['filename']).with_suffix('.jpg').name in list):
-      imageData.convertFitsToJPG(lastImages[image]['filename'],lastImages[image]['filename'].with_suffix('.jpg'))
-      result = c.put(lastImages[image]['filename'].with_suffix('.jpg'),remote=f"frames-{telescope['shortname']}/")
-      print("Uploaded {0.local} to {0.remote}".format(result))
-      lastImages[image]['filename'].with_suffix('.jpg').unlink()
-
-  for file in Path(f'{telescope['statusfiles']}').glob("*.txt"):
-    result = c.put(file,remote=f"statusfiles-{telescope['shortname']}/")
-    print("Uploaded {0.local} to {0.remote}".format(result))
-  if allSkyFile != None:
-    ctime = allSkyFile.stat().st_ctime
-    result = c.put(allSkyFile,remote=f"allsky-{telescope['shortname']}/allsky-{ctime}.jpg")
-    print("Uploaded {0.local} to {0.remote}".format(result))
-  c.close()
-StgenerateData()
+generateData()
+uploadJson()

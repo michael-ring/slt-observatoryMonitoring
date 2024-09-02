@@ -1,9 +1,6 @@
-yattag
 pyephem
 fabric
 requests
 python-dateutil
 pillow
-opencv-python
 fits2image
-boto3

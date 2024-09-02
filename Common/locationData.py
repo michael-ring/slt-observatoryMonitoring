@@ -6,7 +6,7 @@ import ephem
 import sys
 
 try:
-  from config import locations
+  from config import locations, telescope
 except:
   print("locations configuration is missing in config.py")
   sys.exit(1)
@@ -48,6 +48,27 @@ def getSunData(location, overrideDateTime=None):
 
   return(sunData)
 
+def getMoonData(location, overrideDateTime=None):
+  moonData={}
+  obs = ephem.Observer()
+  if overrideDateTime is None:
+    obs.date = getLocationDateTime(location)
+  else:
+    #TODO find correct conversion
+    obs.date = overrideDateTime
+  obs.lon = location['longitude']
+  obs.lat = location['latitude']
+  obs.elev = location['elevation']
+  moonData['rise'] = ephem.localtime(obs.next_rising(ephem.Moon())).astimezone(tz.gettz(location['timezone']))
+  moonData['previousrise'] = ephem.localtime(obs.previous_rising(ephem.Moon())).astimezone(tz.gettz(location['timezone']))
+  moonData['set'] = ephem.localtime(obs.previous_setting(ephem.Moon())).astimezone(tz.gettz(location['timezone']))
+  moonData['nextset'] = ephem.localtime(obs.next_setting(ephem.Moon())).astimezone(tz.gettz(location['timezone']))
+  moon=ephem.Moon()
+  moon.compute(obs)
+  moonData['phase'] = moon.phase
+  moonData['mag'] = moon.mag
+  moonData['alt'] = str(moon.alt)[:2]
+  return moonData
 
 def getWeatherdata(location):
   try:
@@ -75,3 +96,5 @@ def getWeatherdata(location):
     weatherdata['forecastHourly']['hours'][index]['forecastStart'] = forecastStart
 
   return weatherdata
+
+getMoonData(locations[telescope['location']],datetime.now())
