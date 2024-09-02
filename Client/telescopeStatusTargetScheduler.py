@@ -4,6 +4,7 @@ from yattag import Doc
 from Client import targetSchedulerData
 from pathlib import Path
 from Common import uploadData
+import json
 
 try:
   sys.path.append('..')
@@ -19,8 +20,21 @@ except:
   sys.exit(1)
 
 def generateJson():
+  uploadFiles = []
   status = targetSchedulerData.targetStatus()
   lastImages = targetSchedulerData.lastImages()
+
+  statusJsonFile = Path(__file__).parent.parent / 'Temp' / 'status.json'
+  statusJsonFile.write_text(json.dumps(status, indent=2))
+  lastImagesJsonFile = Path(__file__).parent.parent / 'Temp' / 'lastImages.json'
+  lastImagesJsonFile.write_text(json.dumps(lastImages, indent=2))
+  for lastImage in lastImages:
+    if Path(lastImage['FileName']).exists():
+      uploadFiles.append(Path(lastImage['FileName']))
+
+
+  uploadData.uploadData([lastImagesJsonFile,statusJsonFile],uploadFiles)
+
 
 def generateData():
   status = targetSchedulerData.targetStatus()
@@ -84,7 +98,7 @@ def generateData():
   doc.asis(f"<!-- end include status-{telescope['shortname']}.include -->")
   index=Path(f"status-{telescope['shortname']}.include")
   index.write_text(doc.getvalue())
-  uploadData.uploadData(index)
+  uploadData.uploadData([index],[])
 
-generateData()
+#generateData()
 generateJson()
