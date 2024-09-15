@@ -23,7 +23,8 @@ except:
   sys.exit(1)
 
 def uploadJson():
-  uploadFiles = []
+  uploadImageFiles = []
+  uploadStatusFiles = []
   if 'schedulerdb' in telescope:
     schedulerStatus = targetSchedulerData.targetStatus()
     lastImages = targetSchedulerData.lastImages()
@@ -32,24 +33,30 @@ def uploadJson():
 
   schedulerStatusJsonFile = Path(__file__).parent.parent / 'Temp' / 'schedulerStatus.json'
   schedulerStatusJsonFile.write_text(json.dumps(schedulerStatus, indent=2))
+  uploadImageFiles.append(schedulerStatusJsonFile)
+
   lastImagesStatusJsonFile = Path(__file__).parent.parent / 'Temp' / 'lastImagesStatus.json'
   lastImagesStatusJsonFile.write_text(json.dumps(lastImages, indent=2))
+  uploadStatusFiles.append(lastImagesStatusJsonFile)
+
   acquiredDates=[]
   for lastImage in lastImages:
     if Path(lastImage['FileName']).exists():
-      uploadFiles.append(Path(lastImage['FileName']))
+      uploadImageFiles.append(Path(lastImage['FileName']))
     if lastImage['acquireddate'][0:10] not in acquiredDates:
       acquiredDates.append(lastImage['acquireddate'][0:10])
       #The phd log may have started the day before, so also get logs from that day
       dayBefore=(datetime.strptime(lastImage['acquireddate'][0:10],'%Y-%m-%d')-timedelta(days=1)).strftime('%Y-%m-%d')
       acquiredDates.append(dayBefore)
+  if 'phdlogbasedir' in telescope:
+    phd2Status = phd2Data.generateJson(acquiredDates)
+    phd2StatusJsonFile = Path(__file__).parent.parent / 'Temp' / 'phd2Status.json'
+    phd2StatusJsonFile.write_text(json.dumps(phd2Status, indent=2))
+    uploadStatusFiles.append(phd2StatusJsonFile)
 
-  phd2Status = phd2Data.generateJson(acquiredDates)
-  phd2StatusJsonFile = Path(__file__).parent.parent / 'Temp' / 'phd2Status.json'
-  phd2StatusJsonFile.write_text(json.dumps(phd2Status, indent=2))
+  if 'allskybasedir' in telescope:
+    uploadImageFiles = uploadImageFiles + allskyData.findAllSkyFiles(acquiredDates)
 
-  uploadFiles = uploadFiles + allskyData.findAllSkyFiles(acquiredDates)
-
-  uploadData.uploadData([lastImagesStatusJsonFile,schedulerStatusJsonFile,phd2StatusJsonFile],uploadFiles)
+  uploadData.uploadData(uploadStatusFiles,uploadImageFiles)
 
 uploadJson()
