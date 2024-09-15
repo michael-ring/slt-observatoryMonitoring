@@ -23,24 +23,35 @@ def findMostRecentAllSkyFile():
       latestFile=file
   return latestFile
 
-def findMostRecentAllSkyFiles():
+def findAllSkyFiles(requiredDates=None):
+  files=[]
   basedir = Path(telescope['allskybasedir'])
-  today=datetime.date.today().strftime("%m-%d-%Y")
-  if "testing" in telescope and telescope['testing'] == True:
-    today="07-29-2024"
-  files = list(basedir.glob(f"{today}/*.jpg"))
-  yesterday=(datetime.date.today()-datetime.timedelta(days=1)).strftime("%m-%d-%Y")
-  if "testing" in telescope and telescope['testing'] == True:
-    yesterday="07-28-2024"
-  files += list(basedir.glob(f"{yesterday}/*.jpg"))
+  if requiredDates is None:
+    today=datetime.date.today().strftime("%m-%d-%Y")
+    if "testing" in telescope and telescope['testing'] == True:
+      today="07-29-2024"
+    files = list(basedir.glob(f"{today}/*.jpg"))
+    yesterday=(datetime.date.today()-datetime.timedelta(days=1)).strftime("%m-%d-%Y")
+    if "testing" in telescope and telescope['testing'] == True:
+      yesterday="07-28-2024"
+    files += list(basedir.glob(f"{yesterday}/*.jpg"))
+  else:
+    for index,value in enumerate(requiredDates):
+      requiredDates[index]=value[3:4]+'-'+value[0:1]+'-'+value[6:7]
+    today=datetime.date.today().strftime("%m-%d-%Y")
+    if today not in requiredDates:
+      requiredDates.append(today)
+    yesterday=(datetime.date.today()-datetime.timedelta(days=1)).strftime("%m-%d-%Y")
+    if yesterday not in requiredDates:
+      requiredDates.append(yesterday)
+    for requiredDate in requiredDates:
+      files = files + list(basedir.glob(f"{requiredDate}/*.jpg"))
   return files
 
-def generateJson():
+def generateJson(requiredDates=None):
   result={}
   result['allSky']=[]
-  files = findMostRecentAllSkyFiles()
+  files = findAllSkyFiles(requiredDates)
   for file in files:
     result['allSky'].append(file.name)
   return result
-
-findMostRecentAllSkyFiles()

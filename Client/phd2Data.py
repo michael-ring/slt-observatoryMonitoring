@@ -9,28 +9,33 @@ except:
   print("telescope configuration is missing in config.py")
   sys.exit(1)
 
-def generateJson():
+def generateJson(requiredDates=None):
   phd2json={}
   if 'phdlogbasedir' in telescope:
     fileset = dict()
     basedir = Path(telescope['phdlogbasedir'])
-    today = datetime.date.today().strftime("%Y-%m-%d")
-    if "testing" in telescope and telescope['testing'] == True:
-      today = "2024-08-29"
-    files = list(basedir.glob(f"PHD2_GuideLog_{today}*.txt"))
-    yesterday = (datetime.date.today() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
-    if "testing" in telescope and telescope['testing'] == True:
-      yesterday = "2024-08-27"
-    files += list(basedir.glob(f"PHD2_GuideLog_{yesterday}*.txt"))
-    if files is None:
+    if requiredDates == None:
+      today = datetime.date.today().strftime("%Y-%m-%d")
+      if "testing" in telescope and telescope['testing'] == True:
+        today = "2024-08-29"
+      files = list(basedir.glob(f"PHD2_GuideLog_{today}*.txt"))
+      yesterday = (datetime.date.today() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+      if "testing" in telescope and telescope['testing'] == True:
+        yesterday = "2024-08-27"
+      files += list(basedir.glob(f"PHD2_GuideLog_{yesterday}*.txt"))
+    else:
+      files = []
+      for requiredDate in requiredDates:
+        files = files + list(basedir.glob(f"PHD2_GuideLog_{requiredDate}*.txt"))
+    if files is None or files is []:
       return {}
     files.sort(reverse=False)
+    calibration = {}
+    guiding = {}
     for filename in files:
       with open(filename) as file:
         inCalibration=False
         inGuiding=False
-        calibration={}
-        guiding={}
         while line := file.readline():
           line = line.rstrip()
           if line.startswith("Calibration Begins at "):
@@ -82,5 +87,5 @@ def generateJson():
               guiding[guidingStart]['steps'].append((line+f",{settling},{dithering}").replace('"',''))
 
     return {'calibration':calibration,'guiding':guiding}
-generateJson()
+#generateJson()
 

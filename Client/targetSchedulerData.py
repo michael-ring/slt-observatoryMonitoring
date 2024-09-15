@@ -37,6 +37,8 @@ ORDER BY
 """)
 
 def lastImages():
+  lastAcquiredDate=None
+  lastAcquiredDatesCount=0
   data = query("""
 SELECT 
   p.name as projectname, p.state as projectstate, t.name as targetname,
@@ -47,9 +49,8 @@ WHERE
   p.Id = a.projectId and t.Id = a.targetId
 ORDER BY
   a.acquireddate desc
-  LIMIT 200
 """)
-  for row in data:
+  for pos,row in enumerate(data):
     metadata=json.loads(row['metadata'])
     for meta in metadata:
       if isinstance(metadata[meta],float):
@@ -58,4 +59,10 @@ ORDER BY
         row[meta] = metadata[meta]
     row['acquireddate'] = datetime.fromtimestamp(row['acquireddate']).strftime('%Y-%m-%d %H:%M:%S')
     row.pop('metadata')
+    if lastAcquiredDatesCount < 5:
+      if lastAcquiredDate != row['acquireddate'][0:10]:
+        lastAcquiredDatesCount+=1
+        lastAcquiredDate=row['acquireddate'][0:10]
+    else:
+      return data[:pos-1]
   return(data)
