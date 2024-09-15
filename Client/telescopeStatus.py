@@ -33,7 +33,7 @@ def uploadJson():
 
   schedulerStatusJsonFile = Path(__file__).parent.parent / 'Temp' / 'schedulerStatus.json'
   schedulerStatusJsonFile.write_text(json.dumps(schedulerStatus, indent=2))
-  uploadImageFiles.append(schedulerStatusJsonFile)
+  uploadStatusFiles.append(schedulerStatusJsonFile)
 
   lastImagesStatusJsonFile = Path(__file__).parent.parent / 'Temp' / 'lastImagesStatus.json'
   lastImagesStatusJsonFile.write_text(json.dumps(lastImages, indent=2))
