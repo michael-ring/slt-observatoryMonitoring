@@ -37,7 +37,7 @@ def findAllSkyFiles(requiredDates=None):
     files += list(basedir.glob(f"{yesterday}/*.jpg"))
   else:
     for index,value in enumerate(requiredDates):
-      requiredDates[index]=value[3:4]+'-'+value[0:1]+'-'+value[6:7]
+      requiredDates[index]=value[5:7]+'-'+value[8:10]+'-'+value[0:4]
     today=datetime.date.today().strftime("%m-%d-%Y")
     if today not in requiredDates:
       requiredDates.append(today)

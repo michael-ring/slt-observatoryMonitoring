@@ -20,6 +20,82 @@ def query(queryString):
   con.close()
   return unpacked
 
+def updatequery(queryString):
+  con = sqlite3.connect(telescope['schedulerdb'])
+  con.row_factory = sqlite3.Row
+  data = con.execute(queryString)
+  con.commit()
+  con.close()
+  return True
+
+def getHSTargets():
+  result = query("""
+  SELECT
+    p.name as projectname,
+    p.state as projectstate
+  FROM 
+    project p
+  WHERE 
+      ( p.state = 1 or p.state = 2 )
+    AND
+      ( p.name like '%_H' or p.name like '%_S' or p.name like '%_HS' )
+  ORDER BY
+    projectstate asc, projectname asc
+  """)
+  return result
+
+def getOTargets():
+  result = query("""
+  SELECT
+    p.name as projectname,
+    p.state as projectstate
+  FROM 
+    project p
+  WHERE 
+      ( p.state = 1 or p.state = 2 )
+    AND
+      ( p.name like '%_O' )
+  ORDER BY
+    projectstate asc, projectname asc
+  """)
+  return result
+
+def getLRGBTargets():
+  result = query("""
+  SELECT
+    p.name as projectname,
+    p.state as projectstate
+  FROM 
+    project p
+  WHERE 
+      ( p.state = 1 or p.state = 2 )
+    AND
+      ( p.name like '%_RGB' OR p.name like '%_LRGB' )
+  ORDER BY
+    projectstate asc, projectname asc
+  """)
+  return result
+
+def enableProject(projectName):
+  return updatequery(f"""
+  UPDATE 
+    project 
+  SET 
+    state=1
+  WHERE 
+    name = '{projectName}'
+  """)
+
+def disableProject(projectName):
+  return updatequery(f"""
+  UPDATE 
+    project 
+  SET 
+    state=2
+  WHERE 
+    name = '{projectName}'
+  """)
+
 def targetStatus():
   return query("""
 SELECT

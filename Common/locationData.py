@@ -29,6 +29,10 @@ def getSunData(location, overrideDateTime=None):
   obs.pressure = 0
   obs.horizon = '-0:34'
 
+  sun = ephem.Sun()
+  sun.compute(obs)
+  sunData['alt'] = int(str(sun.alt).split(':')[0])
+
   sunData['rise'] = ephem.localtime(obs.next_rising(ephem.Sun())).astimezone(tz.gettz(location['timezone']))
   sunData['previousrise'] = ephem.localtime(obs.previous_rising(ephem.Sun())).astimezone(tz.gettz(location['timezone']))
   sunData['set'] = ephem.localtime(obs.previous_setting(ephem.Sun())).astimezone(tz.gettz(location['timezone']))
@@ -67,7 +71,7 @@ def getMoonData(location, overrideDateTime=None):
   moon.compute(obs)
   moonData['phase'] = moon.phase
   moonData['mag'] = moon.mag
-  moonData['alt'] = str(moon.alt)[:2]
+  moonData['alt'] = int(str(moon.alt).split(':')[0])
   return moonData
 
 def getWeatherdata(location):

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="64720c82-6d1b-4e61-a2d6-36b7d7b0dd05" name="certification">
+        <fileTransfer rootFolder="/C:/Users/mail/devel/slt-observatoryMonitoring" accessType="SFTP" host="nina-spare" port="22" sshConfigId="1401d018-0fe3-4c9f-aa47-3ec227f1dff8" sshConfig="ring@nina-spare:22 key" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

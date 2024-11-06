@@ -3,7 +3,7 @@ import sys
 import json
 from Client import imageData
 from pathlib import Path
-import re
+import hashlib
 
 try:
   sys.path.append('..')
@@ -12,45 +12,47 @@ except:
   print("telescope configuration is missing in config.py")
   sys.exit(1)
 
-activeKeys = 'ExposureStart','Duration','DetectedStars', 'Eccentricity','FilterName','Duration','Binning','Gain','HFR','FWHM','GuidingRMSArcSec','GuidingRMSRAArcSec','GuidingRMSDECArcSec'
+activeIntKeys = ('DetectedStars', 'Gain')
+activeTextKeys= ('acquireddate','ExposureDuration','FilterName','Binning','Eccentricity','HFR','FWHM','GuidingRMSArcSec','GuidingRMSRAArcSec','GuidingRMSDECArcSec')
 
 def addMetaData(data,fullDataSet=False):
+  metadataRecords={}
   for fileinfo in data:
-    metaDataPath=Path(data[fileinfo]['filename']).parent
-    fileDateRegex=re.compile(r"^\d{4}-\d{2}-\d{2}$")
+    metaDataPath=Path(data[fileinfo]['FileName']).parent
     metaDataFilePath=None
-    while metaDataPath.name != "":
-      results=fileDateRegex.findall(metaDataPath.name)
-      if len(results) == 1:
+    while metaDataFilePath is None:
+      p = metaDataPath / "ImageMetaData.json"
+      if (metaDataPath / "ImageMetaData.json").exists():
         metaDataFilePath=metaDataPath / "ImageMetaData.json"
         break
       metaDataPath=metaDataPath.parent
+      if metaDataPath == Path('/'):
+        break
     if metaDataFilePath == None:
-      print(f"MetaData file not found based on {Path(data[fileinfo]['filename']).parent}")
+      print(f"MetaData file not found based on {Path(data[fileinfo]['FileName']).parent}")
       sys.exit(1)
-    metadataRecords = json.load(metaDataFilePath.open())
-    for metadataRecord in metadataRecords:
-      if Path(metadataRecord['FilePath']).name == Path(data[fileinfo]['filename']).name:
-        if fullDataSet == False:
-          for key in activeKeys:
-            if key in metadataRecord.keys():
-              data[fileinfo][key] = metadataRecord[key]
-              if type(data[fileinfo][key]) == float:
-                data[fileinfo][key] = f"{data[fileinfo][key]:.2f}"
-            else:
-              data[fileinfo][key] = 'None'
-              data[fileinfo][key] = metadataRecord[key]
-              if type(data[fileinfo][key]) == float:
-                data[fileinfo][key] = f"{data[fileinfo][key]:.2f}"
-        else:
-          for key in metadataRecord.keys():
-            data[fileinfo][key] = metadataRecord[key]
-            if type(data[fileinfo][key]) == float:
-              data[fileinfo][key] = f"{data[fileinfo][key]:.2f}"
-
-    if not 'DetectedStars' in data[fileinfo].keys():
-      for key in activeKeys:
-        data[fileinfo][key] = 'None'
+    metaDataFilePathHash=hashlib.md5(str(metaDataFilePath).encode()).hexdigest()
+    if not metaDataFilePathHash in metadataRecords:
+      metadataRecords[metaDataFilePathHash] = json.load(metaDataFilePath.open())
+    found=False
+    for metadataRecord in metadataRecords[metaDataFilePathHash]:
+      if Path(metadataRecord['FilePath']).name == Path(data[fileinfo]['FileName']).name:
+        for key in metadataRecord.keys():
+          found=True
+          newkey=key
+          if key == "ExposureStart":
+            newkey = "ExposureStartTime"
+          if key == "Duration":
+            newkey = "ExposureDuration"
+          data[fileinfo][newkey] = metadataRecord[key]
+          if type(data[fileinfo][newkey]) == float:
+            data[fileinfo][newkey] = f"{data[fileinfo][newkey]:.2f}"
+    if not found:
+      for key in activeTextKeys:
+        data[fileinfo][key] = ""
+      for key in activeIntKeys:
+        data[fileinfo][key] = 0
+    data[fileinfo]['acquireddate']=fileinfo[0:10]+' '+fileinfo[11:13]+':'+fileinfo[14:16]+':'+fileinfo[17:19]
 
 def targetStatus():
   data = imageData.findMostRecentFitsFiles()
@@ -61,5 +63,5 @@ def generateJson():
   data = imageData.findMostRecentFitsFiles()
   addMetaData(data,True)
   for item in data:
-    data[item]['filename'] = str(data[item]['filename'])
+    data[item]['FileName'] = str(data[item]['FileName'])
   return(data)

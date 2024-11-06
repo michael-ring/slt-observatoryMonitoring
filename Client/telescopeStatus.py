@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
+import pydevd_pycharm
+pydevd_pycharm.settrace('192.168.1.118', port=9999, stdoutToServer=True, stderrToServer=True)
 import sys
 from Client import allskyData,targetSchedulerData,sessionMetadataData,phd2Data
 from pathlib import Path
 
-from Client.targetSchedulerData import lastImages
 from Common import uploadData
 import json
 from datetime import datetime
@@ -27,13 +28,12 @@ def uploadJson():
   uploadStatusFiles = []
   if 'schedulerdb' in telescope:
     schedulerStatus = targetSchedulerData.targetStatus()
+    schedulerStatusJsonFile = Path(__file__).parent.parent / 'Temp' / 'schedulerStatus.json'
+    schedulerStatusJsonFile.write_text(json.dumps(schedulerStatus, indent=2))
+    uploadStatusFiles.append(schedulerStatusJsonFile)
     lastImages = targetSchedulerData.lastImages()
   else:
     lastImages = sessionMetadataData.generateJson()
-
-  schedulerStatusJsonFile = Path(__file__).parent.parent / 'Temp' / 'schedulerStatus.json'
-  schedulerStatusJsonFile.write_text(json.dumps(schedulerStatus, indent=2))
-  uploadStatusFiles.append(schedulerStatusJsonFile)
 
   lastImagesStatusJsonFile = Path(__file__).parent.parent / 'Temp' / 'lastImagesStatus.json'
   lastImagesStatusJsonFile.write_text(json.dumps(lastImages, indent=2))
@@ -41,12 +41,12 @@ def uploadJson():
 
   acquiredDates=[]
   for lastImage in lastImages:
-    if Path(lastImage['FileName']).exists():
-      uploadImageFiles.append(Path(lastImage['FileName']))
-    if lastImage['acquireddate'][0:10] not in acquiredDates:
-      acquiredDates.append(lastImage['acquireddate'][0:10])
+    if Path(lastImages[lastImage]['FileName']).exists():
+      uploadImageFiles.append(Path(lastImages[lastImage]['FileName']))
+    if lastImages[lastImage]['acquireddate'][0:10] not in acquiredDates:
+      acquiredDates.append(lastImages[lastImage]['acquireddate'][0:10])
       #The phd log may have started the day before, so also get logs from that day
-      dayBefore=(datetime.strptime(lastImage['acquireddate'][0:10],'%Y-%m-%d')-timedelta(days=1)).strftime('%Y-%m-%d')
+      dayBefore=(datetime.strptime(lastImages[lastImage]['acquireddate'][0:10],'%Y-%m-%d')-timedelta(days=1)).strftime('%Y-%m-%d')
       acquiredDates.append(dayBefore)
   if 'phdlogbasedir' in telescope:
     phd2Status = phd2Data.generateJson(acquiredDates)

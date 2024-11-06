@@ -28,8 +28,8 @@ def findMostRecentFitsFiles(count=200):
     if len(results) != 1:
       print(f"Either date/time pattern not found in {file.name} or too many hits")
       sys.exit(1)
-    if not file.name.startswith("Calibration_"):
-      fileset[results[0]] = { "filename" : file }
+    if not file.name.startswith('Calibration_'):
+      fileset[results[0]] = { 'FileName' : file }
   fileset=dict(sorted(fileset.items(), reverse=True))
   fileset=dict(itertools.islice(fileset.items(), count))
   return fileset
