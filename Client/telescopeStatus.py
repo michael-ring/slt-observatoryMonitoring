@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-import pydevd_pycharm
-pydevd_pycharm.settrace('192.168.1.118', port=9999, stdoutToServer=True, stderrToServer=True)
+#import pydevd_pycharm
+#pydevd_pycharm.settrace('192.168.1.118', port=9999, stdoutToServer=True, stderrToServer=True)
 import sys
 from Client import allskyData,targetSchedulerData,sessionMetadataData,phd2Data
 from pathlib import Path

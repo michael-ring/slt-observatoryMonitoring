@@ -26,7 +26,7 @@ def addMetaData(data,fullDataSet=False):
         metaDataFilePath=metaDataPath / "ImageMetaData.json"
         break
       metaDataPath=metaDataPath.parent
-      if metaDataPath == Path('/'):
+      if metaDataPath == Path('/') or (metaDataPath == Path('c:/')):
         break
     if metaDataFilePath == None:
       print(f"MetaData file not found based on {Path(data[fileinfo]['FileName']).parent}")
