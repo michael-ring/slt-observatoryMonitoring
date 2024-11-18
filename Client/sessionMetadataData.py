@@ -65,3 +65,6 @@ def generateJson():
   for item in data:
     data[item]['FileName'] = str(data[item]['FileName'])
   return(data)
+
+if __name__ == '__main__':
+  generateJson()

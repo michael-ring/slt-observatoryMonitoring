@@ -99,10 +99,19 @@ def disableProject(projectName):
 def targetStatus():
   return query("""
 SELECT
-  e.desired as desired ,e.acquired as acquired ,e.accepted as accepted,
-  t.name as targetname, 
+  e.desired as desired,
+  e.acquired as acquired,
+  t.name as targetname,
+  t.ra as ra,
+  t.dec as dec,
+  t.rotation as rotation,
+  t.overrideExposureOrder as overrideexposureorder,
   p.name as projectname,
+  p.description as description,
   p.state as projectstate,
+  p.priority as priority,
+  p.minimumaltitude as minimumaltitude,
+  p.minimumtime as minimumtime,
   x.name as templatename
 FROM 
   exposureplan e, target t, exposuretemplate x, project p

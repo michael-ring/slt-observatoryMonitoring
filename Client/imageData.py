@@ -37,4 +37,5 @@ def findMostRecentFitsFiles(count=200):
 def convertFitsToJPG(fitsFile,jpgFile):
   conversions.fits_to_jpg(fitsFile,jpgFile,width=2000,height=2000)
 
-findMostRecentFitsFiles()
+if __name__ == '__main__':
+  findMostRecentFitsFiles()

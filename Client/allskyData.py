@@ -55,3 +55,6 @@ def generateJson(requiredDates=None):
   for file in files:
     result['allSky'].append(file.name)
   return result
+
+if __name__ == '__main__':
+  generateJson()

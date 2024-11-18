@@ -87,5 +87,7 @@ def generateJson(requiredDates=None):
               guiding[guidingStart]['steps'].append((line+f",{settling},{dithering}").replace('"',''))
 
     return {'calibration':calibration,'guiding':guiding}
-#generateJson()
 
+
+if __name__ == '__main__':
+  generateJson()
