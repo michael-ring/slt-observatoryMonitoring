@@ -41,18 +41,5 @@ def genDiv():
   plotCalibration(phd2Data['calibration'])
   pass
 
-genDiv()
-
-
-
-
-
-
-
-
-
-
-
-
-
-genDiv()
+if __name__ == '__main__':
+  genDiv()

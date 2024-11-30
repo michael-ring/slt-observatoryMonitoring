@@ -48,6 +48,7 @@ def uploadJson():
       #The phd log may have started the day before, so also get logs from that day
       dayBefore=(datetime.strptime(lastImage['acquireddate'][0:10],'%Y-%m-%d')-timedelta(days=1)).strftime('%Y-%m-%d')
       acquiredDates.append(dayBefore)
+
   if 'phdlogbasedir' in telescope:
     phd2Status = phd2Data.generateJson(acquiredDates)
     phd2StatusJsonFile = Path(__file__).parent.parent / 'Temp' / 'phd2Status.json'

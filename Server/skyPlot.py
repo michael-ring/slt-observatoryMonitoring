@@ -109,7 +109,8 @@ def sky_object_plot(objectra,objectdec, location, obs_datetime=None):
   plt.legend()
   plt.show()
 
-objectra="20:58:47"
-objectdec="44:19:48"
-location=locations[telescope['location']]
-sky_object_plot(objectra,objectdec, location)
+if __name__ == '__main__':
+  objectra="20:58:47"
+  objectdec="44:19:48"
+  location=locations[telescope['location']]
+  sky_object_plot(objectra,objectdec, location)

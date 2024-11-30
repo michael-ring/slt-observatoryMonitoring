@@ -100,5 +100,5 @@ def getWeatherdata(location):
     weatherdata['forecastHourly']['hours'][index]['forecastStart'] = forecastStart
 
   return weatherdata
-
-getMoonData(locations[telescope['location']],datetime.now())
+if __name__ == '__main__':
+  getMoonData(locations[telescope['location']],datetime.now())

@@ -47,6 +47,12 @@ def uploadData(dataFiles,imageFiles):
     result = c.put(dataFile,remote=f"{telescope['shortname']}-data/")
     print("Uploaded {0.local} to {0.remote}".format(result))
 
+  if len(imageFiles) > 0:
+    imageData.convertFitsToJPG(imageFiles[0], imageFiles[0].with_stem('subimage').with_suffix('.jpg'))
+    result = c.put(imageFiles[0].with_stem('subimage').with_suffix('.jpg'), remote=f"{telescope['shortname']}-images/")
+    print("Uploaded {0.local} to {0.remote}".format(result))
+    imageFiles[0].with_stem('subimage').with_suffix('.jpg').unlink()
+
   for imageFile in imageFiles:
     if not imageFile.with_suffix('.jpg').name in list:
       if imageFile.suffix == '.fits':

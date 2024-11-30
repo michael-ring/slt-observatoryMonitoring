@@ -179,6 +179,8 @@ def generateData(locationName):
     shutil.copy(index,Path(f"{rootserver['basedir']}/pages/"))
     shutil.copy(locationData.locations[locationName]['locationcode'] + "_bg.png", Path(f"/{rootserver['basedir']}/theme/images/"))
     subprocess.run([f"rootserver['gitdir']/patchhtml.py"])
-generateData('Gantrisch')
-generateData('Starfront Observatory')
-generateData('Prairie Skies Astro Ranch')
+
+if __name__ == '__main__':
+  generateData('Gantrisch')
+  generateData('Starfront Observatory')
+  generateData('Prairie Skies Astro Ranch')

@@ -42,7 +42,6 @@ doc.asis("""
   } 
 </style>
 <script src="https://code.jquery.com/jquery-3.7.1.slim.js"></script>
-
 <body class="light-theme">
 <aside>
   <div>
@@ -76,32 +75,13 @@ doc.asis("""
 <a href=https://www.cleardarksky.com/c/StrfrntObsTXkey.html>
 <img src="https://www.cleardarksky.com/c/StrfrntObsTXcsk.gif?c=2361648"></a>
 </p>
+
+<iframe src="vst-powerBoxStatus.html" onload='javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));' style="height:400px;width:1024px;border:none;overflow:hidden;"></iframe>
+<iframe src="vst-skyAlertStatus.html" onload='javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));' style="height:400px;width:1024px;border:none;overflow:hidden;"></iframe>
+
 """)
 
-with tag('p'):
-  with tag('ul'):
-    with tag('li'):
-      text('allsky-1726372200.0.jpg')
-    with tag('li'):
-      text('allsky-1726372260.0.jpg')
-    with tag('li'):
-      text('allsky-1726372320.0.jpg')
-    with tag('li'):
-      text('allsky-1726372380.0.jpg')
-with tag('div',id='result'):
-  with tag('center'):
-    text('Your Image goes here...')
 doc.asis("""
-
-<script>
-$( "li" ).on( "mouseenter", function() {
-    var img=$(this).text();
-    var result=document.getElementById('result');
-    result.innerHTML="<img src='https://slt-observatory.space/images/slt-images/"+img+"' width='100%'/>";
-  }
-);
-</script>
-
 </article>
 <footer>
 <p>&copy;</p>
@@ -112,6 +92,6 @@ $( "li" ).on( "mouseenter", function() {
 </body>
 </html>
 """)
-index = Path(f"status.html")
+index = Path(Path(__file__).parent.parent / f'Test/status.html')
 index.write_text(doc.getvalue())
 

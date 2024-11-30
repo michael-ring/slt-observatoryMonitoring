@@ -35,6 +35,7 @@ def getPowerBoxStatus():
   powerBoxStatus['probe3temperature']=data[4]
   powerBoxStatus['humidity']=data[5]
   powerBoxStatus['temperature']=data[6]
+  powerBoxStatus['dewpoint']=f"{float(data[6])-((100-float(data[5]))/5):.2f}"
   powerBoxStatus['inputcurrent']=data[7]
   powerBoxStatus['output19vcurrent']=data[8]
   powerBoxStatus['adjustableoutputcurrent']=data[9]
