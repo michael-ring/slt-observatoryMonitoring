@@ -18,7 +18,7 @@ currentSunStatus=locationData.getSunData(locations[telescope['location']])
 
 if currentSunStatus['alt'] >0:
   print('Sun is up, exit...')
-  #sys.exit(0)
+  sys.exit(0)
 
 lrgb = targetSchedulerData.getLRGBTargets()
 o2 = targetSchedulerData.getOTargets()
