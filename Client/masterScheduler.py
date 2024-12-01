@@ -35,7 +35,7 @@ if currentMoonStatus['alt'] < 0 or currentMoonStatus['phase'] < 15:
     if target['projectstate'] == 2:
       print(f'Enable  {target['projectname']}')
       targetSchedulerData.enableProject(target['projectname'])
-elif currentMoonStatus['alt'] < 40 or currentMoonStatus['phase'] < 50:
+elif currentMoonStatus['alt'] < 40 or currentMoonStatus['phase'] < 40:
   for target in lrgb:
     if target['projectstate'] == 1:
       print(f'Disable {target['projectname']}')
