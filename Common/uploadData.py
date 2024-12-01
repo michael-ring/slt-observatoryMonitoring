@@ -47,6 +47,7 @@ def uploadData(dataFiles,imageFiles):
     result = c.put(dataFile,remote=f"{telescope['shortname']}-data/")
     print("Uploaded {0.local} to {0.remote}".format(result))
 
+  # Take the latest image and always upload it as subimage.jpg
   if len(imageFiles) > 0:
     imageData.convertFitsToJPG(imageFiles[0], imageFiles[0].with_stem('subimage').with_suffix('.jpg'))
     result = c.put(imageFiles[0].with_stem('subimage').with_suffix('.jpg'), remote=f"{telescope['shortname']}-images/")

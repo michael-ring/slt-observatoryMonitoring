@@ -77,6 +77,7 @@ def getLRGBTargets():
   return result
 
 def enableProject(projectName):
+  projectName = projectName.replace("'","''")
   return updatequery(f"""
   UPDATE 
     project 
@@ -87,6 +88,7 @@ def enableProject(projectName):
   """)
 
 def disableProject(projectName):
+  projectName = projectName.replace("'","''")
   return updatequery(f"""
   UPDATE 
     project 
