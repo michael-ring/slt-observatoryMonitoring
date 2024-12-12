@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-import json
-import sys
 
 from yattag import Doc
 from pathlib import Path
+
+import powerBoxStatus
+import skyAlertStatus
+import roofStatus
 
 doc, tag, text = Doc().tagtext()
 doc.asis("""
@@ -32,6 +34,7 @@ doc.asis("""
   <meta property="og:locale" content="en_US"/>
   <meta property="og:url" content="https://slt-observatory.space"/>
   <title>Sufficiently Large Telescope Observatory &ndash; Status CDK14</title>
+  <link type="text/css" rel="stylesheet" href="css/lightgallery.css" />
 </head>
 """)
 
@@ -43,6 +46,7 @@ doc.asis("""
 </style>
 <script src="https://code.jquery.com/jquery-3.7.1.slim.js"></script>
 <body class="light-theme">
+<script src="js/lightgallery.min.js"></script>
 <aside>
   <div>
     <a href="https://slt-observatory.space/"><img src="https://slt-observatory.space/theme/img/profile.png" alt="" title="">
@@ -75,14 +79,61 @@ doc.asis("""
 <a href=https://www.cleardarksky.com/c/StrfrntObsTXkey.html>
 <img src="https://www.cleardarksky.com/c/StrfrntObsTXcsk.gif?c=2361648"></a>
 </p>
-
-<iframe src="vst-powerBoxStatus.html" onload='javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));' style="height:400px;width:1024px;border:none;overflow:hidden;"></iframe>
-<iframe src="vst-skyAlertStatus.html" onload='javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));' style="height:400px;width:1024px;border:none;overflow:hidden;"></iframe>
+  <table>
+    <tr>
+      <th>Last Image</th>
+      <th>Pier Camera</th>
+      <th>Building Camera</th>
+    </tr>
+    <tr>
+      <td width="33%">
+        <a id="selector1" href="https://slt-observatory.space/images/slt-images/subimage.jpg" data-source="https://slt-observatory.space/images/slt-images/subimage.jpg">
+          <img alt="Last Image" src="https://slt-observatory.space/images/slt-images/subimage.jpg" />
+        </a>
+      </td>
+      <td width="33%" >
+        <a id="selector2" href="https://slt-observatory.space/images/slt-images/image.jpg" data-source="https://slt-observatory.space/images/slt-images/image.jpg">
+          <img alt="Pier Camera" src="https://slt-observatory.space/images/slt-images/image.jpg" />
+        </a>
+      </td>
+      <td width="33%" >
+        <a id="selector3" href="https://zyssufjepmbhqznfuwcw.supabase.co/storage/v1/object/public/status-assets-public/building-0005/allsky/images/image.jpg">
+          <img alt="Building Camera" src="https://zyssufjepmbhqznfuwcw.supabase.co/storage/v1/object/public/status-assets-public/building-0005/allsky/images/image.jpg" />
+        </a>
+      </td>
+    </tr>
+  </table>
 
 """)
 
+doc.asis(roofStatus.genDiv('vst'))
+doc.asis(powerBoxStatus.genDiv('vst'))
+doc.asis(skyAlertStatus.genDiv('vst'))
+
+
 doc.asis("""
 </article>
+<script type="text/javascript">
+lightGallery(document.getElementById('selector1'), {
+    selector: 'this',
+    plugins: [],
+    licenseKey: '0000-0000-000-0000',
+    speed: 500
+});
+lightGallery(document.getElementById('selector2'), {
+    selector: 'this',
+    plugins: [],
+    licenseKey: '0000-0000-000-0000',
+    speed: 500
+});
+lightGallery(document.getElementById('selector3'), {
+    selector: 'this',
+    plugins: [],
+    licenseKey: '0000-0000-000-0000',
+    speed: 500
+});
+</script>
+
 <footer>
 <p>&copy;</p>
 <p>Built with <a href="http://getpelican.com" target="_blank">Pelican</a> using <a href="http://bit.ly/flex-pelican" target="_blank">Flex</a> theme

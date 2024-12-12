@@ -1,6 +1,5 @@
 yattag
 pyephem
-fabric
-requests
 python-dateutil
 pillow
+matplotlib

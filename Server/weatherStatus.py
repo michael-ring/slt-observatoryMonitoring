@@ -1,11 +1,6 @@
 #!/usr/bin/env python
-from Common import locationData
 from yattag import Doc
 from pathlib import Path
-import warnings
-from cryptography.utils import CryptographyDeprecationWarning
-warnings.filterwarnings(action="ignore", category=CryptographyDeprecationWarning)
-from fabric import Connection
 from PIL import Image
 import platform
 import shutil
@@ -13,6 +8,8 @@ import subprocess
 import sys
 
 try:
+  sys.path.append('..')
+  sys.path.append('.')
   from config import rootserver
 except:
   print("rootserver configuration is missing in config.py")
@@ -23,6 +20,8 @@ try:
 except:
   print("telescope configuration is missing in config.py")
   sys.exit(1)
+
+from Common import locationData
 
 def runningOnServer():
   return platform.uname().node == rootserver['nodename']
@@ -178,9 +177,7 @@ def generateData(locationName):
   else:
     shutil.copy(index,Path(f"{rootserver['basedir']}/pages/"))
     shutil.copy(locationData.locations[locationName]['locationcode'] + "_bg.png", Path(f"/{rootserver['basedir']}/theme/images/"))
-    subprocess.run([f"rootserver['gitdir']/patchhtml.py"])
-
-if __name__ == '__main__':
-  generateData('Gantrisch')
-  generateData('Starfront Observatory')
-  generateData('Prairie Skies Astro Ranch')
+    subprocess.run([f"{rootserver['gitdir']}/Server/patchhtml.py"])
+generateData('Gantrisch')
+generateData('Starfront Observatory')
+generateData('Prairie Skies Astro Ranch')
