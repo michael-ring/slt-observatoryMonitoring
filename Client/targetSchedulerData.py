@@ -157,7 +157,7 @@ ORDER BY
     row.pop('metadata')
     if lastAcquiredDatesCount < 5:
       if lastAcquiredDate != row['acquireddate'][0:10]:
-        lastAcquiredDatesCount + =1
+        lastAcquiredDatesCount +=1
         lastAcquiredDate=row['acquireddate'][0:10]
     else:
       return data[:pos-1]

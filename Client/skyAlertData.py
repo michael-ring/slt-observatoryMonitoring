@@ -25,7 +25,7 @@ def getWeatherStatus():
     content = weatherDataFile.read_text()
     content = content.split()
     weatherStatus['timestamp'] = str(parse(content[0]+' '+content[1]))
-    if content[2] is 'F':
+    if content[2] == 'F':
       weatherStatus['skytemp'] = f"{(float(content[4]) - 32) * 5 / 9:.2f}"
       weatherStatus['ambienttemp'] = f"{(float(content[5]) - 32) * 5 / 9:.2f}"
       weatherStatus['sensortemp'] = f"{(float(content[6]) - 32) * 5 / 9:.2f}"

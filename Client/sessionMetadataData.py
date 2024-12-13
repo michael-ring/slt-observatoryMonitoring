@@ -41,9 +41,9 @@ def addMetaData(data):
         for key in metadataRecord.keys():
           found = True
           newkey = key
-          if key is "ExposureStart":
+          if key == "ExposureStart":
             newkey = "ExposureStartTime"
-          if key is "Duration":
+          if key == "Duration":
             newkey = "ExposureDuration"
           data[fileinfo][newkey] = metadataRecord[key]
           if isinstance(data[fileinfo][newkey], float):
