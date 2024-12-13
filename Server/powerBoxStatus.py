@@ -20,33 +20,35 @@ except:
   print("locations configuration is missing in config.py")
   sys.exit(1)
 
+
 def runningOnServer():
   return platform.uname().node == rootserver['nodename']
 
+
 def genDiv(telescopeName):
   width, height = 1024, 200
-  telescope=telescopes[telescopeName]
-  localtz=locations[telescope['location']]['timezone']
+  telescope = telescopes[telescopeName]
+  localtz = locations[telescope['location']]['timezone']
 
-  if runningOnServer() == True:
+  if runningOnServer() is True:
     with open(Path(f'/home/{rootserver['sshuser']}/{telescopeName}-data/powerboxStatus.json')) as f:
-      powerBoxData=json.load(f)
+      powerBoxData = json.load(f)
   else:
     with open(Path(__file__).parent.parent / 'Test/vst-data/powerboxStatus.json') as f:
-      powerBoxData=json.load(f)
+      powerBoxData = json.load(f)
 
-  start_time=datetime.now(ZoneInfo(localtz))
+  start_time = datetime.now(ZoneInfo(localtz))
   if start_time.hour < 12:
-    start_time = start_time.replace(hour=0,minute=0,second=0,microsecond=0) - timedelta(hours=12)
+    start_time = start_time.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(hours=12)
   else:
-    start_time = start_time.replace(hour=0,minute=0,second=0,microsecond=0) + timedelta(hours=12)
+    start_time = start_time.replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(hours=12)
 
-  timestamps=[]
-  temperatures=[]
-  dewpoints=[]
-  probe1temperatures=[]
-  probe2temperatures=[]
-  #probe3temperatures=[]
+  timestamps = []
+  temperatures = []
+  dewpoints = []
+  probe1temperatures = []
+  probe2temperatures = []
+  #probe3temperatures = []
 
   for dataset in powerBoxData:
     timestamp = next(iter(dataset.keys()))
@@ -62,10 +64,10 @@ def genDiv(telescopeName):
   px = 1 / plt.rcParams['figure.dpi']
   plt.subplots(figsize=(width * px, height * px))
 
-  plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M',tz=tz.gettz(localtz)))
-  plt.gca().xaxis.set_major_locator(mdates.HourLocator(interval = 3))
+  plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M', tz=tz.gettz(localtz)))
+  plt.gca().xaxis.set_major_locator(mdates.HourLocator(interval=3))
   #plt.ylim(-10, 40)
-  plt.xlim(start_time,start_time+timedelta(days=1))
+  plt.xlim(start_time, start_time+timedelta(days=1))
   plt.grid(True)
   plt.ylabel("°C")
   plt.plot(timestamps, temperatures, label='Temperature')
@@ -76,20 +78,20 @@ def genDiv(telescopeName):
     plt.plot(timestamps, probe2temperatures, label='GuideScope Temperature')
   plt.gcf().autofmt_xdate()
   plt.legend()
-  if runningOnServer() == True:
+  if runningOnServer():
     plt.savefig(Path(rootserver['basedir'] / 'images' / 'powerBoxStatus.png'))
   else:
     plt.savefig(Path(__file__).parent.parent / f'Test/images/{telescopeName}-powerBoxStatus.png')
 
-  latestPowerBoxData=list(powerBoxData[-1].values())[-1]
+  latestPowerBoxData = list(powerBoxData[-1].values())[-1]
   doc, tag, text = Doc().tagtext()
   with tag('section'):
-    doc.attr( id='content', klass='body' )
+    doc.attr(id='content', klass='body')
     with tag('h2'):
       text("PowerBox Info")
     with tag('table'):
       with tag('tr'):
-        for title in 'Port3/4 Voltage','Port3/4 Current','InputVoltage','InputCurrent','Port5 PWM','Port6 PWM','Port7 PWM','Firmware Version':
+        for title in 'Port3/4 Voltage', 'Port3/4 Current', 'InputVoltage', 'InputCurrent', 'Port5 PWM', 'Port6 PWM', 'Port7 PWM', 'Firmware Version':
           with tag('th'):
             text(title)
       with tag('tr'):
@@ -113,15 +115,16 @@ def genDiv(telescopeName):
     with tag('h3'):
       text("Temperature/Dewpoint measured at Telescope")
     with tag('img'):
-      doc.attr( src=f'images/{telescopeName}-powerBoxStatus.png', alt=f'{telescopeName}-powerBoxStatus.png' )
+      doc.attr(src=f'images/{telescopeName}-powerBoxStatus.png', alt=f'{telescopeName}-powerBoxStatus.png')
 
-  if runningOnServer() == True:
-    with open(Path(f'{rootserver['basedir']}/{telescopeName}-powerBoxStatus.include'),mode="w") as f:
+  if runningOnServer():
+    with open(Path(f'{rootserver['basedir']}/{telescopeName}-powerBoxStatus.include'), mode="w") as f:
       f.writelines(doc.getvalue())
   else:
-    with open(Path(__file__).parent.parent / f'Test/{telescopeName}-powerBoxStatus.html',mode='w') as f:
+    with open(Path(__file__).parent.parent / f'Test/{telescopeName}-powerBoxStatus.html', mode='w') as f:
       f.writelines(doc.getvalue())
   return doc.getvalue()
+
+
 if __name__ == '__main__':
   genDiv('vst')
-

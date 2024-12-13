@@ -11,6 +11,7 @@ except:
   print("telescope configuration is missing in config.py")
   sys.exit(1)
 
+
 def query(queryString):
   con = sqlite3.connect(telescope['schedulerdb'])
   con.row_factory = sqlite3.Row
@@ -20,6 +21,7 @@ def query(queryString):
   con.close()
   return unpacked
 
+
 def updatequery(queryString):
   con = sqlite3.connect(telescope['schedulerdb'])
   con.row_factory = sqlite3.Row
@@ -27,6 +29,7 @@ def updatequery(queryString):
   con.commit()
   con.close()
   return True
+
 
 def getHSTargets():
   result = query("""
@@ -44,6 +47,7 @@ def getHSTargets():
   """)
   return result
 
+
 def getOTargets():
   result = query("""
   SELECT
@@ -59,6 +63,7 @@ def getOTargets():
     projectstate asc, projectname asc
   """)
   return result
+
 
 def getLRGBTargets():
   result = query("""
@@ -76,8 +81,9 @@ def getLRGBTargets():
   """)
   return result
 
+
 def enableProject(projectName):
-  projectName = projectName.replace("'","''")
+  projectName = projectName.replace("'", "''")
   return updatequery(f"""
   UPDATE 
     project 
@@ -87,8 +93,9 @@ def enableProject(projectName):
     name = '{projectName}'
   """)
 
+
 def disableProject(projectName):
-  projectName = projectName.replace("'","''")
+  projectName = projectName.replace("'", "''")
   return updatequery(f"""
   UPDATE 
     project 
@@ -97,6 +104,7 @@ def disableProject(projectName):
   WHERE 
     name = '{projectName}'
   """)
+
 
 def targetStatus():
   return query("""
@@ -123,9 +131,10 @@ ORDER BY
   projectstate asc, projectname asc
 """)
 
+
 def lastImages():
-  lastAcquiredDate=None
-  lastAcquiredDatesCount=0
+  lastAcquiredDate = None
+  lastAcquiredDatesCount = 0
   data = query("""
 SELECT 
   p.name as projectname, p.state as projectstate, t.name as targetname,
@@ -137,10 +146,10 @@ WHERE
 ORDER BY
   a.acquireddate desc
 """)
-  for pos,row in enumerate(data):
-    metadata=json.loads(row['metadata'])
+  for pos, row in enumerate(data):
+    metadata = json.loads(row['metadata'])
     for meta in metadata:
-      if isinstance(metadata[meta],float):
+      if isinstance(metadata[meta], float):
         row[meta] = f"{metadata[meta]:.2f}"
       else:
         row[meta] = metadata[meta]
@@ -148,8 +157,8 @@ ORDER BY
     row.pop('metadata')
     if lastAcquiredDatesCount < 5:
       if lastAcquiredDate != row['acquireddate'][0:10]:
-        lastAcquiredDatesCount+=1
+        lastAcquiredDatesCount + =1
         lastAcquiredDate=row['acquireddate'][0:10]
     else:
       return data[:pos-1]
-  return(data)
+  return data

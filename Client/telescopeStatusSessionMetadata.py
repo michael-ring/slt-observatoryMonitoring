@@ -2,9 +2,8 @@
 import json
 import sys
 
-from yattag import Doc
 from pathlib import Path
-from Client import allskyData, roofData, sessionMetadataData,phd2Data
+from Client import allskyData, roofData, sessionMetadataData, phd2Data
 from Common import uploadData
 
 try:
@@ -14,9 +13,10 @@ except:
   print("telescope configuration is missing in config.py")
   sys.exit(1)
 
+
 def uploadJson():
   allSkyJson = allskyData.generateJson()
-  uploadFiles = allskyData.findMostRecentAllSkyFiles()
+  uploadFiles = allskyData.findAllSkyFiles()
   allSkyJsonFile = Path(__file__).parent.parent / 'Temp' / 'allSkyFiles.json'
   allSkyJsonFile.write_text(json.dumps(allSkyJson, indent=2))
 
@@ -28,7 +28,8 @@ def uploadJson():
   phdStatus = phd2Data.generateJson()
   phdStatusJsonFile = Path(__file__).parent.parent / 'Temp' / 'phdStatus.json'
   phdStatusJsonFile.write_text(json.dumps(phdStatus, indent=2))
-  uploadData.uploadData([lastImagesJsonFile,allSkyJsonFile,phdStatusJsonFile], uploadFiles)
+  uploadData.uploadData([lastImagesJsonFile, allSkyJsonFile, phdStatusJsonFile], uploadFiles)
   pass
 
-uploadJson()
+if __name__ == '__main__':
+  uploadJson()

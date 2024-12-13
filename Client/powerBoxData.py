@@ -17,10 +17,15 @@ except:
   print("powerbox configuration is missing in config.py")
   sys.exit(1)
 
+
 def generateJson():
   json=getPowerBoxStatus()
-  alljson=jsonLogHelper.appendToDailyLog('powerboxdata',json)
+  if json != "{}":
+    alljson=jsonLogHelper.appendToDailyLog('powerboxdata',json)
+  else:
+    alljson=jsonLogHelper.getDailyLog('powerboxdata')
   return alljson
+
 
 def getPowerBoxStatus():
   port=powerbox['port']
@@ -62,6 +67,7 @@ def getPowerBoxStatus():
     powerBoxStatus['dc34voltage']=int(data[22])/10
   return powerBoxStatus
 
+
 def initialize():
   port=powerbox['port']
   speed=powerbox['speed']
@@ -84,6 +90,7 @@ def initialize():
   ser.close()
   print(getPowerBoxStatus())
 
+
 def shutdown():
   port=powerbox['port']
   speed=powerbox['speed']
@@ -105,6 +112,7 @@ def shutdown():
     data=ser.readline().decode('utf-8')
   ser.close()
   print(getPowerBoxStatus())
+
 
 if __name__ == '__main__':
   generateJson()

@@ -11,25 +11,27 @@ except:
   print("telescope configuration is missing in config.py")
   sys.exit(1)
 
+
 def generateJson():
-  _json=getWeatherStatus()
-  alljson=jsonLogHelper.appendToDailyLog('weatherdata',_json)
+  _json = getWeatherStatus()
+  alljson = jsonLogHelper.appendToDailyLog('weatherdata', _json)
   return alljson
+
 
 def getWeatherStatus():
   weatherDataFile = Path(telescope['weatherstatusdir']) / "weatherdata.txt"
   weatherStatus = {}
   if weatherDataFile.exists():
-    content=weatherDataFile.read_text()
-    content=content.split()
-    weatherStatus['timestamp']=str(parse(content[0]+' '+content[1]))
-    if content[2] == 'F':
-      weatherStatus['skytemp']=f"{(float(content[4]) - 32) * 5 / 9:.2f}"
+    content = weatherDataFile.read_text()
+    content = content.split()
+    weatherStatus['timestamp'] = str(parse(content[0]+' '+content[1]))
+    if content[2] is 'F':
+      weatherStatus['skytemp'] = f"{(float(content[4]) - 32) * 5 / 9:.2f}"
       weatherStatus['ambienttemp'] = f"{(float(content[5]) - 32) * 5 / 9:.2f}"
       weatherStatus['sensortemp'] = f"{(float(content[6]) - 32) * 5 / 9:.2f}"
       weatherStatus['dewpoint'] = f"{(float(content[9]) - 32) * 5 / 9:.2f}"
     else:
-      weatherStatus['skytemp']=f"{float(content[4]):.2f}"
+      weatherStatus['skytemp'] = f"{float(content[4]):.2f}"
       weatherStatus['ambienttemp'] = f"{float(content[5]):.2f}"
       weatherStatus['sensortemp'] = f"{float(content[6]):.2f}"
       weatherStatus['dewpoint'] = f"{float(content[9]):.2f}"
@@ -45,6 +47,7 @@ def getWeatherStatus():
     weatherStatus['raincondition'] = int(content[17])
     weatherStatus['darknesscondition'] = int(content[18])
   return weatherStatus
+
 
 if __name__ == '__main__':
   generateJson()

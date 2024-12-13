@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
-#import pydevd_pycharm
-#pydevd_pycharm.settrace('172.17.16.2', port=9999, stdoutToServer=True, stderrToServer=True)
 import sys
-from Client import allskyData,skyAlertData,powerBoxData,roofData,targetSchedulerData,sessionMetadataData,phd2Data
+from Client import allskyData, skyAlertData, powerBoxData, roofData, targetSchedulerData, sessionMetadataData, phd2Data
 from pathlib import Path
 
 from Common import uploadData
@@ -23,6 +21,7 @@ except:
   print("rootserver configuration is missing in config.py")
   sys.exit(1)
 
+
 def uploadJson():
   uploadImageFiles = []
   uploadStatusFiles = []
@@ -39,14 +38,14 @@ def uploadJson():
   lastImagesStatusJsonFile.write_text(json.dumps(lastImages, indent=2))
   uploadStatusFiles.append(lastImagesStatusJsonFile)
 
-  acquiredDates=[]
+  acquiredDates = []
   for lastImage in lastImages:
     if Path(lastImage['FileName']).exists():
       uploadImageFiles.append(Path(lastImage['FileName']))
     if lastImage['acquireddate'][0:10] not in acquiredDates:
       acquiredDates.append(lastImage['acquireddate'][0:10])
-      #The phd log may have started the day before, so also get logs from that day
-      dayBefore=(datetime.strptime(lastImage['acquireddate'][0:10],'%Y-%m-%d')-timedelta(days=1)).strftime('%Y-%m-%d')
+      # The phd log may have started the day before, so also get logs from that day
+      dayBefore = (datetime.strptime(lastImage['acquireddate'][0:10], '%Y-%m-%d')-timedelta(days=1)).strftime('%Y-%m-%d')
       acquiredDates.append(dayBefore)
 
   if 'phdlogbasedir' in telescope:
@@ -75,6 +74,7 @@ def uploadJson():
   if 'allskybasedir' in telescope:
     uploadImageFiles = uploadImageFiles + allskyData.findAllSkyFiles(acquiredDates)
 
-  uploadData.uploadData(uploadStatusFiles,uploadImageFiles)
+  uploadData.uploadData(uploadStatusFiles, uploadImageFiles)
 
-uploadJson()
+if __name__ == '__main__':
+  uploadJson()

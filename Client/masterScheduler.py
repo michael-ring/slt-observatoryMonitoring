@@ -12,11 +12,11 @@ except:
 from Common import locationData
 import targetSchedulerData
 
-currentTime=locationData.getLocationDateTime(locations[telescope['location']])
-currentMoonStatus=locationData.getMoonData(locations[telescope['location']])
-currentSunStatus=locationData.getSunData(locations[telescope['location']])
+currentTime = locationData.getLocationDateTime(locations[telescope['location']])
+currentMoonStatus = locationData.getMoonData(locations[telescope['location']])
+currentSunStatus = locationData.getSunData(locations[telescope['location']])
 
-if currentSunStatus['alt'] >0:
+if currentSunStatus['alt'] > 0:
   print('Sun is up, exit...')
   sys.exit(0)
 
@@ -53,7 +53,3 @@ else:
     if target['projectstate'] == 1:
       print(f'Disable {target['projectname']}')
       targetSchedulerData.disableProject(target['projectname'])
-
-pass
-
-

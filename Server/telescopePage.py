@@ -6,6 +6,7 @@ from pathlib import Path
 import powerBoxStatus
 import skyAlertStatus
 import roofStatus
+import imageStatus
 
 doc, tag, text = Doc().tagtext()
 doc.asis("""
@@ -63,7 +64,6 @@ doc.asis("""
                 Worum geht es?
               </a>
             </li>
-
       </ul>
     </nav>
   </div>
@@ -71,72 +71,84 @@ doc.asis("""
 <main>
 <article class="single">
   <header>
-    <h1 id="status-cdk14">Status Testing</h1>
+    
+    <h1 id="status-vst">Status VST</h1>
   </header>
   <div>
 <h2>Clear Sky Chart</h2>
-<p>
+<p style="width:1000px;">
 <a href=https://www.cleardarksky.com/c/StrfrntObsTXkey.html>
-<img src="https://www.cleardarksky.com/c/StrfrntObsTXcsk.gif?c=2361648"></a>
+<img src="https://www.cleardarksky.com/c/StrfrntObsTXcsk.gif?c=2012437"></a>
 </p>
-  <table>
+<h2>Liveview</h2>
+<p style="width:1000px;">
+<table>
+  <thead>
     <tr>
-      <th>Last Image</th>
-      <th>Pier Camera</th>
-      <th>Building Camera</th>
+      <th width="33%">Last Image</th>
+      <th width="33%">Pier Camera</th>
+      <th width="33%">Building Camera</th>
     </tr>
+  </thead>
+  <tbody>
+    <tr id="tr-td">
+      <td data-src="https://slt-observatory.space/images/vst-images/subimage.jpg">
+        <img src="https://slt-observatory.space/images/vst-images/subimage.jpg"/>
+      </td>
+      <td data-src="https://slt-observatory.space/images/vst-images/image.jpg">
+        <img src="https://slt-observatory.space/images/vst-images/image.jpg"/>
+      </td>
+      <td data-src="https://zyssufjepmbhqznfuwcw.supabase.co/storage/v1/object/public/status-assets-public/building-0005/allsky/images/image.jpg">
+        <img src="https://zyssufjepmbhqznfuwcw.supabase.co/storage/v1/object/public/status-assets-public/building-0005/allsky/images/image.jpg"/>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<table>
+  <thead>
     <tr>
-      <td width="33%">
-        <a id="selector1" href="https://slt-observatory.space/images/slt-images/subimage.jpg" data-source="https://slt-observatory.space/images/slt-images/subimage.jpg">
-          <img alt="Last Image" src="https://slt-observatory.space/images/slt-images/subimage.jpg" />
-        </a>
+      <th width="33%">NOAA CloudCoverage</th>
+      <th width="33%">NOAA Radar</th>
+      <th width="33%"></th>
+    <tr>
+  </thead>
+  <tbody>
+    <tr id="tr-td2">
+      <td data-src="https://cdn.star.nesdis.noaa.gov/GOES16/ABI/SECTOR/sp/GEOCOLOR/GOES16-SP-GEOCOLOR-600x600.gif">
+        <img src="https://cdn.star.nesdis.noaa.gov/GOES16/ABI/SECTOR/sp/GEOCOLOR/GOES16-SP-GEOCOLOR-600x600.gif"/>
       </td>
-      <td width="33%" >
-        <a id="selector2" href="https://slt-observatory.space/images/slt-images/image.jpg" data-source="https://slt-observatory.space/images/slt-images/image.jpg">
-          <img alt="Pier Camera" src="https://slt-observatory.space/images/slt-images/image.jpg" />
-        </a>
+      <td data-src="https://radar.weather.gov/ridge/standard/KSJT_loop.gif">
+        <img src="https://radar.weather.gov/ridge/standard/KSJT_loop.gif"/>
       </td>
-      <td width="33%" >
-        <a id="selector3" href="https://zyssufjepmbhqznfuwcw.supabase.co/storage/v1/object/public/status-assets-public/building-0005/allsky/images/image.jpg">
-          <img alt="Building Camera" src="https://zyssufjepmbhqznfuwcw.supabase.co/storage/v1/object/public/status-assets-public/building-0005/allsky/images/image.jpg" />
-        </a>
+      <td>
       </td>
     </tr>
-  </table>
+  </tbody>
+</table>
+</p>
+<!-- begin include status-vst.include -->
+<!-- unprocessed version -->
+<!-- end include status-vst.include -->
 
+</div>
 """)
 
 doc.asis(roofStatus.genDiv('vst'))
 doc.asis(powerBoxStatus.genDiv('vst'))
 doc.asis(skyAlertStatus.genDiv('vst'))
-
+doc.asis(imageStatus.genDiv('vst'))
 
 doc.asis("""
-</article>
-<script type="text/javascript">
-lightGallery(document.getElementById('selector1'), {
-    selector: 'this',
-    plugins: [],
-    licenseKey: '0000-0000-000-0000',
-    speed: 500
-});
-lightGallery(document.getElementById('selector2'), {
-    selector: 'this',
-    plugins: [],
-    licenseKey: '0000-0000-000-0000',
-    speed: 500
-});
-lightGallery(document.getElementById('selector3'), {
-    selector: 'this',
-    plugins: [],
-    licenseKey: '0000-0000-000-0000',
-    speed: 500
-});
+<script>
+  lightGallery(document.getElementById('tr-td'));
+  lightGallery(document.getElementById('tr-td2'));
+  lightGallery(document.getElementById('tb-tr'));
 </script>
+</article>
 
 <footer>
 <p>&copy;</p>
-<p>Built with <a href="http://getpelican.com" target="_blank">Pelican</a> using <a href="http://bit.ly/flex-pelican" target="_blank">Flex</a> theme
+<p>Built with <a href="https://getpelican.com" target="_blank">Pelican</a> using <a href="https://bit.ly/flex-pelican" target="_blank">Flex</a> theme
 </p>
 </footer>  
 </main>
@@ -145,4 +157,3 @@ lightGallery(document.getElementById('selector3'), {
 """)
 index = Path(Path(__file__).parent.parent / f'Test/status.html')
 index.write_text(doc.getvalue())
-

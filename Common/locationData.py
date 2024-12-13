@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from dateutil import tz
-from datetime import datetime,timedelta,time
+from datetime import datetime, timedelta, time
 import requests
 import ephem
 import sys
@@ -11,16 +11,18 @@ except:
   print("locations configuration is missing in config.py")
   sys.exit(1)
 
+
 def getLocationDateTime(location):
   return datetime.now(tz=tz.gettz('UTC')).astimezone(tz.gettz(location['timezone']))
 
+
 def getSunData(location, overrideDateTime=None):
-  sunData={}
+  sunData = {}
   obs = ephem.Observer()
   if overrideDateTime is None:
     obs.date = getLocationDateTime(location)
   else:
-    #TODO find correct conversion
+    # TODO find correct conversion
     obs.date = overrideDateTime
   obs.lon = location['longitude']
   obs.lat = location['latitude']
@@ -50,15 +52,16 @@ def getSunData(location, overrideDateTime=None):
   sunData['astronomicalrise'] = ephem.localtime(obs.next_rising(ephem.Sun(), use_center=True)).astimezone(tz.gettz(location['timezone']))
   sunData['astronomicalset'] = ephem.localtime(obs.previous_setting(ephem.Sun(), use_center=True)).astimezone(tz.gettz(location['timezone']))
 
-  return(sunData)
+  return sunData
+
 
 def getMoonData(location, overrideDateTime=None):
-  moonData={}
+  moonData = dict()
   obs = ephem.Observer()
   if overrideDateTime is None:
     obs.date = getLocationDateTime(location)
   else:
-    #TODO find correct conversion
+    # TODO find correct conversion
     obs.date = overrideDateTime
   obs.lon = location['longitude']
   obs.lat = location['latitude']
@@ -67,12 +70,13 @@ def getMoonData(location, overrideDateTime=None):
   moonData['previousrise'] = ephem.localtime(obs.previous_rising(ephem.Moon())).astimezone(tz.gettz(location['timezone']))
   moonData['set'] = ephem.localtime(obs.previous_setting(ephem.Moon())).astimezone(tz.gettz(location['timezone']))
   moonData['nextset'] = ephem.localtime(obs.next_setting(ephem.Moon())).astimezone(tz.gettz(location['timezone']))
-  moon=ephem.Moon()
+  moon = ephem.Moon()
   moon.compute(obs)
   moonData['phase'] = moon.phase
   moonData['mag'] = moon.mag
   moonData['alt'] = int(str(moon.alt).split(':')[0])
   return moonData
+
 
 def getWeatherdata(location):
   try:
@@ -87,12 +91,12 @@ def getWeatherdata(location):
 
   locationDateTime = getLocationDateTime(location)
   if locationDateTime > sunData['previousrise']:
-    start_utc = datetime.combine(locationDateTime, time(hour=12, minute=0, second=0,tzinfo=locationDateTime.tzinfo)).astimezone(tz.gettz('UTC')).strftime("%Y-%m-%dT%H:%M:%SZ")
+    start_utc = datetime.combine(locationDateTime, time(hour=12, minute=0, second=0, tzinfo=locationDateTime.tzinfo)).astimezone(tz.gettz('UTC')).strftime("%Y-%m-%dT%H:%M:%SZ")
   else:
-    start_utc = (datetime.combine(locationDateTime, time(hour=12, minute=0, second=0,tzinfo=locationDateTime.tzinfo)) - timedelta(hours=-24)).astimezone(tz.gettz('UTC')).strftime("%Y-%m-%dT%H:%M:%SZ")
+    start_utc = (datetime.combine(locationDateTime, time(hour=12, minute=0, second=0, tzinfo=locationDateTime.tzinfo)) - timedelta(hours=-24)).astimezone(tz.gettz('UTC')).strftime("%Y-%m-%dT%H:%M:%SZ")
   url = f"https://weatherkit.apple.com/api/v1/weather/{location['language']}/{location['latitude']}/{location['longitude']}?dataSets={datasets}&countryCode={location['country']}&timezone={location['timezone']}&hourlyStart={start_utc}"
   response = requests.get(url, headers={'Authorization': f'Bearer {weatherkit['token']}'})
-  weatherdata=response.json()
+  weatherdata = response.json()
   weatherdata['currentWeather']['asOf'] = datetime.strptime(weatherdata['currentWeather']['asOf'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=tz.gettz('UTC')).astimezone(tz.gettz(location['timezone']))
 
   for index in range(len(weatherdata['forecastHourly']['hours'])):
@@ -100,5 +104,7 @@ def getWeatherdata(location):
     weatherdata['forecastHourly']['hours'][index]['forecastStart'] = forecastStart
 
   return weatherdata
+
+
 if __name__ == '__main__':
-  getMoonData(locations[telescope['location']],datetime.now())
+  getMoonData(locations[telescope['location']], datetime.now())

@@ -18,33 +18,27 @@ except:
   sys.exit(1)
 
 
-def uploadData(dataFiles,imageFiles):
+def uploadData(dataFiles, imageFiles):
   if 'sshuser' in telescope.keys():
-    sshuser=telescope['sshuser']
+    sshuser = telescope['sshuser']
   else:
-    sshuser=rootserver['sshuser']
-  c = Connection('slt-observatory.space',
-                      user=sshuser,
-                      connect_kwargs={'key_filename': telescope['sshkey'], })
+    sshuser = rootserver['sshuser']
+  c = Connection('slt-observatory.space', user=sshuser, connect_kwargs={'key_filename': telescope['sshkey'], })
   c.create_session()
-  #if not isinstance(dataFiles, list):
-  #  dataFiles = [dataFiles]
-  #if not isinstance(imageFiles,list):
-  #  imageFiles = [imageFiles]
   sftp = c.client.open_sftp()
   try:
-    sftp.mkdir(f"{telescope['shortname']}-data",mode=0o755)
+    sftp.mkdir(f"{telescope['shortname']}-data", mode=0o755)
   except:
     pass
   try:
-    sftp.mkdir(f"{telescope['shortname']}-images",mode=0o755)
+    sftp.mkdir(f"{telescope['shortname']}-images", mode=0o755)
   except:
     pass
-  list = sftp.listdir(f"{telescope['shortname']}-images")
+  listing = sftp.listdir(f"{telescope['shortname']}-images")
   sftp.close()
 
   for dataFile in dataFiles:
-    result = c.put(dataFile,remote=f"{telescope['shortname']}-data/")
+    result = c.put(dataFile, remote=f"{telescope['shortname']}-data/")
     print("Uploaded {0.local} to {0.remote}".format(result))
 
   # Take the latest image and always upload it as subimage.jpg
@@ -55,10 +49,14 @@ def uploadData(dataFiles,imageFiles):
     imageFiles[0].with_stem('subimage').with_suffix('.jpg').unlink()
 
   for imageFile in imageFiles:
-    if not imageFile.with_suffix('.jpg').name in list:
+    if not imageFile.with_suffix('.jpg').name in listing:
       if imageFile.suffix == '.fits':
         imageData.convertFitsToJPG(imageFile, imageFile.with_suffix('.jpg'))
-      result = c.put(imageFile.with_suffix('.jpg'),remote=f"{telescope['shortname']}-images/")
+        imageData.convertFitsToJPGThumb(imageFile, imageFile.with_suffix('.thumb.jpg'))
+      result = c.put(imageFile.with_suffix('.jpg'), remote=f"{telescope['shortname']}-images/")
       print("Uploaded {0.local} to {0.remote}".format(result))
+      result = c.put(imageFile.with_suffix('.thumb.jpg'), remote=f"{telescope['shortname']}-images/")
+      print("Uploaded thumb {0.local} to {0.remote}".format(result))
       if imageFile.suffix == '.fits':
         imageFile.with_suffix('.jpg').unlink()
+        imageFile.with_suffix('.thumb.jpg').unlink()
