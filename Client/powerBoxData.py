@@ -20,10 +20,7 @@ except:
 
 def generateJson():
   json=getPowerBoxStatus()
-  if json != "{}":
-    alljson=jsonLogHelper.appendToDailyLog('powerboxdata',json)
-  else:
-    alljson=jsonLogHelper.getDailyLog('powerboxdata')
+  alljson=jsonLogHelper.appendToDailyLog('powerboxdata',json)
   return alljson
 
 

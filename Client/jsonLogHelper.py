@@ -26,6 +26,7 @@ def appendToDailyLog(filename, _json):
   index = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
   _json2[index] = _json
   alljson = getDailyLog(filename)
-  alljson.append(_json2)
+  if _json != {}:
+    alljson.append(_json2)
   writeDailyLog(filename, alljson)
   return alljson
