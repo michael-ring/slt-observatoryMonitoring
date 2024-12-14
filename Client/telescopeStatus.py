@@ -65,7 +65,7 @@ def uploadJson():
     weatherStatusJsonFile.write_text(json.dumps(weatherStatus, indent=2))
     uploadStatusFiles.append(weatherStatusJsonFile)
 
-  if 'powerboxstatus' in telescope:
+  if 'powerbox' in telescope:
     powerBoxStatus = powerBoxData.generateJson()
     powerBoxStatusJsonFile = Path(__file__).parent.parent / 'Temp' / 'powerboxStatus.json'
     powerBoxStatusJsonFile.write_text(json.dumps(powerBoxStatus, indent=2))

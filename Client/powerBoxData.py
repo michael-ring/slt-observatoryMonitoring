@@ -12,7 +12,8 @@ except:
   sys.exit(1)
 
 try:
-  from config import powerbox
+  from config import powerboxes
+  powerbox = powerboxes[telescope['powerbox']]
 except:
   print("powerbox configuration is missing in config.py")
   sys.exit(1)
