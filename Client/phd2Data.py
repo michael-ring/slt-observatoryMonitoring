@@ -13,6 +13,7 @@ except:
 def generateJson(requiredDates=None):
   if 'phdlogbasedir' in telescope:
     basedir = Path(telescope['phdlogbasedir'])
+    files=[]
     if requiredDates is None:
       today = datetime.date.today().strftime("%Y-%m-%d")
       if "testing" in telescope and telescope['testing'] is True:
@@ -23,10 +24,9 @@ def generateJson(requiredDates=None):
         yesterday = "2024-08-27"
       files += list(basedir.glob(f"PHD2_GuideLog_{yesterday}*.txt"))
     else:
-      files = []
       for requiredDate in requiredDates:
         files = files + list(basedir.glob(f"PHD2_GuideLog_{requiredDate}*.txt"))
-    if files is None or files is []:
+    if files == []:
       return {}
     files.sort(reverse=False)
     calibration = {}

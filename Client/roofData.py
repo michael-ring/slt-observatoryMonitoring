@@ -16,7 +16,7 @@ def generateJson():
   json = jsonLogHelper.getDailyLog('roofdata')
   _json = dict()
   _json['roof'] = getRoofStatus()
-  if json is []:
+  if json == []:
     result = jsonLogHelper.appendToDailyLog('roofdata', _json)
   else:
     if list(json[-1].values())[-1]['roof'] != _json['roof']:
