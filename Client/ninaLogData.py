@@ -53,20 +53,22 @@ def generateJson(requiredDates=None):
         if line.find('|') > 0:
           if line.find('|INFO|') > 0:
             infoline=line.split('|')
-            if infoline[2] in ninaInfoWhitelist and infoline[3] in ninaInfoWhitelist[infoline[2]]:
-              timestamp = datetime.datetime.strptime(infoline[0], '%Y-%m-%dT%H:%M:%S.%f')
-              if timestamp > starttime:
-                ninaData[timestamp.strftime('%Y-%m-%d %H:%M:%S')] = {'Level': 'Info', 'Source': infoline[2],
+            if len(infoline) > 5:
+              if infoline[2] in ninaInfoWhitelist and infoline[3] in ninaInfoWhitelist[infoline[2]]:
+                timestamp = datetime.datetime.strptime(infoline[0], '%Y-%m-%dT%H:%M:%S.%f')
+                if timestamp > starttime:
+                  ninaData[timestamp.strftime('%Y-%m-%d %H:%M:%S')] = {'Level': 'Info', 'Source': infoline[2],
                                                                        'Member': infoline[3],
                                                                        'Message': infoline[5].replace('\n', '')}
           elif line.find('|ERROR|') > 0:
             errorline=line.split('|')
-            if errorline[2] in ninaErrorsBlacklist and errorline[3] in ninaErrorsBlacklist[errorline[2]]:
-              pass
-            else:
-              timestamp=datetime.datetime.strptime(errorline[0],'%Y-%m-%dT%H:%M:%S.%f')
-              if timestamp > starttime:
-                ninaData[timestamp.strftime('%Y-%m-%d %H:%M:%S')] = {'Level':'ERROR','Source':errorline[2],'Member':errorline[3],'Message':errorline[5].replace('\n','')}
+            if len(errorline) > 5:
+              if errorline[2] in ninaErrorsBlacklist and errorline[3] in ninaErrorsBlacklist[errorline[2]]:
+                pass
+              else:
+                timestamp=datetime.datetime.strptime(errorline[0],'%Y-%m-%dT%H:%M:%S.%f')
+                if timestamp > starttime:
+                  ninaData[timestamp.strftime('%Y-%m-%d %H:%M:%S')] = {'Level':'ERROR','Source':errorline[2],'Member':errorline[3],'Message':errorline[5].replace('\n','')}
 
     return ninaData
 
