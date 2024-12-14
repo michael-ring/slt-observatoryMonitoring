@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import sys
-from Client import allskyData, skyAlertData, powerBoxData, roofData, targetSchedulerData, sessionMetadataData, phd2Data
+from Client import allskyData, skyAlertData, powerBoxData, roofData, targetSchedulerData, sessionMetadataData, phd2Data, ninaLogData
 from pathlib import Path
 
 from Common import uploadData
@@ -53,6 +53,12 @@ def uploadJson():
     phd2StatusJsonFile = Path(__file__).parent.parent / 'Temp' / 'phd2Status.json'
     phd2StatusJsonFile.write_text(json.dumps(phd2Status, indent=2))
     uploadStatusFiles.append(phd2StatusJsonFile)
+  if 'ninalogbasedir' in telescope:
+    ninaStatus = ninaLogData.generateJson(acquiredDates)
+    if ninaStatus != {}:
+      ninaStatusJsonFile = Path(__file__).parent.parent / 'Temp' / 'ninaStatus.json'
+      ninaStatusJsonFile.write_text(json.dumps(ninaStatus, indent=2))
+      uploadStatusFiles.append(ninaStatusJsonFile)
   if 'roofstatusdir' in telescope:
     roofStatus = roofData.generateJson()
     roofStatusJsonFile = Path(__file__).parent.parent / 'Temp' / 'roofStatus.json'
