@@ -21,6 +21,7 @@ except:
 
 def findMostRecentFitsFiles(count=200):
   fileset = dict()
+  returnset=[]
   basedir = Path(telescope['imagebasedir'])
   files = basedir.glob("????-??-??/**/*.fits")
   for file in files:
@@ -33,7 +34,9 @@ def findMostRecentFitsFiles(count=200):
       fileset[results[0]] = {'FileName': file}
   fileset = dict(sorted(fileset.items(), reverse=True))
   fileset = dict(itertools.islice(fileset.items(), count))
-  return fileset
+  for value in fileset.values():
+    returnset.append(value)
+  return returnset
 
 
 def convertFitsToJPG(fitsFile, jpgFile):

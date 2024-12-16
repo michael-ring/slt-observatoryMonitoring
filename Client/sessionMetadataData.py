@@ -4,6 +4,7 @@ import json
 from Client import imageData
 from pathlib import Path
 import hashlib
+import re
 
 try:
   sys.path.append('..')
@@ -20,13 +21,17 @@ activeTextKeys = ('acquireddate', 'ExposureDuration', 'FilterName', 'Binning', '
 def addMetaData(data):
   metadataRecords = dict()
   for fileinfo in data:
-    metaDataPath = Path(data[fileinfo]['FileName']).parent
+    metaDataPath = Path(fileinfo['FileName']).parent
     metaDataFilePath = None
     while metaDataFilePath is None:
       if (metaDataPath / "ImageMetaData.json").exists():
         metaDataFilePath = metaDataPath / "ImageMetaData.json"
         break
+      for metafile in metaDataPath.glob("ImageMetaData*.json"):
+        metaDataFilePath = metafile
+        break
       metaDataPath = metaDataPath.parent
+
       if metaDataPath == Path('/') or (metaDataPath == Path('c:/')):
         break
     if metaDataFilePath is None:
@@ -34,10 +39,10 @@ def addMetaData(data):
       sys.exit(1)
     metaDataFilePathHash = hashlib.md5(str(metaDataFilePath).encode()).hexdigest()
     if metaDataFilePathHash not in metadataRecords:
-      metadataRecords[metaDataFilePathHash] = json.load(metaDataFilePath.open())
+      metadataRecords[metaDataFilePathHash] = json.load(metaDataFilePath.open(encoding="utf-8"))
     found = False
     for metadataRecord in metadataRecords[metaDataFilePathHash]:
-      if Path(metadataRecord['FilePath']).name == Path(data[fileinfo]['FileName']).name:
+      if Path(metadataRecord['FilePath']).name == Path(fileinfo['FileName']).name:
         for key in metadataRecord.keys():
           found = True
           newkey = key
@@ -45,15 +50,18 @@ def addMetaData(data):
             newkey = "ExposureStartTime"
           if key == "Duration":
             newkey = "ExposureDuration"
-          data[fileinfo][newkey] = metadataRecord[key]
-          if isinstance(data[fileinfo][newkey], float):
-            data[fileinfo][newkey] = f"{data[fileinfo][newkey]:.2f}"
+          fileinfo[newkey] = metadataRecord[key]
+          if isinstance(fileinfo[newkey], float):
+            fileinfo[newkey] = f"{fileinfo[newkey]:.2f}"
     if not found:
       for key in activeTextKeys:
-        data[fileinfo][key] = ""
+        fileinfo[key] = ""
       for key in activeIntKeys:
-        data[fileinfo][key] = 0
-    data[fileinfo]['acquireddate'] = fileinfo[0:10]+' '+fileinfo[11:13]+':'+fileinfo[14:16]+':'+fileinfo[17:19]
+        fileinfo[key] = 0
+    fileDateRegex = re.compile(r"\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}")
+    results = fileDateRegex.findall(Path(metadataRecord['FilePath']).name)
+    if len(results) == 1:
+      fileinfo['acquireddate'] = results[0][0:10]+' '+results[0][11:13]+':'+results[0][14:16]+':'+results[0][17:19]
 
 
 def targetStatus():
@@ -64,9 +72,9 @@ def targetStatus():
 
 def generateJson():
   data = imageData.findMostRecentFitsFiles()
-  addMetaData(data, True)
+  addMetaData(data)
   for item in data:
-    data[item]['FileName'] = str(data[item]['FileName'])
+    item['FileName'] = str(item['FileName'])
   return data
 
 
