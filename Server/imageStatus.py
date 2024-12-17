@@ -4,6 +4,7 @@ import json
 import platform
 from yattag import Doc
 from pathlib import Path, PureWindowsPath
+from datetime import datetime
 
 try:
   sys.path.append('.')
@@ -19,13 +20,20 @@ def runningOnServer():
 
 
 def genDiv(telescopeName):
-
+  ninaData=dict()
   if runningOnServer():
     with open(Path(f'/home/{rootserver['sshuser']}/{telescopeName}-data/lastImagesStatus.json')) as f:
       imageData = json.load(f)
+      if Path(f'/home/{rootserver['sshuser']}/{telescopeName}-data/ninaStatus.json').exists():
+        with open(Path(f'/home/{rootserver['sshuser']}/{telescopeName}-data/ninaStatus.json')) as f:
+          ninaData = json.load(f)
+
   else:
     with open(Path(__file__).parent.parent / 'Test/vst-data/lastImagesStatus.json') as f:
       imageData = json.load(f)
+      if (Path(__file__).parent.parent / 'Test/vst-data/ninaStatus.json').exists():
+        with open(Path(__file__).parent.parent / 'Test/vst-data/ninaStatus.json') as f:
+          ninaData = json.load(f)
 
   doc, tag, text = Doc().tagtext()
   with tag('section'):
@@ -49,6 +57,21 @@ def genDiv(telescopeName):
           realImageName = PureWindowsPath(data['FileName']).name
           imgPath = imgStem+'.jpg'
           imgThumb = imgStem+'.thumb.jpg'
+          if len(ninaData) > 0:
+            lastNinaDate = datetime.strptime(next(reversed(ninaData)),'%Y-%m-%d %H:%M:%S')
+            lastPictureDate = datetime.strptime(data['acquireddate'],'%Y-%m-%d %H:%M:%S')
+            while lastNinaDate > lastPictureDate:
+              key = next(reversed(ninaData))
+              if ninaData[key]['Level'] == 'ERROR':
+                with tag('tr'):
+                  with tag('td'):
+                    text(key)
+                  with tag('td',colspan="9"):
+                    text(f"{ninaData[key]['Level']}: {ninaData[key]['Source']} {ninaData[key]['Member']} {ninaData[key]['Message']}")
+              ninaData.popitem()
+              if len(ninaData) == 0:
+                break
+              lastNinaDate = datetime.strptime(next(reversed(ninaData)),'%Y-%m-%d %H:%M:%S')
 
           imageData = f"""
           Timestamp: {data['acquireddate']} |
