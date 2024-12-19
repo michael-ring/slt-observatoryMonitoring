@@ -7,6 +7,17 @@ import powerBoxStatus
 import skyAlertStatus
 import roofStatus
 import imageStatus
+import platform
+
+try:
+  from config import rootserver
+except:
+  print("rootserver configuration is missing in config.py")
+  sys.exit(1)
+
+
+def runningOnServer():
+  return platform.uname().node == rootserver['nodename']
 
 doc, tag, text = Doc().tagtext()
 doc.asis("""
@@ -155,5 +166,6 @@ doc.asis("""
 </body>
 </html>
 """)
-index = Path(Path(__file__).parent.parent / f'Test/status.html')
-index.write_text(doc.getvalue())
+if runningOnServer() == False:
+  index = Path(Path(__file__).parent.parent / f'Test/status.html')
+  index.write_text(doc.getvalue())

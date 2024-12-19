@@ -37,7 +37,7 @@ def genDiv(telescopeName):
     with open(Path(__file__).parent.parent / 'Test/vst-data/powerboxStatus.json') as f:
       powerBoxData = json.load(f)
 
-  start_time = datetime.now(ZoneInfo(localtz))
+  start_time = datetime.now(tz=tz.gettz('UTC')).astimezone(tz.gettz(localtz))
   if start_time.hour < 12:
     start_time = start_time.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(hours=12)
   else:
@@ -52,7 +52,7 @@ def genDiv(telescopeName):
 
   for dataset in powerBoxData:
     timestamp = next(iter(dataset.keys()))
-    timestamps.append(parser.parse(timestamp).replace(tzinfo=ZoneInfo(localtz)))
+    timestamps.append(parser.parse(timestamp).astimezone(tz.gettz(localtz)))
     temperatures.append(float(dataset[timestamp]['temperature']))
     dewpoints.append(float(dataset[timestamp]['dewpoint']))
     if dataset[timestamp]['probe1temperature'] != "-127.00":
@@ -79,7 +79,7 @@ def genDiv(telescopeName):
   plt.gcf().autofmt_xdate()
   plt.legend()
   if runningOnServer():
-    plt.savefig(Path(rootserver['basedir'] / 'images' / 'powerBoxStatus.png'))
+    plt.savefig(Path(rootserver['basedir']) / 'images' / 'powerBoxStatus.png')
   else:
     plt.savefig(Path(__file__).parent.parent / f'Test/images/{telescopeName}-powerBoxStatus.png')
 
@@ -118,7 +118,7 @@ def genDiv(telescopeName):
       doc.attr(src=f'images/{telescopeName}-powerBoxStatus.png', alt=f'{telescopeName}-powerBoxStatus.png')
 
   if runningOnServer():
-    with open(Path(f'{rootserver['basedir']}/{telescopeName}-powerBoxStatus.include'), mode="w") as f:
+    with open(Path(f'{rootserver['basedir']}/pages/{telescopeName}-powerBoxStatus.include'), mode="w") as f:
       f.writelines(doc.getvalue())
   else:
     with open(Path(__file__).parent.parent / f'Test/{telescopeName}-powerBoxStatus.html', mode='w') as f:

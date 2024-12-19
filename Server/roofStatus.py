@@ -44,7 +44,7 @@ def genDiv(telescopeName):
             text(f"{status[list(status.keys())[0]]['roof']}")
 
   if runningOnServer():
-    with open(Path(f'{rootserver['basedir']}/{telescopeName}-roofStatus.include'), mode="w") as f:
+    with open(Path(f'{rootserver['basedir']}/pages/{telescopeName}-roofStatus.include'), mode="w") as f:
       f.writelines(doc.getvalue())
   else:
     with open(Path(__file__).parent.parent / f'Test/{telescopeName}-roofStatus.html', mode='w') as f:
