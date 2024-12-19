@@ -85,10 +85,10 @@ def genDiv(telescopeName):
       doc.attr(src=f'images/{telescopeName}-skyAlertStatus.png', alt=f'{telescopeName}-skyAlertStatus.png')
 
   if runningOnServer():
-    with open(Path(f'{rootserver['basedir']}/pages/{telescopeName}-skyAlertStatus.include'), mode="w") as f:
+    with open(Path(f'{rootserver['basedir']}/pages/status-{telescopeName}.skyAlertStatus.include'), mode="w") as f:
       f.writelines(doc.getvalue())
   else:
-    with open(Path(__file__).parent.parent / f'Test/{telescopeName}-skyAlertStatus.html', mode='w') as f:
+    with open(Path(__file__).parent.parent / f'Test/status-{telescopeName}.skyAlertStatus.include', mode='w') as f:
       f.writelines(doc.getvalue())
   return doc.getvalue()
 

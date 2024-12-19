@@ -150,9 +150,9 @@ def genDiv(telescopeName):
                 text("")
 
   if runningOnServer():
-    with open(Path(f'{rootserver['basedir']}/pages/{telescopeName}-imageStatus.include'), mode="w") as f:
+    with open(Path(f'{rootserver['basedir']}/pages/status-{telescopeName}.imageStatus.include'), mode="w") as f:
       f.writelines(doc.getvalue())
   else:
-    with open(Path(__file__).parent.parent / f'Test/{telescopeName}-imageStatus.html', mode='w') as f:
+    with open(Path(__file__).parent.parent / f'Test/status-{telescopeName}.imageStatus.include', mode='w') as f:
       f.writelines(doc.getvalue())
   return doc.getvalue()

@@ -118,10 +118,10 @@ def genDiv(telescopeName):
       doc.attr(src=f'images/{telescopeName}-powerBoxStatus.png', alt=f'{telescopeName}-powerBoxStatus.png')
 
   if runningOnServer():
-    with open(Path(f'{rootserver['basedir']}/pages/{telescopeName}-powerBoxStatus.include'), mode="w") as f:
+    with open(Path(f'{rootserver['basedir']}/pages/status-{telescopeName}.powerBoxStatus.include'), mode="w") as f:
       f.writelines(doc.getvalue())
   else:
-    with open(Path(__file__).parent.parent / f'Test/{telescopeName}-powerBoxStatus.html', mode='w') as f:
+    with open(Path(__file__).parent.parent / f'Test/status-{telescopeName}.powerBoxStatus.include', mode='w') as f:
       f.writelines(doc.getvalue())
   return doc.getvalue()
 
