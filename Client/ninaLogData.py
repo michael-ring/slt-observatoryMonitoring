@@ -13,17 +13,6 @@ except:
   sys.exit(1)
 
 def generateJson(requiredDates=None):
-  print(requiredDates)
-  ninaErrorsBlacklist = {'DllLoader.cs': ['LoadDllFromAbsolutePath'],
-    'ToupTekAlikeCamera.cs': ['TemperatureSetPoint'],
-    'AscomDevice.cs': ['GetProperty']
-  }
-  ninaInfoWhitelist = {'FocuserMediator.cs': ['BroadcastSuccessfulAutoFocusRun'],
-    'SequenceTrigger.cs': ['Run'],
-    'HocusFocusStarDetection.cs': ['Detect'],
-    'FocuserVM.cs':['MoveFocuserInternal'],
-    'AutoFocusEngine.cs': ['StartBlindFocusPoints']
-  }
   if 'ninalogbasedir' in telescope:
     basedir = Path(telescope['ninalogbasedir'])
     files=[]
@@ -54,21 +43,21 @@ def generateJson(requiredDates=None):
           if line.find('|INFO|') > 0:
             infoline=line.split('|')
             if len(infoline) > 5:
-              if infoline[2] in ninaInfoWhitelist and infoline[3] in ninaInfoWhitelist[infoline[2]]:
-                timestamp = datetime.datetime.strptime(infoline[0], '%Y-%m-%dT%H:%M:%S.%f')
-                if timestamp > starttime:
-                  ninaData[timestamp.strftime('%Y-%m-%d %H:%M:%S')] = {'Level': 'Info', 'Source': infoline[2],
+              timestamp = datetime.datetime.strptime(infoline[0], '%Y-%m-%dT%H:%M:%S.%f')
+              if timestamp > starttime:
+                ninaData[timestamp.strftime('%Y-%m-%d %H:%M:%S')] = {'Level': 'INFO', 'Source': infoline[2],
                                                                        'Member': infoline[3],
+                                                                       'Line': infoline[4],
                                                                        'Message': infoline[5].replace('\n', '')}
           elif line.find('|ERROR|') > 0:
             errorline=line.split('|')
             if len(errorline) > 5:
-              if errorline[2] in ninaErrorsBlacklist and errorline[3] in ninaErrorsBlacklist[errorline[2]]:
-                pass
-              else:
-                timestamp=datetime.datetime.strptime(errorline[0],'%Y-%m-%dT%H:%M:%S.%f')
-                if timestamp > starttime:
-                  ninaData[timestamp.strftime('%Y-%m-%d %H:%M:%S')] = {'Level':'ERROR','Source':errorline[2],'Member':errorline[3],'Message':errorline[5].replace('\n','')}
+              timestamp=datetime.datetime.strptime(errorline[0],'%Y-%m-%dT%H:%M:%S.%f')
+              if timestamp > starttime:
+                ninaData[timestamp.strftime('%Y-%m-%d %H:%M:%S')] = {'Level':'ERROR','Source':errorline[2],
+                                                                     'Member':errorline[3],
+                                                                     'Line': infoline[4],
+                                                                     'Message':errorline[5].replace('\n','')}
 
     return ninaData
 
