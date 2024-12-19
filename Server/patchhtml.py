@@ -16,7 +16,7 @@ def runningOnServer():
   return platform.uname().node == rootserver['nodename']
 
 if runningOnServer():
-  basedir = Path(rootserver['basedir'])
+  basedir = Path(rootserver['basedir'] / 'pages')
 else:
   basedir = Path(__file__).parent.parent / "Test"
 
