@@ -115,7 +115,10 @@ def genDiv(telescopeName):
     with tag('h3'):
       text("Temperature/Dewpoint measured at Telescope")
     with tag('img'):
-      doc.attr(src=f'images/{telescopeName}-powerBoxStatus.png', alt=f'{telescopeName}-powerBoxStatus.png')
+      if runningOnServer():
+        doc.attr(src=f'https://{rootserver['name']}/images/{telescopeName}-powerBoxStatus.png', alt=f'{telescopeName}-powerBoxStatus.png')
+      else:
+        doc.attr(src=f'/images/{telescopeName}-powerBoxStatus.png', alt=f'{telescopeName}-powerBoxStatus.png')
 
   if runningOnServer():
     with open(Path(f'{rootserver['basedir']}/pages/status-{telescopeName}.powerBoxStatus.include'), mode="w") as f:

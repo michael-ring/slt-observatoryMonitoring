@@ -121,7 +121,10 @@ def genDiv(telescopeName):
           Guiding DEC RMS: {data['GuidingRMSDECArcSec']}"
         """
           with tag('tr'):
-            doc.attr(('data-src', imgPath), ('data-sub-html', f"<h4>{realImageName}</h4><p>{imageData}</p>"))
+            if runningOnServer():
+              doc.attr(('data-src', f'https://{rootserver['name']}{imgPath}'), ('data-sub-html', f"<h4>{realImageName}</h4><p>{imageData}</p>"))
+            else:
+              doc.attr(('data-src', imgPath), ('data-sub-html', f"<h4>{realImageName}</h4><p>{imageData}</p>"))
             with tag('td'):
               text(f"{data['acquireddate']}")
             with tag('td'):
@@ -130,7 +133,10 @@ def genDiv(telescopeName):
                 doc.stag('br')
                 for issue in issueList:
                   key=next(iter(issue))
-                  doc.stag('img', src=f'icons/{key}.png', title=issue[key], height=16)
+                  if runningOnServer():
+                    doc.stag('img',src=f'https://{rootserver['name']}/icons/{key}.png', title=issue[key], height=16)
+                  else:
+                    doc.stag('img', src=f'icons/{key}.png', title=issue[key], height=16)
             with tag('td'):
               text(f"{data['ExposureDuration']}")
             with tag('td'):
@@ -146,8 +152,10 @@ def genDiv(telescopeName):
             with tag('td'):
               text(f"{data['GuidingRMSArcSec']}/{data['GuidingRMSRAArcSec']}/{data['GuidingRMSDECArcSec']}")
             with tag('td'):
-              with tag('img', src=str(imgThumb)):
-                text("")
+              if runningOnServer():
+                doc.stag('img', src=f'https://{rootserver['name']}{imgThumb}')
+              else:
+                doc.stag('img', src=str(imgThumb))
 
   if runningOnServer():
     with open(Path(f'{rootserver['basedir']}/pages/status-{telescopeName}.imageStatus.include'), mode="w") as f:
