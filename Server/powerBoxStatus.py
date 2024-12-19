@@ -79,7 +79,7 @@ def genDiv(telescopeName):
   plt.gcf().autofmt_xdate()
   plt.legend()
   if runningOnServer():
-    plt.savefig(Path(rootserver['basedir']) / 'images' / 'powerBoxStatus.png')
+    plt.savefig(Path(rootserver['basedir']) / 'images' / f'images-{telescopeName}' / 'powerBoxStatus.png')
   else:
     plt.savefig(Path(__file__).parent.parent / f'Test/images/{telescopeName}-powerBoxStatus.png')
 
@@ -116,7 +116,7 @@ def genDiv(telescopeName):
       text("Temperature/Dewpoint measured at Telescope")
     with tag('img'):
       if runningOnServer():
-        doc.attr(src=f'https://{rootserver['name']}/images/{telescopeName}-powerBoxStatus.png', alt=f'{telescopeName}-powerBoxStatus.png')
+        doc.attr(src=f'https://{rootserver['name']}/images/images-{telescopeName}/powerBoxStatus.png', alt=f'{telescopeName}-powerBoxStatus.png')
       else:
         doc.attr(src=f'/images/{telescopeName}-powerBoxStatus.png', alt=f'{telescopeName}-powerBoxStatus.png')
 

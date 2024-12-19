@@ -122,7 +122,7 @@ def genDiv(telescopeName):
         """
           with tag('tr'):
             if runningOnServer():
-              doc.attr(('data-src', f'https://{rootserver['name']}{imgPath}'), ('data-sub-html', f"<h4>{realImageName}</h4><p>{imageData}</p>"))
+              doc.attr(('data-src', f'https://{rootserver['name']}/images/{imgPath}'), ('data-sub-html', f"<h4>{realImageName}</h4><p>{imageData}</p>"))
             else:
               doc.attr(('data-src', imgPath), ('data-sub-html', f"<h4>{realImageName}</h4><p>{imageData}</p>"))
             with tag('td'):
@@ -153,7 +153,7 @@ def genDiv(telescopeName):
               text(f"{data['GuidingRMSArcSec']}/{data['GuidingRMSRAArcSec']}/{data['GuidingRMSDECArcSec']}")
             with tag('td'):
               if runningOnServer():
-                doc.stag('img', src=f'https://{rootserver['name']}{imgThumb}')
+                doc.stag('img', src=f'https://{rootserver['name']}/images/{imgThumb}')
               else:
                 doc.stag('img', src=str(imgThumb))
 
