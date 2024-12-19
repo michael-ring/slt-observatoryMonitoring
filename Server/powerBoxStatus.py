@@ -116,7 +116,7 @@ def genDiv(telescopeName):
       text("Temperature/Dewpoint measured at Telescope")
     with tag('img'):
       if runningOnServer():
-        doc.attr(src=f'https://{rootserver['name']}/images/{telescopeName}images/powerBoxStatus.png', alt=f'{telescopeName}-powerBoxStatus.png')
+        doc.attr(src=f'https://{rootserver['name']}/images/{telescopeName}-images/powerBoxStatus.png', alt=f'powerBoxStatus.png')
       else:
         doc.attr(src=f'/images/{telescopeName}-powerBoxStatus.png', alt=f'{telescopeName}-powerBoxStatus.png')
 
