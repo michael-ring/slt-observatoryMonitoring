@@ -70,7 +70,7 @@ def genDiv(telescopeName):
   plt.gcf().autofmt_xdate()
   plt.legend()
   if runningOnServer():
-    plt.savefig(Path(rootserver['basedir']) / 'images' / f'images-{telescopeName}' / 'skyAlertStatus.png')
+    plt.savefig(Path(rootserver['basedir']) / 'images' / f'{telescopeName}-images' / 'skyAlertStatus.png')
   else:
     plt.savefig(Path(__file__).parent.parent / f'Test/images/{telescopeName}-skyAlertStatus.png')
 
@@ -83,7 +83,7 @@ def genDiv(telescopeName):
       text("Temperature/Dewpoint measured on site")
     with tag('img'):
       if runningOnServer():
-        doc.attr(src=f'https://{rootserver['name']}/images/images-{telescopeName}/skyAlertStatus.png', alt=f'{telescopeName}-skyAlertStatus.png')
+        doc.attr(src=f'https://{rootserver['name']}/images/{telescopeName}-images/skyAlertStatus.png', alt=f'{telescopeName}-skyAlertStatus.png')
       else:
         doc.attr(src=f'/images/{telescopeName}-skyAlertStatus.png', alt=f'{telescopeName}-skyAlertStatus.png')
 
