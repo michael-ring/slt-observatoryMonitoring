@@ -122,7 +122,7 @@ SELECT
   p.priority as priority,
   p.minimumaltitude as minimumaltitude,
   p.minimumtime as minimumtime,
-  x.name as templatename
+  x.name as templatename,
   x.filtername as filtername,
   x.gain as gain,
   x.readoutmode as readoutmode,
