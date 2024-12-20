@@ -7,6 +7,7 @@ import hashlib
 import re
 
 try:
+  sys.path.append('.')
   sys.path.append('..')
   from config import telescope
 except:
