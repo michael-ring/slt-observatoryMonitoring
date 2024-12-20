@@ -7,6 +7,7 @@ import powerBoxStatus
 import skyAlertStatus
 import roofStatus
 import imageStatus
+import schedulerStatus
 import platform
 
 try:
@@ -147,7 +148,21 @@ doc.asis("""
 doc.asis(roofStatus.genDiv('vst'))
 doc.asis(powerBoxStatus.genDiv('vst'))
 doc.asis(skyAlertStatus.genDiv('vst'))
+doc.asis(schedulerStatus.genDiv('vst'))
 doc.asis(imageStatus.genDiv('vst'))
+
+if runningOnServer():
+  doc.asis(roofStatus.genDiv('slt'))
+  doc.asis(powerBoxStatus.genDiv('slt'))
+  doc.asis(skyAlertStatus.genDiv('slt'))
+  doc.asis(schedulerStatus.genDiv('slt'))
+  doc.asis(imageStatus.genDiv('slt'))
+
+  #doc.asis(roofStatus.genDiv('cdk14'))
+  #doc.asis(powerBoxStatus.genDiv('cdk14'))
+  #doc.asis(skyAlertStatus.genDiv('cdk14'))
+  #doc.asis(schedulerStatus.genDiv('cdk14'))
+  #doc.asis(imageStatus.genDiv('cdk14'))
 
 doc.asis("""
 <script>
