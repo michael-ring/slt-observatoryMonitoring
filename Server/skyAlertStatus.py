@@ -37,8 +37,7 @@ def genDiv(telescopeName):
     with open(Path(__file__).parent.parent / 'Test/vst-data/weatherStatus.json') as f:
       skyAlertData = json.load(f)
 
-  start_time = datetime.now(tz=tz.gettz('UTC')).astimezone(tz.gettz(localtz))
-
+  start_time = parser.parse(next(iter(skyAlertData[0].keys())))
   if start_time.hour < 12:
     start_time = start_time.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(hours=12)
   else:
@@ -59,7 +58,7 @@ def genDiv(telescopeName):
   px = 1 / plt.rcParams['figure.dpi']
   plt.subplots(figsize=(width * px, height * px))
 
-  plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M', tz=tz.gettz(localtz)))
+  plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
   plt.gca().xaxis.set_major_locator(mdates.HourLocator(interval=3))
   #plt.ylim(-10, 40)
   plt.xlim(start_time, start_time+timedelta(days=1))
@@ -85,7 +84,7 @@ def genDiv(telescopeName):
       if runningOnServer():
         doc.attr(src=f'https://{rootserver['name']}/images/{telescopeName}-images/skyAlertStatus.png', alt=f'{telescopeName}-skyAlertStatus.png')
       else:
-        doc.attr(src=f'/images/{telescopeName}-skyAlertStatus.png', alt=f'{telescopeName}-skyAlertStatus.png')
+        doc.attr(src=f'images/{telescopeName}-skyAlertStatus.png', alt=f'{telescopeName}-skyAlertStatus.png')
 
   if runningOnServer():
     with open(Path(f'{rootserver['basedir']}/pages/status-{telescopeName}.skyAlertStatus.include'), mode="w") as f:
