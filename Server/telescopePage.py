@@ -144,12 +144,15 @@ doc.asis("""
 
 </div>
 """)
+doc.asis(roofStatus.genDiv('cdk14'))
+doc.asis(schedulerStatus.genDiv('cdk14'))
+doc.asis(imageStatus.genDiv('cdk14'))
 
-doc.asis(roofStatus.genDiv('vst'))
-doc.asis(powerBoxStatus.genDiv('vst'))
-doc.asis(skyAlertStatus.genDiv('vst'))
-doc.asis(schedulerStatus.genDiv('vst'))
-doc.asis(imageStatus.genDiv('vst'))
+#doc.asis(roofStatus.genDiv('vst'))
+#doc.asis(powerBoxStatus.genDiv('vst'))
+#doc.asis(skyAlertStatus.genDiv('vst'))
+#doc.asis(schedulerStatus.genDiv('vst'))
+#doc.asis(imageStatus.genDiv('vst'))
 
 if runningOnServer():
   doc.asis(roofStatus.genDiv('slt'))
@@ -158,11 +161,11 @@ if runningOnServer():
   doc.asis(schedulerStatus.genDiv('slt'))
   doc.asis(imageStatus.genDiv('slt'))
 
-  doc.asis(roofStatus.genDiv('cdk14'))
+  #doc.asis(roofStatus.genDiv('cdk14'))
   #doc.asis(powerBoxStatus.genDiv('cdk14'))
   #doc.asis(skyAlertStatus.genDiv('cdk14'))
-  doc.asis(schedulerStatus.genDiv('cdk14'))
-  doc.asis(imageStatus.genDiv('cdk14'))
+  #doc.asis(schedulerStatus.genDiv('cdk14'))
+  #doc.asis(imageStatus.genDiv('cdk14'))
 
 doc.asis("""
 <script>

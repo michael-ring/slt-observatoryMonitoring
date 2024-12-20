@@ -24,8 +24,6 @@ def addMetaData(data):
   metadataRecords = dict()
   for fileinfo in data:
     metaDataPath = Path(fileinfo['FileName']).parent
-    #if 'imagemetadatapath' in telescope:
-    #    metaDataPath = telescope['imagemetadatapath']
     metaDataFilePath = None
     while metaDataFilePath is None:
       if (metaDataPath / "ImageMetaData.json").exists():
@@ -63,7 +61,7 @@ def addMetaData(data):
       for key in activeIntKeys:
         fileinfo[key] = 0
     fileDateRegex = re.compile(r"\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}")
-    results = fileDateRegex.findall(Path(metadataRecord['FilePath']).name)
+    results = fileDateRegex.findall(Path(fileinfo['FileName']).name)
     if len(results) == 1:
       fileinfo['acquireddate'] = results[0][0:10]+' '+results[0][11:13]+':'+results[0][14:16]+':'+results[0][17:19]
 
@@ -118,4 +116,4 @@ def generateJson():
 
 
 if __name__ == '__main__':
-  print(imageData.findMostRecentFitsFiles())
+  generateJson()

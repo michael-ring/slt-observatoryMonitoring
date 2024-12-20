@@ -50,10 +50,10 @@ def genDiv(telescopeName):
         ninaData = json.load(f)
 
   else:
-    with open(Path(__file__).parent.parent / 'Test/vst-data/lastImagesStatus.json') as f:
+    with open(Path(__file__).parent.parent / f'Test/{telescopeName}-data/lastImagesStatus.json') as f:
       imageData = json.load(f)
-      if (Path(__file__).parent.parent / 'Test/vst-data/ninaStatus.json').exists():
-        with open(Path(__file__).parent.parent / 'Test/vst-data/ninaStatus.json') as g:
+      if (Path(__file__).parent.parent / f'Test/{telescopeName}-data/ninaStatus.json').exists():
+        with open(Path(__file__).parent.parent / f'Test/{telescopeName}-data/ninaStatus.json') as g:
           ninaData = json.load(g)
 
   doc, tag, text = Doc().tagtext()
@@ -128,6 +128,8 @@ def genDiv(telescopeName):
             with tag('td'):
               text(f"{data['acquireddate']}")
             with tag('td'):
+              if 'targetname' not in data:
+                data['targetname'] = Path(data['FilePath']).name.split(f"_{data['FilterName']}_")[0]
               text(f"{data['targetname']}")
               if len(issueList) > 0:
                 doc.stag('br')
@@ -164,3 +166,7 @@ def genDiv(telescopeName):
     with open(Path(__file__).parent.parent / f'Test/status-{telescopeName}.imageStatus.include', mode='w') as f:
       f.writelines(doc.getvalue())
   return doc.getvalue()
+
+if __name__ == '__main__':
+  genDiv('cdk14')
+

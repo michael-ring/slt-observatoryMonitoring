@@ -29,7 +29,7 @@ def genDiv(telescopeName):
     with open(Path(f'/home/{rootserver['sshuser']}/{telescopeName}-data/schedulerStatus.json')) as f:
       schedulerData = json.load(f)
   else:
-    with open(Path(__file__).parent.parent / 'Test/vst-data/schedulerStatus.json') as f:
+    with open(Path(__file__).parent.parent / f'Test/{telescopeName}-data/schedulerStatus.json') as f:
       schedulerData = json.load(f)
 
   targetnames=[]
@@ -74,18 +74,21 @@ table, th, td {
                       text('Gain')
                     with tag('th'):
                       text('Exposure')
-                    with tag('th'):
-                      text('ReadoutMode')
+                    if 'readoutmode' in target:
+                      with tag('th'):
+                        text('ReadoutMode')
                     with tag('th'):
                       text('Rotation')
-                    with tag('th'):
-                      text('Min Altitude')
-                    with tag('th'):
-                      text('Min Time')
+                    if 'minimumaltitude' in target:
+                      with tag('th'):
+                        text('Min Altitude')
+                    if 'minimumtime' in target:
+                      with tag('th'):
+                        text('Min Time')
                     with tag('th'):
                       text('Count')
                 with tag('tbody'):
-                  for filtername in ['L','R','G','B','Sii','SiiOiii','Ha','HaOiii','Oiii']:
+                  for filtername in ['L','Lum','R','Red','G','Green','B','Blue','Sii','SII','SiiOiii','Ha','Halpha','HaOiii','Oiii','OIII']:
                     with tag('tr'):
                       for item in schedulerData:
                         if item['targetname'] == target and item['filtername'] == filtername:
@@ -97,16 +100,22 @@ table, th, td {
                             text(item['gain'])
                           with tag('td'):
                             text(item['exposure'])
-                          with tag('td'):
-                            text(item['readoutmode'])
+                          if 'readoutmode' in target:
                             with tag('td'):
-                              text(item['rotation'])
+                              text(item['readoutmode'])
+                          with tag('td'):
+                            text(item['rotation'])
+                          if 'minimumaltitude' in target:
                             with tag('td'):
                               text(item['minimumaltitude'])
+                          if 'minimumtime' in target:
                             with tag('td'):
                               text(item['minimumtime'])
-                            with tag('td'):
+                          with tag('td'):
+                            if item['desired'] > -1:
                               text(f"{item['acquired']}/{item['desired']}")
+                            else:
+                              text(f"{item['acquired']}")
             with tag('td',style='width:280px'):
               doc.stag('img',src=f'status-{telescopeName}.schedulerStatus.{target}.png',style='width:256px; height:256px')
   doc.asis('</body></html>')
