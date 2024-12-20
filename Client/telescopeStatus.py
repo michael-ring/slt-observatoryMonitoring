@@ -32,6 +32,10 @@ def uploadJson():
     uploadStatusFiles.append(schedulerStatusJsonFile)
     lastImages = targetSchedulerData.lastImages()
   else:
+    schedulerStatus = sessionMetadataData.targetStatus()
+    schedulerStatusJsonFile = Path(__file__).parent.parent / 'Temp' / 'schedulerStatus.json'
+    schedulerStatusJsonFile.write_text(json.dumps(schedulerStatus, indent=2))
+    uploadStatusFiles.append(schedulerStatusJsonFile)
     lastImages = sessionMetadataData.generateJson()
 
   lastImagesStatusJsonFile = Path(__file__).parent.parent / 'Temp' / 'lastImagesStatus.json'

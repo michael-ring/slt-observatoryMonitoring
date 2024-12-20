@@ -123,6 +123,10 @@ SELECT
   p.minimumaltitude as minimumaltitude,
   p.minimumtime as minimumtime,
   x.name as templatename
+  x.filtername as filtername,
+  x.gain as gain,
+  x.readoutmode as readoutmode,
+  x.defaultexposure as exposure
 FROM 
   exposureplan e, target t, exposuretemplate x, project p
 WHERE 

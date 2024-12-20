@@ -66,9 +66,44 @@ def addMetaData(data):
 
 def targetStatus():
   data = imageData.findMostRecentFitsFiles()
-  addMetaData(data)
-  return data
+  result=[]
+  tempresult={}
+  for item in data:
+    fitsHeader = imageData.extractFitsHeaders(item['FileName'])
+    if fitsHeader.get('IMAGETYP') == 'LIGHT':
+      if 'READOUTM' in fitsHeader:
+        key = f"{fitsHeader['OBJECT']}-{fitsHeader['EXPOSURE']}-{fitsHeader['FILTER']}-{fitsHeader['GAIN']}-{fitsHeader['READOUTM']}"
+      else:
+        key = f"{fitsHeader['OBJECT']}-{fitsHeader['EXPOSURE']}-{fitsHeader['FILTER']}-{fitsHeader['GAIN']}"
 
+      if key not in result:
+        tempresult[key]={
+                     'desired': -1,
+                     'acquired': 0,
+                     'targetname': fitsHeader['OBJECT'],
+                     'ra': fitsHeader['RA'],
+                     'dec': fitsHeader['DEC'],
+                     'overrideexposureorder': None,
+                     'projectname': fitsHeader['OBJECT'],
+                     'description': None,
+                     'projectstate': 2,
+                     'priority': 1,
+                     'minimumaltitude': None,
+                     'templatename': f"{fitsHeader['FILTER']}-{int(fitsHeader['EXPOSURE'])}",
+                     'rotation': fitsHeader['OBJCTROT'],
+                     'gain': fitsHeader['GAIN'],
+                     'exposure': fitsHeader['EXPOSURE'],
+                     'filtername': fitsHeader['FILTER'],
+                     }
+      if 'READOUTM' in fitsHeader:
+        tempresult[key]['readoutmode'] = fitsHeader['READOUTM']
+      else:
+        tempresult[key]['readoutmode'] = None
+
+      tempresult[key]['acquired'] += 1
+  for item in tempresult:
+    result.append(tempresult[item])
+  return result
 
 def generateJson():
   data = imageData.findMostRecentFitsFiles()
@@ -79,4 +114,4 @@ def generateJson():
 
 
 if __name__ == '__main__':
-  generateJson()
+  targetStatus()

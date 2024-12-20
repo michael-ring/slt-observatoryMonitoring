@@ -4,6 +4,8 @@ from pathlib import Path
 import re
 import itertools
 from fits2image import conversions
+from astropy.io import fits
+from astropy.io.fits import getheader
 
 try:
   sys.path.append('..')
@@ -38,6 +40,11 @@ def findMostRecentFitsFiles(count=200):
     returnset.append(value)
   return returnset
 
+
+def extractFitsHeaders(fitsFile):
+  fitsFile = Path(fitsFile)
+  header = fits.getheader(fitsFile)
+  return header
 
 def convertFitsToJPG(fitsFile, jpgFile):
   conversions.fits_to_jpg(fitsFile, jpgFile, width=2000, height=2000)
