@@ -22,6 +22,8 @@ def addMetaData(data):
   metadataRecords = dict()
   for fileinfo in data:
     metaDataPath = Path(fileinfo['FileName']).parent
+    #if 'imagemetadatapath' in telescope:
+    #    metaDataPath = telescope['imagemetadatapath']
     metaDataFilePath = None
     while metaDataFilePath is None:
       if (metaDataPath / "ImageMetaData.json").exists():
@@ -114,4 +116,4 @@ def generateJson():
 
 
 if __name__ == '__main__':
-  targetStatus()
+  print(imageData.findMostRecentFitsFiles())
