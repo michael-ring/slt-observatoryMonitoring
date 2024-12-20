@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import sys
 import json
-from Client import imageData
 from pathlib import Path
 import hashlib
 import re
@@ -13,6 +12,8 @@ try:
 except:
   print("telescope configuration is missing in config.py")
   sys.exit(1)
+
+from Client import imageData
 
 activeIntKeys = ('DetectedStars', 'Gain')
 activeTextKeys = ('acquireddate', 'ExposureDuration', 'FilterName', 'Binning', 'Eccentricity', 'HFR', 'FWHM',
