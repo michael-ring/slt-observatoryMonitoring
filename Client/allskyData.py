@@ -31,11 +31,11 @@ def findAllSkyFiles(requiredDates=None):
     today = datetime.date.today().strftime("%m-%d-%Y")
     if "testing" in telescope and telescope['testing'] is True:
       today = "07-29-2024"
-    files = list(basedir.glob(f"{today}/*.jpg"))
+    files = list(basedir.glob(f"{today}/*00.jpg"))
     yesterday = (datetime.date.today()-datetime.timedelta(days=1)).strftime("%m-%d-%Y")
     if "testing" in telescope and telescope['testing'] is True:
       yesterday = "07-28-2024"
-    files += list(basedir.glob(f"{yesterday}/*.jpg"))
+    files += list(basedir.glob(f"{yesterday}/*00.jpg"))
   else:
     for index, value in enumerate(requiredDates):
       requiredDates[index] = value[5:7] + '-' + value[8:10] + '-' + value[0:4]
@@ -46,7 +46,7 @@ def findAllSkyFiles(requiredDates=None):
     if yesterday not in requiredDates:
       requiredDates.append(yesterday)
     for requiredDate in requiredDates:
-      files = files + list(basedir.glob(f"{requiredDate}/*.jpg"))
+      files = files + list(basedir.glob(f"{requiredDate}/*00.jpg"))
   return files
 
 

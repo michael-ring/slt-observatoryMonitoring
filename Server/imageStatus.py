@@ -21,9 +21,11 @@ def runningOnServer():
 def genDiv(telescopeName):
   ninaLoggingWhiteList = [
     ["INFO", "AscomTelescope.cs", 382, "telescopeInfo", ""],
+    ["INFO", "CenterAfterDriftTrigger.cs", 189, "telescopeInfo", ""],
     ["INFO", "ImageSolver.cs", 41, "astapInfo", ""],
     ["INFO", "SafetyMonitorVM.cs", 94, "ninaInfo", ""],
     ["INFO", "SequenceItem.cs", 208, "afInfo", "Autofocus"],
+    ["INFO", "SequenceItem.cs", 208, "phd2Info", "Dither"],
     ["INFO", "SequenceItem.cs", 254, "afInfo", "Autofocus"],
     ["INFO", "SequenceTrigger.cs", 114, "afInfo", "Autofocus"],
     ["INFO", "SequenceTrigger.cs", 114, "astapInfo", "CenterAfterDrift"],
