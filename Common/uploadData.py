@@ -55,8 +55,10 @@ def uploadData(dataFiles, imageFiles):
         imageData.convertFitsToJPGThumb(imageFile, imageFile.with_suffix('.thumb.jpg'))
       result = c.put(imageFile.with_suffix('.jpg'), remote=f"{telescope['shortname']}-images/")
       print("Uploaded {0.local} to {0.remote}".format(result))
-      result = c.put(imageFile.with_suffix('.thumb.jpg'), remote=f"{telescope['shortname']}-images/")
+      if imageFile.with_suffix('.thumb.jpg').exists():
+        result = c.put(imageFile.with_suffix('.thumb.jpg'), remote=f"{telescope['shortname']}-images/")
       print("Uploaded thumb {0.local} to {0.remote}".format(result))
       if imageFile.suffix == '.fits':
         imageFile.with_suffix('.jpg').unlink()
-        imageFile.with_suffix('.thumb.jpg').unlink()
+        if imageFile.with_suffix('.thumb.jpg').exists():
+          imageFile.with_suffix('.thumb.jpg').unlink()
