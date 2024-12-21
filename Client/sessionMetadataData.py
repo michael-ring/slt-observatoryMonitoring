@@ -78,7 +78,7 @@ def targetStatus():
       else:
         key = f"{fitsHeader['OBJECT']}-{fitsHeader['EXPOSURE']}-{fitsHeader['FILTER']}-{fitsHeader['GAIN']}"
 
-      if key not in result:
+      if key not in tempresult:
         tempresult[key]={
                      'desired': -1,
                      'acquired': 0,
@@ -116,4 +116,4 @@ def generateJson():
 
 
 if __name__ == '__main__':
-  generateJson()
+  targetStatus()

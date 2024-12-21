@@ -5,7 +5,6 @@ import re
 import itertools
 from fits2image import conversions
 from astropy.io import fits
-from astropy.io.fits import getheader
 
 try:
   sys.path.append('..')
