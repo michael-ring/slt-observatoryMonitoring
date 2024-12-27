@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-import datetime
+import os
+from datetime import datetime,date,timedelta
 import sys
 from pathlib import Path
 
@@ -13,7 +14,7 @@ except:
 
 def findMostRecentAllSkyFile():
   basedir = Path(telescope['allskybasedir'])
-  today = datetime.date.today().strftime("%m-%d-%Y")
+  today = date.today().strftime("%m-%d-%Y")
   files = basedir.glob(f"{today}/*.jpg")
   ctime = 0
   latestFile = None
@@ -28,26 +29,34 @@ def findAllSkyFiles(requiredDates=None):
   files = []
   basedir = Path(telescope['allskybasedir'])
   if requiredDates is None:
-    today = datetime.date.today().strftime("%m-%d-%Y")
+    today = date.today().strftime("%m-%d-%Y")
     if "testing" in telescope and telescope['testing'] is True:
       today = "07-29-2024"
-    files = list(basedir.glob(f"{today}/*00.jpg"))
-    yesterday = (datetime.date.today()-datetime.timedelta(days=1)).strftime("%m-%d-%Y")
+    files = list(basedir.glob(f"{today}/*.jpg"))
+    yesterday = (date.today()-timedelta(days=1)).strftime("%m-%d-%Y")
     if "testing" in telescope and telescope['testing'] is True:
       yesterday = "07-28-2024"
-    files += list(basedir.glob(f"{yesterday}/*00.jpg"))
+    files += list(basedir.glob(f"{yesterday}/*.jpg"))
   else:
     for index, value in enumerate(requiredDates):
       requiredDates[index] = value[5:7] + '-' + value[8:10] + '-' + value[0:4]
-    today = datetime.date.today().strftime("%m-%d-%Y")
+    today = date.today().strftime("%m-%d-%Y")
     if today not in requiredDates:
       requiredDates.append(today)
-    yesterday = (datetime.date.today()-datetime.timedelta(days=1)).strftime("%m-%d-%Y")
+    yesterday = (date.today()-timedelta(days=1)).strftime("%m-%d-%Y")
     if yesterday not in requiredDates:
       requiredDates.append(yesterday)
     for requiredDate in requiredDates:
-      files = files + list(basedir.glob(f"{requiredDate}/*00.jpg"))
-  return files
+      files = files + list(basedir.glob(f"{requiredDate}/*.jpg"))
+  lastTimestamp = datetime.fromtimestamp(0)
+  result = []
+  files.sort(key=os.path.getctime)
+  for file in files:
+    timestamp=datetime.fromtimestamp(file.stat().st_ctime)
+    if (timestamp - lastTimestamp).total_seconds() >=600.0:
+      lastTimestamp = timestamp
+      result.append(file)
+  return result
 
 
 def generateJson(requiredDates=None):

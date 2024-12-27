@@ -4,6 +4,8 @@ from cryptography.utils import CryptographyDeprecationWarning
 warnings.filterwarnings(action="ignore", category=CryptographyDeprecationWarning)
 from fabric import Connection
 from Client import imageData
+from pathlib import Path
+from datetime import datetime
 
 try:
   from config import telescope
@@ -18,7 +20,7 @@ except:
   sys.exit(1)
 
 
-def uploadData(dataFiles, imageFiles):
+def uploadData(dataFiles, imageFiles, allskyFiles=None):
   if 'sshuser' in telescope.keys():
     sshuser = telescope['sshuser']
   else:
@@ -57,8 +59,18 @@ def uploadData(dataFiles, imageFiles):
       print("Uploaded {0.local} to {0.remote}".format(result))
       if imageFile.with_suffix('.thumb.jpg').exists():
         result = c.put(imageFile.with_suffix('.thumb.jpg'), remote=f"{telescope['shortname']}-images/")
-      print("Uploaded thumb {0.local} to {0.remote}".format(result))
+        print("Uploaded thumb {0.local} to {0.remote}".format(result))
       if imageFile.suffix == '.fits':
         imageFile.with_suffix('.jpg').unlink()
         if imageFile.with_suffix('.thumb.jpg').exists():
           imageFile.with_suffix('.thumb.jpg').unlink()
+
+  if allskyFiles is not None and len(allskyFiles) > 0:
+    for allskyFile in allskyFiles:
+      if not Path(allskyFile).name in listing:
+        ctime=datetime.fromtimestamp(Path(allskyFile).stat().st_ctime).strftime('%Y%m%d%H%M%S')
+        result = c.put(allskyFile, remote=f"{telescope['shortname']}-images/allsky-{ctime}.jpg")
+        print("Uploaded {0.local} to {0.remote}".format(result))
+    result = c.put(allskyFiles[-1], remote=f"{telescope['shortname']}-images/suballsky.jpg")
+    print("Uploaded {0.local} to {0.remote}".format(result))
+

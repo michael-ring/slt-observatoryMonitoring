@@ -89,9 +89,12 @@ def uploadJson():
 
   if 'allskybasedir' in telescope:
     from Client import allskyData
-    uploadImageFiles = uploadImageFiles + allskyData.findAllSkyFiles(acquiredDates)
+    uploadAllSkyFiles = allskyData.findAllSkyFiles(acquiredDates)
+  else:
+    uploadAllSkyFiles = None
 
-  uploadData.uploadData(uploadStatusFiles, uploadImageFiles)
+
+  uploadData.uploadData(uploadStatusFiles, uploadImageFiles, uploadAllSkyFiles)
 
 if __name__ == '__main__':
   uploadJson()
