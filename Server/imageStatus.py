@@ -66,7 +66,7 @@ def genDiv(telescopeName):
     with tag('table'):
       with tag('thead'):
         with tag('tr'):
-          for title in 'Time', 'Target', 'Duration', 'Filter', 'Rotation', 'Median', 'Stars', 'HFR', 'Roundness', 'Guiding(ArcSec)', 'Thumbnail':
+          for title in 'Time', 'Target', 'Exposure', 'Filter', 'Angle', 'Median', 'Stars', 'HFR', 'Roundness', 'Guiding', 'Thumbnail':
             with tag('th'):
               text(title)
               if title == 'Target':
