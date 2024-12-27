@@ -33,9 +33,19 @@ def genDiv(telescopeName):
       schedulerData = json.load(f)
 
   targetnames=[]
+  hasMinimumaltitude = False
+  hasMinimumtime = False
+  hasReadoutmode = False
   for item in schedulerData:
     if item['targetname'] not in targetnames:
-      targetnames.append(item['targetname'])
+      targetnames.append({item['targetname']: item['description']})
+    if 'minimumaltitude' in item:
+      hasMinimumaltitude = True
+    if 'minimumtime' in item:
+      hasMinimumtime = True
+    if 'readoutmode' in item:
+      hasReadoutmode = True
+
   doc, tag, text = Doc().tagtext()
   doc.asis("""<!DOCTYPE html>
 <html>
@@ -49,7 +59,7 @@ table, th, td {
 </head>
 <body>
 """)
-  with tag('section'):
+  with (tag('section')):
     doc.attr(id='content', klass='body')
     with tag('h2'):
       text("Scheduler Status")
@@ -64,7 +74,10 @@ table, th, td {
           with tag('tr'):
             with tag('td',style='vertical-align:top; width:750px'):
               with tag('h3'):
-                text(target)
+                if list(target.values())[0] != None:
+                  text(f"{list(target.keys())[0]} ({list(target.values())[0]})")
+                else:
+                  text(f"{list(target.keys())[0]}")
               with tag('table',style='width:100%'):
                 with tag('thead'):
                   with tag('tr'):
@@ -74,15 +87,15 @@ table, th, td {
                       text('Gain')
                     with tag('th'):
                       text('Exposure')
-                    if 'readoutmode' in target:
+                    if hasReadoutmode:
                       with tag('th'):
                         text('ReadoutMode')
                     with tag('th'):
                       text('Rotation')
-                    if 'minimumaltitude' in target:
+                    if hasMinimumaltitude:
                       with tag('th'):
                         text('Min Altitude')
-                    if 'minimumtime' in target:
+                    if hasMinimumtime:
                       with tag('th'):
                         text('Min Time')
                     with tag('th'):
@@ -100,15 +113,15 @@ table, th, td {
                             text(item['gain'])
                           with tag('td'):
                             text(item['exposure'])
-                          if 'readoutmode' in target:
+                          if hasReadoutmode:
                             with tag('td'):
                               text(item['readoutmode'])
                           with tag('td'):
                             text(item['rotation'])
-                          if 'minimumaltitude' in target:
+                          if hasMinimumaltitude:
                             with tag('td'):
                               text(item['minimumaltitude'])
-                          if 'minimumtime' in target:
+                          if hasMinimumtime:
                             with tag('td'):
                               text(item['minimumtime'])
                           with tag('td'):

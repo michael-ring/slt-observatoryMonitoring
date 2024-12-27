@@ -66,7 +66,7 @@ def genDiv(telescopeName):
     with tag('table'):
       with tag('thead'):
         with tag('tr'):
-          for title in 'Time', 'Target', 'Duration', 'Filter', 'Rotation', 'Stars', 'HFR', 'Roundness', 'Guiding(ArcSec)', 'Thumbnail':
+          for title in 'Time', 'Target', 'Duration', 'Filter', 'Rotation', 'Median', 'Stars', 'HFR', 'Roundness', 'Guiding(ArcSec)', 'Thumbnail':
             with tag('th'):
               text(title)
               if title == 'Target':
@@ -115,6 +115,7 @@ def genDiv(telescopeName):
           Exposure: {data['ExposureDuration']}s |
           Filter: {data['FilterName']} |
           Rotation: {data['RotatorPosition']}° |
+          Median: {data['ADUMedian']} |
           Stars: {data['DetectedStars']} |
           HFR: {data['HFR']} |
           Roundness: {data['Eccentricity']} |
@@ -147,6 +148,8 @@ def genDiv(telescopeName):
               text(f"{data['FilterName']}")
             with tag('td'):
               text(f"{data['RotatorPosition']}")
+            with tag('td'):
+              text(f"{data['ADUMedian']}")
             with tag('td'):
               text(f"{data['DetectedStars']}")
             with tag('td'):
