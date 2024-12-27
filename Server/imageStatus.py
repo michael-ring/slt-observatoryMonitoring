@@ -58,7 +58,7 @@ def genDiv(telescopeName):
         with open(Path(__file__).parent.parent / f'Test/{telescopeName}-data/ninaStatus.json') as g:
           ninaData = json.load(g)
 
-  if imageData == []
+  if imageData == []:
     return ""
   doc, tag, text = Doc().tagtext()
   with tag('section'):
