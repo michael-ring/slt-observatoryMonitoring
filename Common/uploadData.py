@@ -67,8 +67,8 @@ def uploadData(dataFiles, imageFiles, allskyFiles=None):
 
   if allskyFiles is not None and len(allskyFiles) > 0:
     for allskyFile in allskyFiles:
-      if not Path(allskyFile).name in listing:
-        ctime=datetime.fromtimestamp(Path(allskyFile).stat().st_ctime).strftime('%Y%m%d%H%M%S')
+      ctime=datetime.fromtimestamp(Path(allskyFile).stat().st_ctime).strftime('%Y%m%d%H%M%S')
+      if not f'allsky-{ctime}.jpg' in listing:
         result = c.put(allskyFile, remote=f"{telescope['shortname']}-images/allsky-{ctime}.jpg")
         print("Uploaded {0.local} to {0.remote}".format(result))
     result = c.put(allskyFiles[-1], remote=f"{telescope['shortname']}-images/suballsky.jpg")
