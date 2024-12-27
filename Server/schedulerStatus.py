@@ -47,7 +47,7 @@ def genDiv(telescopeName):
       hasMinimumaltitude = True
     if 'minimumtime' in item:
       hasMinimumtime = True
-    if 'readoutmode' in item:
+    if 'readoutmode' in item and item['readoutmode'] is not None:
       hasReadoutmode = True
 
   doc, tag, text = Doc().tagtext()
