@@ -32,6 +32,8 @@ def genDiv(telescopeName):
     with open(Path(__file__).parent.parent / f'Test/{telescopeName}-data/schedulerStatus.json') as f:
       schedulerData = json.load(f)
 
+  if schedulerData == []:
+    return ""
   targetnames=[]
   hasMinimumaltitude = False
   hasMinimumtime = False

@@ -36,6 +36,8 @@ def plotCalibration(calibration):
 
 def genDiv():
   phd2Data = json.load(open('../Temp/phdStatus.json'))
+  if phd2Data == []:
+    return ""
   plotCalibration(phd2Data['calibration'])
   pass
 
