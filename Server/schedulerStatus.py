@@ -43,9 +43,9 @@ def genDiv(telescopeName):
         targetFound = True
     if not targetFound:
       targetnames.append({item['targetname']: item['description']})
-    if 'minimumaltitude' in item:
+    if 'minimumaltitude' in item and item['minimumaltitude'] is not None:
       hasMinimumaltitude = True
-    if 'minimumtime' in item:
+    if 'minimumtime' in item and item['minimumtime'] is not None:
       hasMinimumtime = True
     if 'readoutmode' in item and item['readoutmode'] is not None:
       hasReadoutmode = True
