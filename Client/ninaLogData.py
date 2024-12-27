@@ -16,7 +16,7 @@ def generateJson(requiredDates=None):
   if 'ninalogbasedir' in telescope:
     basedir = Path(telescope['ninalogbasedir'])
     files=[]
-    if requiredDates is None:
+    if requiredDates is None or requiredDates == []:
       today = datetime.date.today().strftime("%Y%m%d")
       if "testing" in telescope and telescope['testing'] is True:
         today = "20241211"

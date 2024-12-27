@@ -28,7 +28,7 @@ def findMostRecentAllSkyFile():
 def findAllSkyFiles(requiredDates=None):
   files = []
   basedir = Path(telescope['allskybasedir'])
-  if requiredDates is None:
+  if requiredDates is None  or requiredDates == []:
     today = date.today().strftime("%m-%d-%Y")
     if "testing" in telescope and telescope['testing'] is True:
       today = "07-29-2024"
@@ -50,6 +50,9 @@ def findAllSkyFiles(requiredDates=None):
       files = files + list(basedir.glob(f"{requiredDate}/*.jpg"))
   lastTimestamp = datetime.fromtimestamp(0)
   result = []
+  if files == []:
+    return []
+
   files.sort(key=os.path.getctime)
   for file in files:
     timestamp=datetime.fromtimestamp(file.stat().st_ctime)
