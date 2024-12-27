@@ -37,7 +37,11 @@ def genDiv(telescopeName):
   hasMinimumtime = False
   hasReadoutmode = False
   for item in schedulerData:
-    if item['targetname'] not in targetnames:
+    targetFound=False
+    for target in targetnames:
+      if item['targetname'] in target:
+        targetFound = True
+    if not targetFound:
       targetnames.append({item['targetname']: item['description']})
     if 'minimumaltitude' in item:
       hasMinimumaltitude = True
@@ -104,7 +108,7 @@ table, th, td {
                   for filtername in ['L','Lum','R','Red','G','Green','B','Blue','Sii','SII','SiiOiii','Ha','Halpha','HaOiii','Oiii','OIII']:
                     with tag('tr'):
                       for item in schedulerData:
-                        if item['targetname'] == target and item['filtername'] == filtername:
+                        if item['targetname'] in target and item['filtername'] == filtername:
                           if item['acquired'] == item['desired']:
                             doc.attr(style='background-color: #88FF88')
                           with tag('td'):
