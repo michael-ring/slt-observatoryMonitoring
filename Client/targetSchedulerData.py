@@ -132,7 +132,7 @@ FROM
 WHERE 
   e.targetid = t.Id and e.exposureTemplateId = x.Id and t.projectid = p.id and ( p.state = 1 or p.state = 2 )
 ORDER BY
-  projectstate asc, projectname asc
+  projectname asc, targetname asc
 """)
 
 
