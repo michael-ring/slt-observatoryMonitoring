@@ -147,7 +147,7 @@ table, th, td {
                   targetdec = item3['dec']
                   break
               if runningOnServer():
-                fileName=Path(f'{rootserver['basedir']}/images/{telescopeName}-images/status-{telescopeName}.schedulerStatus.{targetName}.png'),
+                fileName=Path(f'{rootserver['basedir']}/images/{telescopeName}-images/status-{telescopeName}.schedulerStatus.{targetName}.png')
               else:
                 fileName=Path(__file__).parent.parent / f'Test/status-{telescopeName}.schedulerStatus.{targetName}.png'
               skyPlot.sky_object_plot(targetra,targetdec,locations[telescope['location']],fileName)
