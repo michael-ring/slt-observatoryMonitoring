@@ -42,16 +42,17 @@ def sky_object_plot(_objectra, _objectdec, _location, targetFileName=None):
   time_int = np.arange(0, 24 * 60, 10) * u.min
   #time_int = np.arange(0, 12 * 60, 10) * u.min
   time = start_time_utc + time_int
-
+  time2 = Time(start_time) -4 * u.hour + time_int
   # define alt-az frame of reference based on the time intervals and geocentric location
   alt_az_conversion = AltAz(obstime=time, location=observation_location)
+  alt_az_conversion2 = AltAz(obstime=time2, location=observation_location)
 
   # get celestial coordinates for the object of interest (by default in dec-ra system)
   #sky_object = SkyCoord([f"{_objectra} {_objectdec}"], frame="icrs", unit=(u.hourangle, u.deg))
   sky_object = SkyCoord(_objectra,_objectdec, frame="icrs", unit='deg')
 
   # convert celestial coordinates to our alt-az frame
-  sky_object_alt_az = sky_object.transform_to(alt_az_conversion)
+  sky_object_alt_az = sky_object.transform_to(alt_az_conversion2)
 
   # determine sun position during the time intervals and convert to our alt-az frame
   moon = get_body("moon", time)
