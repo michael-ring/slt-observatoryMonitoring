@@ -113,7 +113,7 @@ table, th, td {
                         if item['targetname'] in target and item['filtername'] == filtername:
                           if item['acquired'] >= item['desired']:
                             doc.attr(style='background-color: #88FF88')
-                          if not item['overrideexposureorder'].startswith('Dither'):
+                          if "overrideexposureorder" in item and not item['overrideexposureorder'].startswith('Dither'):
                             doc.attr(style='background-color: #FF8888')
                           with tag('td'):
                             text(item['filtername'])
