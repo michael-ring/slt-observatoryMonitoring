@@ -42,7 +42,7 @@ def sky_object_plot(_objectra, _objectdec, _location, targetFileName=None):
   time_int = np.arange(0, 24 * 60, 10) * u.min
   #time_int = np.arange(0, 12 * 60, 10) * u.min
   time = start_time_utc + time_int
-  time2 = Time(start_time) -4 * u.hour + time_int
+  time2 = Time(start_time_utc) -5 * u.hour + time_int
   # define alt-az frame of reference based on the time intervals and geocentric location
   alt_az_conversion = AltAz(obstime=time, location=observation_location)
   alt_az_conversion2 = AltAz(obstime=time2, location=observation_location)
@@ -122,6 +122,7 @@ def sky_object_plot(_objectra, _objectdec, _location, targetFileName=None):
     plt.show()
   else:
     plt.savefig(targetFileName)
+  plt.close()
 
 
 if __name__ == '__main__':
