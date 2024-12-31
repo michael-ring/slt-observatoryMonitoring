@@ -15,6 +15,7 @@ except:
   print("locations configuration is missing in config.py")
   sys.exit(1)
 
+import skyPlot
 
 def runningOnServer():
   return platform.uname().node == rootserver['nodename']
@@ -77,13 +78,15 @@ table, th, td {
       #    doc.stag('th',style='width:256px')
       with tag('tbody'):
         for target in targetnames:
+          targetName = list(target.keys())[0]
+          targetDescription = list(target.values())[0]
           with tag('tr'):
             with tag('td',style='vertical-align:top; width:750px'):
               with tag('h3'):
                 if list(target.values())[0] != None:
-                  text(f"{list(target.keys())[0]} ({list(target.values())[0]})")
+                  text(f"{targetName} ({targetDescription})")
                 else:
-                  text(f"{list(target.keys())[0]}")
+                  text(f"{targetName}")
               with tag('table',style='width:100%'):
                 with tag('thead'):
                   with tag('tr'):
@@ -109,36 +112,46 @@ table, th, td {
                 with tag('tbody'):
                   for filtername in ['L','Lum','R','Red','G','Green','B','Blue','Sii','SII','SiiOiii','Ha','Halpha','HaOiii','Oiii','OIII']:
                     with tag('tr'):
-                      for item in schedulerData:
-                        if item['targetname'] in target and item['filtername'] == filtername:
-                          if item['acquired'] >= item['desired']:
+                      for item2 in schedulerData:
+                        if item2['targetname'] in target and item2['filtername'] == filtername:
+                          if item2['acquired'] >= item2['desired']:
                             doc.attr(style='background-color: #88FF88')
-                          if item["overrideexposureorder"] is not None and not item['overrideexposureorder'].startswith('Dither'):
+                          if item2["overrideexposureorder"] is not None and not item2['overrideexposureorder'].startswith('Dither'):
                             doc.attr(style='background-color: #FF8888')
                           with tag('td'):
-                            text(item['filtername'])
+                            text(item2['filtername'])
                           with tag('td'):
-                            text(item['gain'])
+                            text(item2['gain'])
                           with tag('td'):
-                            text(item['exposure'])
+                            text(item2['exposure'])
                           if hasReadoutmode:
                             with tag('td'):
-                              text(item['readoutmode'])
+                              text(item2['readoutmode'])
                           with tag('td'):
-                            text(item['rotation'])
+                            text(item2['rotation'])
                           if hasMinimumaltitude:
                             with tag('td'):
-                              text(item['minimumaltitude'])
+                              text(item2['minimumaltitude'])
                           if hasMinimumtime:
                             with tag('td'):
-                              text(item['minimumtime'])
+                              text(item2['minimumtime'])
                           with tag('td'):
-                            if item['desired'] > -1:
-                              text(f"{item['acquired']}/{item['desired']}")
+                            if item2['desired'] > -1:
+                              text(f"{item2['acquired']}/{item2['desired']}")
                             else:
-                              text(f"{item['acquired']}")
+                              text(f"{item2['acquired']}")
             with tag('td',style='width:280px'):
-              doc.stag('img',src=f'status-{telescopeName}.schedulerStatus.{target}.png',style='width:256px; height:256px')
+              for item3 in schedulerData:
+                if item3['targetname'] in target:
+                  targetra=item3['ra']
+                  targetdec = item3['dec']
+                  break
+              if runningOnServer():
+                fileName=Path(f'{rootserver['basedir']}/pages/status-{telescopeName}.schedulerStatus.{targetName}.png'),
+              else:
+                fileName=Path(__file__).parent.parent / f'Test/status-{telescopeName}.schedulerStatus.{targetName}.png'
+              skyPlot.sky_object_plot(targetra,targetdec,locations[telescope['location']],fileName)
+              doc.stag('img',src=f'status-{telescopeName}.schedulerStatus.{targetName}.png',style='width:256px; height:256px')
   doc.asis('</body></html>')
 
 
