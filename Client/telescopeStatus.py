@@ -2,6 +2,7 @@
 import sys
 from pathlib import Path
 
+from Client.targetSchedulerData import lastImages
 from Common import uploadData
 import json
 from datetime import datetime
@@ -24,6 +25,7 @@ except:
 def uploadJson():
   uploadImageFiles = []
   uploadStatusFiles = []
+  lastImages = []
   if 'schedulerdb' in telescope:
     from Client import targetSchedulerData
     schedulerStatus = targetSchedulerData.targetStatus()
@@ -33,15 +35,20 @@ def uploadJson():
     lastImages = targetSchedulerData.lastImages()
   else:
     from Client import sessionMetadataData
-    schedulerStatus = sessionMetadataData.targetStatus()
-    schedulerStatusJsonFile = Path(__file__).parent.parent / 'Temp' / 'schedulerStatus.json'
-    schedulerStatusJsonFile.write_text(json.dumps(schedulerStatus, indent=2))
-    uploadStatusFiles.append(schedulerStatusJsonFile)
-    lastImages = sessionMetadataData.generateJson()
+    from Common import locationData
+    from config import locations
+    currentSunStatus = locationData.getSunData(locations[telescope['location']])
+    if currentSunStatus['alt'] <= -12:
+      schedulerStatus = sessionMetadataData.targetStatus()
+      schedulerStatusJsonFile = Path(__file__).parent.parent / 'Temp' / 'schedulerStatus.json'
+      schedulerStatusJsonFile.write_text(json.dumps(schedulerStatus, indent=2))
+      uploadStatusFiles.append(schedulerStatusJsonFile)
+      lastImages = sessionMetadataData.generateJson()
 
-  lastImagesStatusJsonFile = Path(__file__).parent.parent / 'Temp' / 'lastImagesStatus.json'
-  lastImagesStatusJsonFile.write_text(json.dumps(lastImages, indent=2))
-  uploadStatusFiles.append(lastImagesStatusJsonFile)
+  if len(lastImages) > 0:
+    lastImagesStatusJsonFile = Path(__file__).parent.parent / 'Temp' / 'lastImagesStatus.json'
+    lastImagesStatusJsonFile.write_text(json.dumps(lastImages, indent=2))
+    uploadStatusFiles.append(lastImagesStatusJsonFile)
 
   acquiredDates = []
   for lastImage in lastImages:
