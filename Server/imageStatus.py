@@ -43,6 +43,9 @@ def genDiv(telescopeName):
     ["ERROR", "", -1, "ninaError", ""],
   ]
 
+  hasAllSky=False
+  if 'allskybasedir' in telescopes[telescopeName]:
+    hasAllSky=True
   ninaData = dict()
   if runningOnServer():
     with open(Path(f'/home/{rootserver['sshuser']}/{telescopeName}-data/lastImagesStatus.json')) as f:
@@ -75,6 +78,11 @@ def genDiv(telescopeName):
                 doc.attr(width='100%')
               else:
                 doc.attr(width='1%')
+          if hasAllSky:
+            with tag('th'):
+              text('AllSky')
+              doc.attr(width='1%')
+
       with tag('tbody', id='tb-tr'):
         firstPictureDate = datetime.strptime(imageData[0]['acquireddate'], '%Y-%m-%d %H:%M:%S') - timedelta(hours=12)
         for data in imageData:
@@ -165,6 +173,12 @@ def genDiv(telescopeName):
                 doc.stag('img', src=f'https://{rootserver['name']}/images/{imgThumb}')
               else:
                 doc.stag('img', src=str(imgThumb))
+            if hasAllSky:
+              with tag('td'):
+                if runningOnServer():
+                  doc.stag('img', src=f'https://{rootserver['name']}/images/{imgThumb}')
+                else:
+                  doc.stag('img', src=str(imgThumb))
 
   if runningOnServer():
     with open(Path(f'{rootserver['basedir']}/pages/status-{telescopeName}.imageStatus.include'), mode="w") as f:
