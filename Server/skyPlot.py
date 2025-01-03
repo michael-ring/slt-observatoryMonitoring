@@ -46,7 +46,7 @@ def sky_object_plot(_objectra, _objectdec, _location, targetFileName=None):
 
   # get celestial coordinates for the object of interest (by default in dec-ra system)
   #sky_object = SkyCoord([f"{_objectra} {_objectdec}"], frame="icrs", unit=(u.hourangle, u.deg))
-  sky_object = SkyCoord(_objectra,_objectdec, frame="icrs", unit='deg')
+  sky_object = SkyCoord(ra=_objectra*u.hourangle,dec=_objectdec*u.deg, frame="icrs")
 
   # convert celestial coordinates to our alt-az frame
   sky_object_alt_az = sky_object.transform_to(alt_az_conversion)
