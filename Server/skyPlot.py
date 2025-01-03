@@ -28,7 +28,7 @@ def sky_object_plot(_objectra, _objectdec, _location, targetFileName=None):
   width=512
   height=512
   # identify location in geocentric coordinates
-  observation_location = EarthLocation.from_geodetic(_location['longitude'], _location['latitude'], _location['elevation'])
+  observation_location = EarthLocation.from_geodetic(_location['longitude'], _location['latitude'], _location['elevation']*u.m)
 
   start_time = datetime.now(tz=tz.gettz('UTC')).astimezone(tz.gettz(_location['timezone']))
   if start_time.replace(hour=12, minute=0, second=0, microsecond=0) < start_time:
@@ -36,23 +36,20 @@ def sky_object_plot(_objectra, _objectdec, _location, targetFileName=None):
   else:
     start_time = start_time.replace(hour=12, minute=0, second=0, microsecond=0)  - timedelta(hours=24)
 
-  start_time_utc = Time(start_time.astimezone(tz.gettz('utc')), scale='utc')
-
+  start_time_utc = start_time.astimezone(tz.gettz('utc'))
   # splitting 24h into 10min intervals
   time_int = np.arange(0, 24 * 60, 10) * u.min
   #time_int = np.arange(0, 12 * 60, 10) * u.min
-  time = start_time_utc + time_int
-  time2 = Time(start_time_utc) -5 * u.hour + time_int
+  time = Time(start_time_utc) + time_int
   # define alt-az frame of reference based on the time intervals and geocentric location
   alt_az_conversion = AltAz(obstime=time, location=observation_location)
-  alt_az_conversion2 = AltAz(obstime=time2, location=observation_location)
 
   # get celestial coordinates for the object of interest (by default in dec-ra system)
   #sky_object = SkyCoord([f"{_objectra} {_objectdec}"], frame="icrs", unit=(u.hourangle, u.deg))
   sky_object = SkyCoord(_objectra,_objectdec, frame="icrs", unit='deg')
 
   # convert celestial coordinates to our alt-az frame
-  sky_object_alt_az = sky_object.transform_to(alt_az_conversion2)
+  sky_object_alt_az = sky_object.transform_to(alt_az_conversion)
 
   # determine sun position during the time intervals and convert to our alt-az frame
   moon = get_body("moon", time)
@@ -95,7 +92,7 @@ def sky_object_plot(_objectra, _objectdec, _location, targetFileName=None):
 
   # plotting
 
-  minutes = mdates.drange(start_time, start_time+timedelta(days=1), timedelta(minutes=10))
+  minutes = mdates.drange(start_time_utc, start_time_utc+timedelta(days=1), timedelta(minutes=10))
 
   px = 1 / plt.rcParams['figure.dpi']
   plt.subplots(figsize=(width * px, height * px))
@@ -126,9 +123,11 @@ def sky_object_plot(_objectra, _objectdec, _location, targetFileName=None):
 
 
 if __name__ == '__main__':
-  objectra = "4:3:18"
-  objectdec = "36:25:18"
-  objectra = 4.123055555555555
-  objectdec = 34.94638888888888
+  objectra = "5h35m17.3s"
+  objectdec = "-5d23m28s"
+  objectra = "18h3m37s"
+  objectdec = "-24d23m12s"
+  #objectra = 4.123055555555555
+  #objectdec = 34.94638888888888
   location = locations[telescope['location']]
   sky_object_plot(objectra, objectdec, location)
