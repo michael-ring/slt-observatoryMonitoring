@@ -81,6 +81,33 @@ def getLRGBTargets():
   """)
   return result
 
+def getEnabledTargets():
+  result = query("""
+  SELECT
+    p.name as projectname,
+    p.state as projectstate
+  FROM 
+    project p
+  WHERE 
+      ( p.state = 1 )
+  ORDER BY
+    projectname asc
+  """)
+  return result
+
+def getDisabledTargets():
+  result = query("""
+  SELECT
+    p.name as projectname,
+    p.state as projectstate
+  FROM 
+    project p
+  WHERE 
+      ( p.state = 2 )
+  ORDER BY
+    projectname asc
+  """)
+  return result
 
 def enableProject(projectName):
   projectName = projectName.replace("'", "''")
