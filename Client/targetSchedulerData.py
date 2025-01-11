@@ -60,6 +60,8 @@ def getOTargets():
       ( p.state = 1 or p.state = 2 )
     AND
       ( p.name like '%O' )
+    AND
+      ( p.name not like '%SHO' )
   ORDER BY
     projectstate asc, projectname asc
   """)
