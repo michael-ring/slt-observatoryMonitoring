@@ -82,7 +82,7 @@ def generateJson(requiredDates=None):
               settling = 0
               dithering = 0
               continue
-            if line[0] >= '0' and line[0] <= '9':
+            if len(line) > 0 and line[0] >= '0' and line[0] <= '9':
               guiding[guidingStart]['steps'].append((line+f",{settling},{dithering}").replace('"', ''))
 
     return {'calibration': calibration, 'guiding': guiding}
