@@ -41,7 +41,8 @@ def getHSTargets():
   WHERE 
       ( p.state = 1 or p.state = 2 )
     AND
-      ( p.name like '%_H' or p.name like '%_S' or p.name like '%_HS' )
+      ( p.name like '%_H' ESCAPE '_' or p.name like '%_S' ESCAPE '\' or p.name like '%_HS' ESCAPE '_' or p.name like '%_HSO' ESCAPE '_')
+       
   ORDER BY
     projectstate asc, projectname asc
   """)
@@ -58,7 +59,7 @@ def getOTargets():
   WHERE 
       ( p.state = 1 or p.state = 2 )
     AND
-      ( p.name like '%_O' )
+      ( p.name like '%_O' ESCAPE '_' )
   ORDER BY
     projectstate asc, projectname asc
   """)
@@ -75,7 +76,7 @@ def getLRGBTargets():
   WHERE 
       ( p.state = 1 or p.state = 2 )
     AND
-      ( p.name like '%_RGB' OR p.name like '%_LRGB' )
+      ( p.name like '%_RGB' ESCAPE '_' OR p.name like '%_LRGB' ESCAPE '_' )
   ORDER BY
     projectstate asc, projectname asc
   """)
