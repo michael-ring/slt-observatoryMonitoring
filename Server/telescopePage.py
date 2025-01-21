@@ -196,21 +196,44 @@ if not runningOnServer():
 #doc.asis(imageStatus.genDiv('vst'))
 
 if runningOnServer():
-  doc.asis(roofStatus.genDiv('vst'))
-  doc.asis(powerBoxStatus.genDiv('vst'))
-  doc.asis(skyAlertStatus.genDiv('vst'))
-  doc.asis(schedulerStatus.genDiv('vst'))
-  doc.asis(imageStatus.genDiv('vst'))
+  for server in ['vst','slt']:
+    try:
+      doc.asis(roofStatus.genDiv(server))
+    except Exception as e:
+      logger.exception(e)
+      print(e)
+      pass
+    try:
+      doc.asis(powerBoxStatus.genDiv(server))
+    except Exception as e:
+      logger.exception(e)
+      traceback.format_exc()
+      pass
+    try:
+      doc.asis(skyAlertStatus.genDiv(server))
+    except Exception as e:
+      logger.exception(e)
+      traceback.format_exc()
+      pass
+    try:
+      allSkyStatus.renderVideo(server)
+    except Exception as e:
+      logger.exception(e)
+      traceback.format_exc()
+    try:
+      doc.asis(schedulerStatus.genDiv(server))
+    except Exception as e:
+      logger.exception(e)
+      traceback.format_exc()
+    try:
+      doc.asis(imageStatus.genDiv(server))
+    except Exception as e:
+      logger.exception(e)
+      traceback.format_exc()
 
-  doc.asis(roofStatus.genDiv('slt'))
-  doc.asis(powerBoxStatus.genDiv('slt'))
-  doc.asis(skyAlertStatus.genDiv('slt'))
-  doc.asis(schedulerStatus.genDiv('slt'))
-  doc.asis(imageStatus.genDiv('slt'))
-
-  doc.asis(roofStatus.genDiv('cdk14'))
-  doc.asis(schedulerStatus.genDiv('cdk14'))
-  doc.asis(imageStatus.genDiv('cdk14'))
+  #doc.asis(roofStatus.genDiv('cdk14'))
+  #doc.asis(schedulerStatus.genDiv('cdk14'))
+  #doc.asis(imageStatus.genDiv('cdk14'))
 
 doc.asis("""
 <script>
