@@ -198,34 +198,40 @@ if not runningOnServer():
 if runningOnServer():
   for server in ['vst','slt']:
     try:
+      logger.info(f'running script roofstatus for {server}')
       doc.asis(roofStatus.genDiv(server))
     except Exception as e:
       logger.exception(e)
       print(e)
       pass
     try:
+      logger.info(f'running script powerBoxStatus for {server}')
       doc.asis(powerBoxStatus.genDiv(server))
     except Exception as e:
       logger.exception(e)
       traceback.format_exc()
       pass
     try:
+      logger.info(f'running script skyAlertStatus for {server}')
       doc.asis(skyAlertStatus.genDiv(server))
     except Exception as e:
       logger.exception(e)
       traceback.format_exc()
       pass
     try:
+      logger.info(f'running script allSkyStatus for {server}')
       allSkyStatus.renderVideo(server)
     except Exception as e:
       logger.exception(e)
       traceback.format_exc()
     try:
+      logger.info(f'running script schedulerStatus for {server}')
       doc.asis(schedulerStatus.genDiv(server))
     except Exception as e:
       logger.exception(e)
       traceback.format_exc()
     try:
+      logger.info(f'running script imageStatus for {server}')
       doc.asis(imageStatus.genDiv(server))
     except Exception as e:
       logger.exception(e)
