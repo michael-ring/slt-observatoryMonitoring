@@ -6,7 +6,9 @@ from yattag import Doc
 from pathlib import Path
 
 try:
-  from Common.config import rootserver,logger,runningOnServer
+  sys.path.append('.')
+  sys.path.append('..')
+  from Common.config import locations,telescopes,rootserver,runningOnServer,logger
 except Exception as e:
   print(e)
   raise(e)
