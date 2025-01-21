@@ -10,22 +10,12 @@ import sys
 try:
   sys.path.append('..')
   sys.path.append('.')
-  from config import rootserver
-except:
-  print("rootserver configuration is missing in config.py")
-  sys.exit(1)
-
-try:
-  from config import telescope
-except:
-  print("telescope configuration is missing in config.py")
-  sys.exit(1)
+  from Common.config import rootserver,runningOnServer
+except Exception as e:
+  print(e)
+  raise(e)
 
 from Common import locationData
-
-
-def runningOnServer():
-  return platform.uname().node == rootserver['nodename']
 
 
 def generateData(locationName):
@@ -39,21 +29,21 @@ def generateData(locationName):
   ld = im.load()
 
   for x in range(width):
-    if x < int((sunData['set'].hour/24+sunData['set'].minute/24/60)*width+width/2) % width:
+    if x < int((sunData['previousset'].hour/24+sunData['previousset'].minute/24/60)*width+width/2) % width:
       r, g, b = 128, 128, 255
-    elif x < int((sunData['twilightset'].hour*1/24+sunData['twilightset'].minute*1/24/60)*width+width/2) % width:
+    elif x < int((sunData['previoustwilightset'].hour*1/24+sunData['previoustwilightset'].minute*1/24/60)*width+width/2) % width:
       r, g, b = 96, 96, 255
-    elif x < int((sunData['nauticalset'].hour*1/24+sunData['nauticalset'].minute*1/24/60)*width+width/2) % width:
+    elif x < int((sunData['previousnauticalset'].hour*1/24+sunData['previousnauticalset'].minute*1/24/60)*width+width/2) % width:
       r, g, b = 48, 48, 128
-    elif x < int((sunData['astronomicalset'].hour * 1 / 24 + sunData['astronomicalset'].minute * 1 / 24 / 60) * width + width / 2) % width:
+    elif x < int((sunData['previousastronomicalset'].hour * 1 / 24 + sunData['previousastronomicalset'].minute * 1 / 24 / 60) * width + width / 2) % width:
       r, g, b = 0, 0, 128
-    elif x < int((sunData['astronomicalrise'].hour * 1 / 24 + sunData['astronomicalrise'].minute * 1 / 24 / 60) * width + width / 2) % width:
+    elif x < int((sunData['nextastronomicalrise'].hour * 1 / 24 + sunData['nextastronomicalrise'].minute * 1 / 24 / 60) * width + width / 2) % width:
       r, g, b = 0, 0,  0
-    elif x < int((sunData['nauticalrise'].hour * 1 / 24 + sunData['nauticalrise'].minute * 1 / 24 / 60) * width + width / 2) % width:
+    elif x < int((sunData['previousnauticalrise'].hour * 1 / 24 + sunData['nextnauticalrise'].minute * 1 / 24 / 60) * width + width / 2) % width:
       r, g, b = 0, 0, 128
-    elif x < int((sunData['twilightrise'].hour * 1 / 24 + sunData['twilightrise'].minute * 1 / 24 / 60) * width + width / 2) % width:
+    elif x < int((sunData['previoustwilightrise'].hour * 1 / 24 + sunData['nexttwilightrise'].minute * 1 / 24 / 60) * width + width / 2) % width:
       r, g, b = 40, 48, 128
-    elif x < int((sunData['rise'].hour * 1 / 24 + sunData['rise'].minute * 1 / 24 / 60) * width + width / 2) % width:
+    elif x < int((sunData['nextrise'].hour * 1 / 24 + sunData['nextrise'].minute * 1 / 24 / 60) * width + width / 2) % width:
       r, g, b = 96, 96, 255
     else:
       r, g, b = 128, 128, 255
@@ -81,7 +71,7 @@ def generateData(locationName):
           with tag('th'):
             text(title)
       with tag('tr'):
-        for data in 'set', 'twilightset', 'nauticalset', 'astronomicalset', 'astronomicalrise', 'nauticalrise', 'twilightrise', 'rise':
+        for data in 'previousset', 'previoustwilightset', 'previousnauticalset', 'previousastronomicalset', 'nextastronomicalrise', 'nextnauticalrise', 'nexttwilightrise', 'nextrise':
           with tag('td'):
             text(sunData[data].strftime("%H:%M"))
   with tag('section'):
@@ -94,7 +84,7 @@ def generateData(locationName):
           with tag('th'):
             text(title)
       with tag('tr'):
-        for data in 'previousrise', 'set', 'rise', 'nextset':
+        for data in 'previousrise', 'previousset', 'nextrise', 'nextset':
           with tag('td'):
             text(moonData[data].strftime("%d.%m %H:%M"))
         for data in 'phase', 'mag':

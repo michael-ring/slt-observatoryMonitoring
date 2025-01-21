@@ -1,19 +1,16 @@
 #!/usr/bin/env python3
 from pathlib import Path
 import sys
-import platform
 
 try:
   sys.path.append('.')
   sys.path.append('..')
-  from config import rootserver
+  from Common.config import rootserver,runningOnServer
 except:
   print("rootserver configuration is missing in config.py")
-  sys.exit(1)
+  print(e)
+  raise(e)
 
-
-def runningOnServer():
-  return platform.uname().node == rootserver['nodename']
 
 if runningOnServer():
   basedir = Path(rootserver['basedir']) / 'pages'

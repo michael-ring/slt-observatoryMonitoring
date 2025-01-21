@@ -8,14 +8,11 @@ from pathlib import Path
 try:
   sys.path.append('.')
   sys.path.append('..')
-  from config import telescopes, rootserver
+  from Common.config import telescopes, rootserver,runningOnServer
 except:
   print("telescopes configuration is missing in config.py")
-  sys.exit(1)
-
-
-def runningOnServer():
-  return platform.uname().node == rootserver['nodename']
+  print(e)
+  raise(e)
 
 
 def genDiv(telescopeName):

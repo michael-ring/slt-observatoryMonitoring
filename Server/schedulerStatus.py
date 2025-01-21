@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 import json
-import platform
-from asyncio.staggered import staggered_race
-
 from yattag import Doc
 from pathlib import Path
 import sys
@@ -10,16 +7,12 @@ import sys
 try:
   sys.path.append('.')
   sys.path.append('..')
-  from config import locations, telescopes, rootserver
+  from Common.config import locations, telescopes, rootserver,runningOnServer,logger
 except:
-  print("locations configuration is missing in config.py")
-  sys.exit(1)
+  print(e)
+  raise(e)
 
 import skyPlot
-
-def runningOnServer():
-  return platform.uname().node == rootserver['nodename']
-
 
 def genDiv(telescopeName):
   width, height = 1024, 200
@@ -34,6 +27,7 @@ def genDiv(telescopeName):
       schedulerData = json.load(f)
 
   if schedulerData == []:
+    logger.info('No scheduler data, exit early')
     return ""
   targetnames=[]
   hasMinimumaltitude = False
@@ -151,7 +145,11 @@ table, th, td {
               else:
                 fileName=Path(__file__).parent.parent / f'Test/status-{telescopeName}.schedulerStatus.{targetName}.png'
               skyPlot.sky_object_plot(targetra,targetdec,locations[telescope['location']],fileName)
-              doc.stag('img',src=f'images/{telescopeName}-images/status-{telescopeName}.schedulerStatus.{targetName}.png',style='width:256px; height:256px')
+              if runningOnServer():
+                doc.stag('img',src=f'images/{telescopeName}-images/status-{telescopeName}.schedulerStatus.{targetName}.png',style='width:256px; height:256px')
+              else:
+                doc.stag('img',src=str(fileName),style='width:256px; height:256px')
+
   doc.asis('</body></html>')
 
 

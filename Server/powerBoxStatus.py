@@ -1,28 +1,21 @@
 #!/usr/bin/env python3
 import json
-import platform
 from yattag import Doc
 from pathlib import Path
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import sys
-from datetime import datetime
 from datetime import timedelta
 from dateutil import tz
 from dateutil import parser
-from zoneinfo import ZoneInfo
 
 try:
   sys.path.append('.')
   sys.path.append('..')
-  from config import locations,telescopes,rootserver
-except:
-  print("locations configuration is missing in config.py")
-  sys.exit(1)
-
-
-def runningOnServer():
-  return platform.uname().node == rootserver['nodename']
+  from Common.config import locations,telescopes,rootserver,runningOnServer,logger
+except Exception as e:
+  print(e)
+  raise(e)
 
 
 def genDiv(telescopeName):
@@ -72,9 +65,18 @@ def genDiv(telescopeName):
   plt.plot(timestamps, temperatures, label='Temperature')
   plt.plot(timestamps, dewpoints, label='Dewpoint')
   if len(probe1temperatures) > 0:
-    plt.plot(timestamps, probe1temperatures, label='Scope Temperature')
+    try:
+      plt.plot(timestamps, probe1temperatures, label='Scope Temperature')
+    except Exception as e:
+      logger.exception('Plot of Scope Temperature failed')
+      pass
+
   if len(probe2temperatures) > 0:
-    plt.plot(timestamps, probe2temperatures, label='GuideScope Temperature')
+    try:
+      plt.plot(timestamps, probe2temperatures, label='GuideScope Temperature')
+    except Exception as e:
+      logger.exception('Plot of Guidescope Temperature failed')
+      pass
   plt.gcf().autofmt_xdate()
   plt.legend()
   if runningOnServer():

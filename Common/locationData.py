@@ -5,12 +5,9 @@ import requests
 import ephem
 import sys
 
-try:
-  from config import locations, telescope
-except:
-  print("locations configuration is missing in config.py")
-  sys.exit(1)
-
+sys.path.append('.')
+sys.path.append('..')
+from Common.config import locations
 
 def getLocationDateTime(location):
   return datetime.now(tz=tz.gettz('UTC')).astimezone(tz.gettz(location['timezone']))
@@ -35,22 +32,28 @@ def getSunData(location, overrideDateTime=None):
   sun.compute(obs)
   sunData['alt'] = int(str(sun.alt).split(':')[0])
 
-  sunData['rise'] = ephem.localtime(obs.next_rising(ephem.Sun())).astimezone(tz.gettz(location['timezone']))
+  sunData['nextrise'] = ephem.localtime(obs.next_rising(ephem.Sun())).astimezone(tz.gettz(location['timezone']))
   sunData['previousrise'] = ephem.localtime(obs.previous_rising(ephem.Sun())).astimezone(tz.gettz(location['timezone']))
-  sunData['set'] = ephem.localtime(obs.previous_setting(ephem.Sun())).astimezone(tz.gettz(location['timezone']))
   sunData['nextset'] = ephem.localtime(obs.next_setting(ephem.Sun())).astimezone(tz.gettz(location['timezone']))
+  sunData['previousset'] = ephem.localtime(obs.previous_setting(ephem.Sun())).astimezone(tz.gettz(location['timezone']))
 
   obs.horizon = '-6'  # -6=civil twilight, -12=nautical, -18=astronomical
-  sunData['twilightrise'] = ephem.localtime(obs.next_rising(ephem.Sun(), use_center=True)).astimezone(tz.gettz(location['timezone']))
-  sunData['twilightset'] = ephem.localtime(obs.previous_setting(ephem.Sun(), use_center=True)).astimezone(tz.gettz(location['timezone']))
+  sunData['nexttwilightrise'] = ephem.localtime(obs.next_rising(ephem.Sun(), use_center=True)).astimezone(tz.gettz(location['timezone']))
+  sunData['previoustwilightrise'] = ephem.localtime(obs.previous_rising(ephem.Sun(), use_center=True)).astimezone(tz.gettz(location['timezone']))
+  sunData['nexttwilightset'] = ephem.localtime(obs.next_setting(ephem.Sun(), use_center=True)).astimezone(tz.gettz(location['timezone']))
+  sunData['previoustwilightset'] = ephem.localtime(obs.previous_setting(ephem.Sun(), use_center=True)).astimezone(tz.gettz(location['timezone']))
 
   obs.horizon = '-12'  # -6=civil twilight, -12=nautical, -18=astronomical
-  sunData['nauticalrise'] = ephem.localtime(obs.next_rising(ephem.Sun(), use_center=True)).astimezone(tz.gettz(location['timezone']))
-  sunData['nauticalset'] = ephem.localtime(obs.previous_setting(ephem.Sun(), use_center=True)).astimezone(tz.gettz(location['timezone']))
+  sunData['nextnauticalrise'] = ephem.localtime(obs.next_rising(ephem.Sun(), use_center=True)).astimezone(tz.gettz(location['timezone']))
+  sunData['previousnauticalrise'] = ephem.localtime(obs.previous_rising(ephem.Sun(), use_center=True)).astimezone(tz.gettz(location['timezone']))
+  sunData['nextnauticalset'] = ephem.localtime(obs.next_setting(ephem.Sun(), use_center=True)).astimezone(tz.gettz(location['timezone']))
+  sunData['previousnauticalset'] = ephem.localtime(obs.previous_setting(ephem.Sun(), use_center=True)).astimezone(tz.gettz(location['timezone']))
 
   obs.horizon = '-18'  # -6=civil twilight, -12=nautical, -18=astronomical
-  sunData['astronomicalrise'] = ephem.localtime(obs.next_rising(ephem.Sun(), use_center=True)).astimezone(tz.gettz(location['timezone']))
-  sunData['astronomicalset'] = ephem.localtime(obs.previous_setting(ephem.Sun(), use_center=True)).astimezone(tz.gettz(location['timezone']))
+  sunData['nextastronomicalrise'] = ephem.localtime(obs.next_rising(ephem.Sun(), use_center=True)).astimezone(tz.gettz(location['timezone']))
+  sunData['previousastronomicalrise'] = ephem.localtime(obs.previous_rising(ephem.Sun(), use_center=True)).astimezone(tz.gettz(location['timezone']))
+  sunData['nextastronomicalset'] = ephem.localtime(obs.next_setting(ephem.Sun(), use_center=True)).astimezone(tz.gettz(location['timezone']))
+  sunData['previousastronomicalset'] = ephem.localtime(obs.previous_setting(ephem.Sun(), use_center=True)).astimezone(tz.gettz(location['timezone']))
 
   return sunData
 
@@ -66,10 +69,10 @@ def getMoonData(location, overrideDateTime=None):
   obs.lon = location['longitude']
   obs.lat = location['latitude']
   obs.elev = location['elevation']
-  moonData['rise'] = ephem.localtime(obs.next_rising(ephem.Moon())).astimezone(tz.gettz(location['timezone']))
+  moonData['nextrise'] = ephem.localtime(obs.next_rising(ephem.Moon())).astimezone(tz.gettz(location['timezone']))
   moonData['previousrise'] = ephem.localtime(obs.previous_rising(ephem.Moon())).astimezone(tz.gettz(location['timezone']))
-  moonData['set'] = ephem.localtime(obs.previous_setting(ephem.Moon())).astimezone(tz.gettz(location['timezone']))
   moonData['nextset'] = ephem.localtime(obs.next_setting(ephem.Moon())).astimezone(tz.gettz(location['timezone']))
+  moonData['previousset'] = ephem.localtime(obs.previous_setting(ephem.Moon())).astimezone(tz.gettz(location['timezone']))
   moon = ephem.Moon()
   moon.compute(obs)
   moonData['phase'] = moon.phase
@@ -80,7 +83,7 @@ def getMoonData(location, overrideDateTime=None):
 
 def getWeatherdata(location):
   try:
-    from config import weatherkit
+    from Common.config import weatherkit
   except:
     print("weatherkit configuration is missing in config.py")
     sys.exit(1)

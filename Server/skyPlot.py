@@ -9,15 +9,13 @@ import matplotlib.dates as mdates
 import datetime
 from dateutil import tz
 from datetime import datetime, timedelta
-from pathlib import Path
-
-import sys
 
 try:
-  from config import locations, telescope
+  from Common.config import locations, telescopes
 except:
   print("locations configuration is missing in config.py")
-  sys.exit(1)
+  print(e)
+  raise(e)
 
 
 def getLocationDateTime(_location):
@@ -123,11 +121,7 @@ def sky_object_plot(_objectra, _objectdec, _location, targetFileName=None):
 
 
 if __name__ == '__main__':
-  objectra = "5h35m17.3s"
-  objectdec = "-5d23m28s"
-  objectra = "18h3m37s"
-  objectdec = "-24d23m12s"
-  #objectra = 4.123055555555555
-  #objectdec = 34.94638888888888
-  location = locations[telescope['location']]
+  objectra = 4.123055555555555
+  objectdec = 34.94638888888888
+  location = locations[telescopes['slt']['location']]
   sky_object_plot(objectra, objectdec, location)

@@ -7,17 +7,30 @@ from Client import imageData
 from pathlib import Path
 from datetime import datetime
 
-try:
-  from config import telescope
-except:
-  print("telescope configuration is missing in config.py")
-  sys.exit(1)
+sys.path.append('.')
+sys.path.append('..')
+from Common.config import telescopes,rootserver,logger
 
-try:
-  from config import rootserver
-except:
-  print("rootserver configuration is missing in config.py")
-  sys.exit(1)
+def uploadLogFile():
+  logfile=None
+  for handler in logger['root']['handlers']:
+    if isinstance(handler, logging.FileHandler):
+      logFile=handler['baseFilename']
+  if logFile is not None:
+    if 'sshuser' in telescope.keys():
+      sshuser = telescope['sshuser']
+    else:
+      sshuser = rootserver['sshuser']
+    c = Connection('slt-observatory.space', user=sshuser, connect_kwargs={'key_filename': telescope['sshkey'], })
+    c.create_session()
+    sftp = c.client.open_sftp()
+    try:
+      sftp.mkdir(f"{telescope['shortname']}-data", mode=0o755)
+    except:
+      pass
+    sftp.close()
+    result = c.put(filePath, remote=f"{telescope['shortname']}-data/")
+    print("Uploaded {0.local} to {0.remote}".format(result))
 
 
 def uploadData(dataFiles, imageFiles, allskyFiles=None):

@@ -163,5 +163,5 @@ cython_debug/
 
 *_bg.png
 *.include
-config.py
+Common/config.py
 Test/schedulerdb.sqlite

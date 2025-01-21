@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import sys
 import json
-import platform
 from yattag import Doc
 from pathlib import Path, PureWindowsPath
 from datetime import datetime,timedelta
@@ -9,13 +8,12 @@ from datetime import datetime,timedelta
 try:
   sys.path.append('.')
   sys.path.append('..')
-  from config import telescopes, rootserver
-except:
-  print("telescopes configuration is missing in config.py")
-  sys.exit(1)
+  from Common.config import telescopes,rootserver,logger,runningOnServer
+except Exception as e:
+  print(e)
+  raise(e)
 
-def runningOnServer():
-  return platform.uname().node == rootserver['nodename']
+import Server.allSkyStatus
 
 
 def genDiv(telescopeName):
@@ -43,26 +41,56 @@ def genDiv(telescopeName):
     ["ERROR", "", -1, "ninaError", ""],
   ]
 
-  hasAllSky=False
-  if 'allskybasedir' in telescopes[telescopeName]:
-    hasAllSky=True
   ninaData = dict()
+  imageData = dict()
   if runningOnServer():
-    with open(Path(f'/home/{rootserver['sshuser']}/{telescopeName}-data/lastImagesStatus.json')) as f:
-      imageData = json.load(f)
+    if Path(f'/home/{rootserver['sshuser']}/{telescopeName}-data/lastImagesStatus.json').exists():
+      with open(Path(f'/home/{rootserver['sshuser']}/{telescopeName}-data/lastImagesStatus.json')) as f:
+        imageData = json.load(f)
     if Path(f'/home/{rootserver['sshuser']}/{telescopeName}-data/ninaStatus.json').exists():
       with open(Path(f'/home/{rootserver['sshuser']}/{telescopeName}-data/ninaStatus.json')) as f:
         ninaData = json.load(f)
-
   else:
-    with open(Path(__file__).parent.parent / f'Test/{telescopeName}-data/lastImagesStatus.json') as f:
-      imageData = json.load(f)
-      if (Path(__file__).parent.parent / f'Test/{telescopeName}-data/ninaStatus.json').exists():
-        with open(Path(__file__).parent.parent / f'Test/{telescopeName}-data/ninaStatus.json') as g:
-          ninaData = json.load(g)
+    if (Path(__file__).parent.parent / f'Test/{telescopeName}-data/lastImagesStatus.json').exists():
+      with open(Path(__file__).parent.parent / f'Test/{telescopeName}-data/lastImagesStatus.json') as f:
+        _imageData = json.load(f)
+    if (Path(__file__).parent.parent / f'Test/{telescopeName}-data/ninaStatus.json').exists():
+      with open(Path(__file__).parent.parent / f'Test/{telescopeName}-data/ninaStatus.json') as f:
+        _ninaData = json.load(f)
 
-  if imageData == []:
+  if _imageData == []:
+    logger.info(f'No image data found for telescope {telescopeName}, early exit...')
     return ""
+
+  for image in _imageData:
+    imageData[datetime.strptime(image['acquireddate'], '%Y-%m-%d %H:%M:%S')] = image
+  imageData=dict(reversed(sorted(imageData.items())))
+  lastImageDate=next(iter(imageData.keys()))
+  if lastImageDate.time().hour < 12:
+    minFirstImageDate=(lastImageDate-timedelta(days=1)).replace(hour=12,minute=0,second=0)
+  else:
+    minFirstImageDate=lastImageDate.replace(hour=12,minute=0,second=0)
+
+  imageData={}
+  ninaData={}
+  allSkyImages={}
+  for image in _imageData:
+    if datetime.strptime(image['acquireddate'], '%Y-%m-%d %H:%M:%S') > minFirstImageDate:
+      imageData[datetime.strptime(image['acquireddate'], '%Y-%m-%d %H:%M:%S')] = image
+  imageData=dict(reversed(sorted(imageData.items())))
+  firstImageDate=next(iter(reversed(imageData.keys())))
+
+  logger.info(f'Count of loaded Nina Datasets: {len(_ninaData)}')
+  for key,ninaItem in _ninaData.items():
+    itemDate=datetime.strptime(key, '%Y-%m-%d %H:%M:%S')
+    if firstImageDate < itemDate and itemDate < lastImageDate:
+      ninaData[itemDate]=ninaItem
+
+  logger.info(f'Count of Nina Datasets in timeframe {firstImageDate} - {lastImageDate} : {len(_ninaData)}')
+
+  allSkyImages=Server.allSkyStatus.getAllSkyFrames(telescopeName,startTime=firstImageDate,endTime=lastImageDate+timedelta(hours=1))
+  hasAllSkyImages=len(allSkyImages) > 0
+
   doc, tag, text = Doc().tagtext()
   with tag('section'):
     doc.attr(id='content', klass='body')
@@ -78,26 +106,23 @@ def genDiv(telescopeName):
                 doc.attr(width='100%')
               else:
                 doc.attr(width='1%')
-          if hasAllSky:
+          if hasAllSkyImages:
             with tag('th'):
               text('AllSky')
               doc.attr(width='1%')
 
-      with tag('tbody', id='tb-tr'):
-        firstPictureDate = datetime.strptime(imageData[0]['acquireddate'], '%Y-%m-%d %H:%M:%S') - timedelta(hours=12)
-        for data in imageData:
-          lastPictureDate = datetime.strptime(data['acquireddate'], '%Y-%m-%d %H:%M:%S')
-          if lastPictureDate < firstPictureDate:
-            break
+      with tag('tbody', id='selector'):
+        for imageDate,data in imageData.items():
           issueList = []
           # Work around issue that with_suffix does create issues when ° is in the filename
           imgStem = str(Path(f'{telescopeName}-images') / PureWindowsPath(data['FileName']).stem)
           realImageName = PureWindowsPath(data['FileName']).name
           imgPath = imgStem+'.jpg'
           imgThumb = imgStem+'.thumb.jpg'
+
           if len(ninaData) > 0:
-            lastNinaDate = datetime.strptime(next(reversed(ninaData)), '%Y-%m-%d %H:%M:%S')
-            while (lastNinaDate > lastPictureDate):
+            lastNinaDate = next(reversed(ninaData))
+            while (lastNinaDate > imageDate):
               key = next(reversed(ninaData))
               for item in ninaLoggingWhiteList:
                 if ninaData[key]['Level'].upper() == item[0]:
@@ -105,22 +130,28 @@ def genDiv(telescopeName):
                     if int(ninaData[key]['Line']) == item[2]:
                       if len(item[4]) > 0:
                         if item[4] in ninaData[key]['Message']:
-                          issueList.append({item[3]: f"{key[-8:]} {ninaData[key]['Source']}({ninaData[key]['Line']}): {ninaData[key]['Message']}"})
+                          issueList.append({item[3]: f"{key.strftime('%H:%M:%S')} {ninaData[key]['Source']}({ninaData[key]['Line']}): {ninaData[key]['Message']}"})
                           break
                       else:
-                        issueList.append({item[3]: f"{key[-8:]} {ninaData[key]['Source']}({ninaData[key]['Line']}): {ninaData[key]['Message']}"})
+                        issueList.append({item[3]: f"{key.strftime('%H:%M:%S')} {ninaData[key]['Source']}({ninaData[key]['Line']}): {ninaData[key]['Message']}"})
                         break
                   else:
                     if item[2] == -1:
-                      issueList.append({item[3]: f"{key[-8:]} {ninaData[key]['Source']}({ninaData[key]['Line']}): {ninaData[key]['Message']}"})
+                      issueList.append({item[3]: f"{key.strftime('%H:%M:%S')} {ninaData[key]['Source']}({ninaData[key]['Line']}): {ninaData[key]['Message']}"})
                       break
 
               ninaData.popitem()
               if len(ninaData) == 0:
                 break
-              lastNinaDate = datetime.strptime(next(reversed(ninaData)), '%Y-%m-%d %H:%M:%S')
+              lastNinaDate = next(reversed(ninaData))
+          if hasAllSkyImages:
+            for key,_allSkyImage in allSkyImages.items():
+              if key >= imageDate:
+                allSkyImage=_allSkyImage
+                allSkyImageThumb = _allSkyImage.with_suffix('.thumb.jpg')
+                break
 
-          imageData = f"""
+          imageProperties = f"""
           Timestamp: {data['acquireddate']} |
           Exposure: {data['ExposureDuration']}s |
           Filter: {data['FilterName']} |
@@ -134,10 +165,6 @@ def genDiv(telescopeName):
           Guiding DEC RMS: {data['GuidingRMSDECArcSec']}"
         """
           with tag('tr'):
-            if runningOnServer():
-              doc.attr(('data-src', f'https://{rootserver['name']}/images/{imgPath}'), ('data-sub-html', f"<h4>{realImageName}</h4><p>{imageData}</p>"))
-            else:
-              doc.attr(('data-src', imgPath), ('data-sub-html', f"<h4>{realImageName}</h4><p>{imageData}</p>"))
             with tag('td'):
               text(f"{data['acquireddate']}")
             with tag('td'):
@@ -170,18 +197,23 @@ def genDiv(telescopeName):
               text(f"{data['GuidingRMSArcSec']}/{data['GuidingRMSRAArcSec']}/{data['GuidingRMSDECArcSec']}")
             with tag('td'):
               if runningOnServer():
-                doc.stag('img', src=f'https://{rootserver['name']}/images/{imgThumb}')
+                doc.attr(('class','sub'),('data-src', f'https://{rootserver['name']}/images/{imgPath}'),
+                         ('data-sub-html', f"<h4>{realImageName}</h4><p>{imagePtoperties}</p>"))
+                doc.stag('img', src=f'https://{rootserver['name']}/images/{imgThumb}',height="50px")
               else:
-                doc.stag('img', src=str(imgThumb))
-            if hasAllSky:
+                doc.attr(('class','sub'),('data-src', imgPath), ('data-sub-html', f"<h4>{realImageName}</h4><p>{imageProperties}</p>"))
+                doc.stag('img', src=str(imgThumb),height="50px")
+            if hasAllSkyImages:
               with tag('td'):
                 if runningOnServer():
-                  doc.stag('img', src=f'https://{rootserver['name']}/images/{imgThumb}')
+                  doc.attr(('class', 'allsky'), ('data-src', f'https://{rootserver['name']}/images/{telescopeName}-images/{allSkyImage.name}'))
+                  doc.stag('img', src=f'https://{rootserver['name']}/images/{telescopeName}-images/{allSkyImageThumb.name}',height="50px")
                 else:
-                  doc.stag('img', src=str(imgThumb))
+                  doc.attr(('class','allsky'),('data-src', str(allSkyImage)))
+                  doc.stag('img', src=str(allSkyImageThumb),height="50px")
 
   if runningOnServer():
-    with open(Path(f'{rootserver['basedir']}/pages/status-{telescopeName}.imageStatus.include'), mode="w") as f:
+    with open(Path(f'{rootserver['basedir']}/pages/status-{telescopeName}.imageStatus.include'), mode='w') as f:
       f.writelines(doc.getvalue())
   else:
     with open(Path(__file__).parent.parent / f'Test/status-{telescopeName}.imageStatus.include', mode='w') as f:
@@ -189,5 +221,5 @@ def genDiv(telescopeName):
   return doc.getvalue()
 
 if __name__ == '__main__':
-  genDiv('cdk14')
+  genDiv('slt')
 

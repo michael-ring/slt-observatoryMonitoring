@@ -1,24 +1,32 @@
 #!/usr/bin/env python3
 
+import sys
+import traceback
 from yattag import Doc
 from pathlib import Path
+
+try:
+  from Common.config import rootserver,logger,runningOnServer
+except Exception as e:
+  print(e)
+  raise(e)
 
 import powerBoxStatus
 import skyAlertStatus
 import roofStatus
 import imageStatus
 import schedulerStatus
-import platform
+import allSkyStatus
 
-try:
-  from config import rootserver
-except:
-  print("rootserver configuration is missing in config.py")
-  sys.exit(1)
+def handle_exception(exc_type, exc_value, exc_traceback):
+  if issubclass(exc_type, KeyboardInterrupt):
+    sys.__excepthook__(exc_type, exc_value, exc_traceback)
+    return
+  logger.critical("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
 
 
-def runningOnServer():
-  return platform.uname().node == rootserver['nodename']
+sys.excepthook = handle_exception
+
 
 doc, tag, text = Doc().tagtext()
 doc.asis("""
@@ -145,9 +153,39 @@ doc.asis("""
 </div>
 """)
 if not runningOnServer():
-  doc.asis(roofStatus.genDiv('cdk14'))
-  doc.asis(schedulerStatus.genDiv('cdk14'))
-  doc.asis(imageStatus.genDiv('cdk14'))
+  try:
+    doc.asis(roofStatus.genDiv('slt'))
+  except Exception as e:
+    logger.exception(e)
+    print(e)
+    pass
+  try:
+    doc.asis(powerBoxStatus.genDiv('slt'))
+  except Exception as e:
+    logger.exception(e)
+    traceback.format_exc()
+    pass
+  try:
+    doc.asis(skyAlertStatus.genDiv('slt'))
+  except Exception as e:
+    logger.exception(e)
+    traceback.format_exc()
+    pass
+  try:
+    allSkyStatus.renderVideo('slt')
+  except Exception as e:
+    logger.exception(e)
+    traceback.format_exc()
+  try:
+    doc.asis(schedulerStatus.genDiv('slt'))
+  except Exception as e:
+    logger.exception(e)
+    traceback.format_exc()
+  try:
+    doc.asis(imageStatus.genDiv('slt'))
+  except Exception as e:
+    logger.exception(e)
+    traceback.format_exc()
 
 #doc.asis(roofStatus.genDiv('vst'))
 #doc.asis(powerBoxStatus.genDiv('vst'))
@@ -176,7 +214,8 @@ doc.asis("""
 <script>
   lightGallery(document.getElementById('tr-td'));
   lightGallery(document.getElementById('tr-td2'));
-  lightGallery(document.getElementById('tb-tr'));
+  lightGallery(document.getElementById('selector'), {selector: '.sub',});
+  lightGallery(document.getElementById('selector'), {selector: '.allsky',});
 </script>
 </article>
 

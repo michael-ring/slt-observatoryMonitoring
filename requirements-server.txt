@@ -3,3 +3,4 @@ pyephem
 python-dateutil
 pillow
 matplotlib
+astropy
