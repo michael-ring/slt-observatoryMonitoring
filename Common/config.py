@@ -41,6 +41,7 @@ if nodeName == config['rootserver']['nodename']:
   telescopes = config['telescopes']
   locations = config['locations']
   rootserver = config['rootserver']
+  weatherkit=config['weatherkit']
   logging.info(f"running on rootserver: {nodeName}")
 else:
   telescope={}
