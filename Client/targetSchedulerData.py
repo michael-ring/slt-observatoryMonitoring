@@ -41,7 +41,8 @@ def getHSTargets():
   WHERE 
       ( p.state = 1 or p.state = 2 )
     AND
-      ( p.name like '%_H' or p.name like '%_S' or p.name like '%_HS' )
+      ( p.name like '%H' or p.name like '%S' or p.name like '%HS' or p.name like '%HSO' )
+       
   ORDER BY
     projectstate asc, projectname asc
   """)
@@ -58,7 +59,9 @@ def getOTargets():
   WHERE 
       ( p.state = 1 or p.state = 2 )
     AND
-      ( p.name like '%_O' )
+      ( p.name like '%O' )
+    AND
+      ( p.name not like '%SHO' )
   ORDER BY
     projectstate asc, projectname asc
   """)
@@ -75,12 +78,39 @@ def getLRGBTargets():
   WHERE 
       ( p.state = 1 or p.state = 2 )
     AND
-      ( p.name like '%_RGB' OR p.name like '%_LRGB' )
+      ( p.name like '%RGB' OR p.name like '%LRGB' )
   ORDER BY
     projectstate asc, projectname asc
   """)
   return result
 
+def getEnabledTargets():
+  result = query("""
+  SELECT
+    p.name as projectname,
+    p.state as projectstate
+  FROM 
+    project p
+  WHERE 
+      ( p.state = 1 )
+  ORDER BY
+    projectname asc
+  """)
+  return result
+
+def getDisabledTargets():
+  result = query("""
+  SELECT
+    p.name as projectname,
+    p.state as projectstate
+  FROM 
+    project p
+  WHERE 
+      ( p.state = 2 )
+  ORDER BY
+    projectname asc
+  """)
+  return result
 
 def enableProject(projectName):
   projectName = projectName.replace("'", "''")
