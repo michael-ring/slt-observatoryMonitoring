@@ -46,10 +46,10 @@ def genDiv(telescopeName):
   if runningOnServer():
     if Path(f'/home/{rootserver['sshuser']}/{telescopeName}-data/lastImagesStatus.json').exists():
       with open(Path(f'/home/{rootserver['sshuser']}/{telescopeName}-data/lastImagesStatus.json')) as f:
-        imageData = json.load(f)
+        _imageData = json.load(f)
     if Path(f'/home/{rootserver['sshuser']}/{telescopeName}-data/ninaStatus.json').exists():
       with open(Path(f'/home/{rootserver['sshuser']}/{telescopeName}-data/ninaStatus.json')) as f:
-        ninaData = json.load(f)
+        _ninaData = json.load(f)
   else:
     if (Path(__file__).parent.parent / f'Test/{telescopeName}-data/lastImagesStatus.json').exists():
       with open(Path(__file__).parent.parent / f'Test/{telescopeName}-data/lastImagesStatus.json') as f:
