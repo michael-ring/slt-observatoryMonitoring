@@ -198,7 +198,7 @@ def genDiv(telescopeName):
             with tag('td'):
               if runningOnServer():
                 doc.attr(('class','sub'),('data-src', f'https://{rootserver['name']}/images/{imgPath}'),
-                         ('data-sub-html', f"<h4>{realImageName}</h4><p>{imagePtoperties}</p>"))
+                         ('data-sub-html', f"<h4>{realImageName}</h4><p>{imageProperties}</p>"))
                 doc.stag('img', src=f'https://{rootserver['name']}/images/{imgThumb}',height="50px")
               else:
                 doc.attr(('class','sub'),('data-src', imgPath), ('data-sub-html', f"<h4>{realImageName}</h4><p>{imageProperties}</p>"))
