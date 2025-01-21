@@ -23,7 +23,10 @@ logger = logging.getLogger(__name__)
 logger.info('Start of logging')
 
 def runningOnServer():
-  return platform.uname().node == rootserver['nodename'] and rootserver['testing'] is not True
+  if 'testing' in rootserver:
+    return platform.uname().node == rootserver['nodename'] and rootserver['testing'] is not True
+  else:
+    return platform.uname().node == rootserver['nodename']
 
 def genTelescopeConfig(telescopeName):
   telescope = config['telescopes'][telescopeName]
