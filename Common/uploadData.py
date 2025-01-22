@@ -14,14 +14,14 @@ sys.path.append('..')
 from Common.config import telescope,rootserver,logger
 
 def uploadLogFile(c):
-  logfile=None
-  for handler in logger['root']['handlers']:
-    if isinstance(handler, logging.FileHandler):
-      logFile=handler['baseFilename']
+  logfile=Path("monitoring.log")
+  #for handler in logger['root']['handlers']:
+  #  if isinstance(handler, logging.FileHandler):
+  #    logFile=handler['baseFilename']
   if logFile is not None:
     logger.info(f"Upload log file: {logFile}")
     c.create_session()
-    result = c.put(filePath, remote=f"{telescope['shortname']}-data/")
+    result = c.put(logfile, remote=f"{telescope['shortname']}-data/")
     print(f"Uploaded {result.local} to {result.remote}")
     logger.info(f"Uploaded {result.local} to {result.remote}")
   else:
