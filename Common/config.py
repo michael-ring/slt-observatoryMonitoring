@@ -87,13 +87,6 @@ else:
     print("rootserver configuration is missing in config.json, please fix!")
     sys.exit(1)
 
-  if 'weatherkit' in config:
-    weatherkit=config['weatherkit']
-  else:
-    logging.error(f"weatherkit token configuration is missing in config.json, weather data will not be available")
-    print("weatherkit token configuration is missing in config.json, please fix if you want to use weather data!")
-    weatherkit={}
-
   if 'idrive' in config:
     idrive=config['idrive']
   else:
