@@ -16,7 +16,7 @@ def generateJson():
 
 
 def getWeatherStatus():
-  logger.info("Searching for Weatherdata in Path(telescope['weatherstatusdir']) / 'weatherdata.txt'")
+  logger.info(f"Searching for Weatherdata in Path(telescope['weatherstatusdir']) / 'weatherdata.txt'")
   weatherDataFile = Path(telescope['weatherstatusdir']) / "weatherdata.txt"
   weatherStatus = {}
   if weatherDataFile.exists():
