@@ -26,7 +26,7 @@ def generateJson(requiredDates=None):
     else:
       for requiredDate in requiredDates:
         requiredDate=requiredDate.replace("-","")
-        logger.info(f"searching for Nina Logfiles {basedir}/{requireddate}*.log")
+        logger.info(f"searching for Nina Logfiles {basedir}/{requiredDate}*.log")
         files = files + list(basedir.glob(f"{requiredDate}*.log"))
       today = requiredDates[0].replace("-","")
       yesterday = requiredDates[1].replace("-", "")
