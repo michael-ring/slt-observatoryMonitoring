@@ -3,20 +3,10 @@ import sys
 import time
 import serial
 import jsonLogHelper
-try:
-  sys.path.append('.')
-  sys.path.append('..')
-  from config import telescope
-except:
-  print("telescope configuration is missing in config.py")
-  sys.exit(1)
 
-try:
-  from config import powerboxes
-  powerbox = powerboxes[telescope['powerbox']]
-except:
-  print("powerbox configuration is missing in config.py")
-  sys.exit(1)
+sys.path.append('.')
+sys.path.append('..')
+from Common.config import logger,powerbox
 
 
 def generateJson():
@@ -30,15 +20,20 @@ def getPowerBoxStatus():
   speed=powerbox['speed']
   powerBoxStatus={}
   try:
+    logger.info(f"Connecting to power box serial {port} {speed}")
+    powerBoxStatus['port']=port
     ser = serial.Serial(port, speed, timeout=1)
     data=ser.readline().decode('utf-8')
     if not data.startswith(powerbox['identifier']):
       data = ser.readline().decode('utf-8')
+    logger.info(f"Initial serial data: {data}")
     data=data.split('A')
   except:
+    logger.exception("Failed to connect to power box")
     return {}
   ser.close()
   if len(data) >= 22:
+    logger.info(f"complete dataset found")
     powerBoxStatus['model']=data[0]
     powerBoxStatus['firmwareversion']=data[1]
     powerBoxStatus['probe1temperature']=data[2]
@@ -63,6 +58,8 @@ def getPowerBoxStatus():
     powerBoxStatus['dc89status']=data[20]
     powerBoxStatus['dc10']=data[21]
     powerBoxStatus['dc34voltage']=int(data[22])/10
+  else:
+    logger.error("incomplete dataset found")
   return powerBoxStatus
 
 
@@ -70,15 +67,19 @@ def initialize():
   port=powerbox['port']
   speed=powerbox['speed']
   try:
+    logger.info(f"Connecting to power box serial {port} {speed}")
     ser = serial.Serial(port, speed, timeout=1)
     data=ser.readline().decode('utf-8')
     print(data)
     if not data.startswith(powerbox['identifier']):
       data = ser.readline().decode('utf-8')
+    logger.info(f"Initial serial data: {data}")
   except:
     print('Exception, is Serial Port connected?')
+    logger.exception("Failed to connect to power box")
     return {}
   for code in powerbox['init']:
+    logger.info(f"Sending code {code}")
     print(f"Init Code: {code}")
     ser.write((str(code)+'\r\n').encode())
     time.sleep(1)

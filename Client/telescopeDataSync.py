@@ -2,14 +2,11 @@
 import sys
 from rclone_python import rclone
 from pathlib import Path
-try:
-  sys.path.append('..')
-  from config import telescope
-except:
-  print("telescope configuration is missing in config.py")
-  sys.exit(1)
 
-from config import idrive
+sys.path.append('.')
+sys.path.append('..')
+from Common.config import logger,telescope
+from Common.config import idrive
 
 
 def sync():

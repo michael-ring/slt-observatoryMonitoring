@@ -5,14 +5,9 @@ from pathlib import Path
 import hashlib
 import re
 
-try:
-  sys.path.append('.')
-  sys.path.append('..')
-  from config import telescope
-except:
-  print("telescope configuration is missing in config.py")
-  sys.exit(1)
-
+sys.path.append('.')
+sys.path.append('..')
+from Common.config import logger,telescope
 from Client import imageData
 
 activeIntKeys = ('DetectedStars', 'Gain')
@@ -37,8 +32,9 @@ def addMetaData(data):
       if metaDataPath == Path('/') or (metaDataPath == Path('c:/')):
         break
     if metaDataFilePath is None:
+      logger.error(f"MetaData file not found based on {Path(data[fileinfo]['FileName']).parent}")
       print(f"MetaData file not found based on {Path(data[fileinfo]['FileName']).parent}")
-      sys.exit(1)
+      raise Exception("MetaData file not found based on {Path(data[fileinfo]['FileName']).parent}")
     metaDataFilePathHash = hashlib.md5(str(metaDataFilePath).encode()).hexdigest()
     if metaDataFilePathHash not in metadataRecords:
       metadataRecords[metaDataFilePathHash] = json.load(metaDataFilePath.open(encoding="utf-8"))

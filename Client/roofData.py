@@ -3,13 +3,9 @@ import sys
 from pathlib import Path
 import jsonLogHelper
 
-try:
-  sys.path.append('.')
-  sys.path.append('..')
-  from config import telescope
-except:
-  print("telescope configuration is missing in config.py")
-  sys.exit(1)
+sys.path.append('.')
+sys.path.append('..')
+from Common.config import logger,telescope
 
 
 def generateJson():
@@ -35,6 +31,9 @@ def getRoofStatus():
       roofStatus = "closed"
     if content.find("OPEN") != -1:
       roofStatus = "open"
+  else:
+    logger.error("RoofStatus file {Path(telescope['roofstatusdir']) / 'RoofStatusFile.txt'} not found")
+  logger.info("RoofStatus: " + roofStatus)
   return roofStatus
 
 

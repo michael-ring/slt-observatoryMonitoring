@@ -2,14 +2,11 @@
 import sys
 from pathlib import Path
 from dateutil.parser import parse
+
+sys.path.append('.')
+sys.path.append('..')
+from Common.config import logger,telescope
 import jsonLogHelper
-try:
-  sys.path.append('.')
-  sys.path.append('..')
-  from config import telescope
-except:
-  print("telescope configuration is missing in config.py")
-  sys.exit(1)
 
 
 def generateJson():
@@ -19,6 +16,7 @@ def generateJson():
 
 
 def getWeatherStatus():
+  logger.info("Searching for Weatherdata in Path(telescope['weatherstatusdir']) / 'weatherdata.txt'")
   weatherDataFile = Path(telescope['weatherstatusdir']) / "weatherdata.txt"
   weatherStatus = {}
   if weatherDataFile.exists():
@@ -46,6 +44,8 @@ def getWeatherStatus():
     weatherStatus['windcondition'] = int(content[16])
     weatherStatus['raincondition'] = int(content[17])
     weatherStatus['darknesscondition'] = int(content[18])
+  else:
+    logger.error("WeatherStatus file not found")
   return weatherStatus
 
 

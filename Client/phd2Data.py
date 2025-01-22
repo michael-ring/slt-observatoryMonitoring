@@ -2,12 +2,9 @@ import sys
 import datetime
 from pathlib import Path
 
-try:
-  sys.path.append('..')
-  from config import telescope
-except:
-  print("telescope configuration is missing in config.py")
-  sys.exit(1)
+sys.path.append('.')
+sys.path.append('..')
+from Common.config import logger,telescope
 
 
 def generateJson(requiredDates=None):
@@ -18,6 +15,7 @@ def generateJson(requiredDates=None):
       today = datetime.date.today().strftime("%Y-%m-%d")
       if "testing" in telescope and telescope['testing'] is True:
         today = "2024-08-29"
+      logger.info(f"Searching for PHD2 Logs in {basedir}")
       files = list(basedir.glob(f"PHD2_GuideLog_{today}*.txt"))
       yesterday = (datetime.date.today() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
       if "testing" in telescope and telescope['testing'] is True:
@@ -27,7 +25,9 @@ def generateJson(requiredDates=None):
       for requiredDate in requiredDates:
         files = files + list(basedir.glob(f"PHD2_GuideLog_{requiredDate}*.txt"))
     if files == []:
+      logger.error(f"No PHD2 Logs found in {basedir}")
       return {}
+    logger.info(f"Found {len(files)} PHD2 Logs in {basedir}")
     files.sort(reverse=False)
     calibration = {}
     guiding = {}
@@ -38,12 +38,14 @@ def generateJson(requiredDates=None):
         while line := file.readline():
           line = line.rstrip()
           if line.startswith("Calibration Begins at "):
+            logger.info(f"Found calibration start")
             calibrationStart = line[len("Calibration Begins at "):]
             inCalibration = True
             calibration[calibrationStart] = {'steps': []}
             continue
           if line.startswith("Guiding Begins at "):
             guidingStart = line[len("Guiding Begins at "):]
+            logger.info(f"Found guiding start")
             inGuiding = True
             settling = 0
             dithering = 0
