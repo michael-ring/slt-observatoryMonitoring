@@ -9,7 +9,7 @@ from datetime import datetime
 
 sys.path.append('.')
 sys.path.append('..')
-from Common.config import telescopes,rootserver,logger
+from Common.config import telescope,rootserver,logger
 
 def uploadLogFile():
   logfile=None
