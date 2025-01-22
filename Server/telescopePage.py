@@ -25,7 +25,7 @@ def handle_exception(exc_type, exc_value, exc_traceback):
     sys.__excepthook__(exc_type, exc_value, exc_traceback)
     return
   logger.critical("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
-
+  print(sys.exc_info())
 
 sys.excepthook = handle_exception
 
