@@ -50,8 +50,8 @@ def uploadData(dataFiles, imageFiles, allskyFiles=None):
 
   for dataFile in dataFiles:
     result = c.put(dataFile, remote=f"{telescope['shortname']}-data/")
-    print("Uploaded {0.local} to {0.remote}".format(result))
-    logger.info(f"Uploaded {0.local} to {0.remote}")
+    print(f"Uploaded {result.local} to {result.remote}")
+    logger.info(f"Uploaded {result.local} to {result.remote}")
 
   # Take the latest image and always upload it as subimage.jpg
   if len(imageFiles) > 0:
@@ -101,3 +101,4 @@ def uploadData(dataFiles, imageFiles, allskyFiles=None):
     print(f"Uploaded {result.local} to {result.remote}")
     logger.info(f"Uploaded {result.local} to {result.remote}")
 
+  uploadLogFile(c)
