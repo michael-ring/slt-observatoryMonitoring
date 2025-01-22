@@ -53,7 +53,7 @@ def renderVideo(telescopeName):
       except:
         logger.exception(f"Could not load/render file {img}, ignoring")
         pass
-    frames[0].save(outputMovie, "webp", save_all=True, append_images=frames[1:],duration=10)
+    frames[0].save(outputMovie, "webp", save_all=True, append_images=frames[1:],duration=15)
     logger.info(f"Rendered allsky video {outputMovie.name}")
     frames=[]
     for key,img in activeFiles.items():

@@ -145,6 +145,8 @@ def genDiv(telescopeName):
                 break
               lastNinaDate = next(reversed(ninaData))
           if hasAllSkyImages:
+            allSkyImage=Path("none.jpg")
+            allSkyImageThumb=Path("none.thumb.jpg")
             for key,_allSkyImage in allSkyImages.items():
               if key >= imageDate:
                 allSkyImage=_allSkyImage
@@ -206,8 +208,8 @@ def genDiv(telescopeName):
             if hasAllSkyImages:
               with tag('td'):
                 if runningOnServer():
-                  doc.attr(('class', 'allsky'), ('data-src', f'https://{rootserver['name']}/images/{telescopeName}-images/{allSkyImage.name}'))
-                  doc.stag('img', src=f'https://{rootserver['name']}/images/{telescopeName}-images/{allSkyImageThumb.name}',height="50px")
+                  doc.attr(('class', 'allsky'), ('data-src', f'https://{rootserver['name']}/images/{telescopeName}-images/{Path(allSkyImage).name}'))
+                  doc.stag('img', src=f'https://{rootserver['name']}/images/{telescopeName}-images/{Path(allSkyImageThumb).name}',height="50px")
                 else:
                   doc.attr(('class','allsky'),('data-src', str(allSkyImage)))
                   doc.stag('img', src=str(allSkyImageThumb),height="50px")
