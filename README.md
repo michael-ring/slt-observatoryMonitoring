@@ -1,6 +1,6 @@
 This project allows monitoring of a remote server on a web page.
 Client Components collect the data and upload it to the server running the visualization.
-Configuration is done in config.py on top level of the directory structure, please check the example config
+Configuration is done in config.json on top level of the directory structure, please check the example config
 
 To install, first make sure that you have a revent version of python installed on your remote imaging PC, I currently use Python 3.12.
 
