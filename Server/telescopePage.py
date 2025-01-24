@@ -225,9 +225,30 @@ if runningOnServer():
       logger.exception(e)
       traceback.format_exc()
 
-  #doc.asis(roofStatus.genDiv('cdk14'))
-  #doc.asis(schedulerStatus.genDiv('cdk14'))
-  #doc.asis(imageStatus.genDiv('cdk14'))
+  try:
+    logger.info(f'running script roofStatus for cdk14')
+    doc.asis(roofStatus.genDiv('cdk14'))
+  except Exception as e:
+    logger.exception(e)
+    traceback.format_exc()
+  try:
+    logger.info(f'running script schedulerStatus for cdk14')
+    doc.asis(schedulerStatus.genDiv('cdk14'))
+  except Exception as e:
+    logger.exception(e)
+    traceback.format_exc()
+  try:
+    logger.info(f'running script imageStatus for cdk14')
+    doc.asis(imageStatus.genDiv('cdk14'))
+  except Exception as e:
+    logger.exception(e)
+    traceback.format_exc()
+  try:
+    logger.info(f'running script allSkyStatus for cdk14')
+    allSkyStatus.renderVideo('cdk14')
+  except Exception as e:
+    logger.exception(e)
+    traceback.format_exc()
 
 doc.asis("""
 <script>
