@@ -9,13 +9,9 @@ from datetime import timedelta
 from dateutil import tz
 from dateutil import parser
 
-try:
-  sys.path.append('.')
-  sys.path.append('..')
-  from Common.config import locations, telescopes, rootserver, runningOnServer
-except:
-  print(e)
-  raise(e)
+sys.path.append('.')
+sys.path.append('..')
+from Common.config import locations, telescopes, rootserver, runningOnServer
 
 
 def genDiv(telescopeName):

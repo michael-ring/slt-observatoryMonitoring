@@ -5,14 +5,9 @@ from yattag import Doc
 from pathlib import Path, PureWindowsPath
 from datetime import datetime,timedelta
 
-try:
-  sys.path.append('.')
-  sys.path.append('..')
-  from Common.config import telescopes,rootserver,logger,runningOnServer
-except Exception as e:
-  print(e)
-  raise(e)
-
+sys.path.append('.')
+sys.path.append('..')
+from Common.config import telescopes,rootserver,logger,runningOnServer
 import Server.allSkyStatus
 
 

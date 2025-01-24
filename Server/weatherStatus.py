@@ -7,14 +7,9 @@ import shutil
 import subprocess
 import sys
 
-try:
-  sys.path.append('..')
-  sys.path.append('.')
-  from Common.config import rootserver,runningOnServer
-except Exception as e:
-  print(e)
-  raise(e)
-
+sys.path.append('..')
+sys.path.append('.')
+from Common.config import rootserver,runningOnServer
 from Common import locationData
 
 

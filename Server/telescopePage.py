@@ -5,13 +5,9 @@ import traceback
 from yattag import Doc
 from pathlib import Path
 
-try:
-  sys.path.append('.')
-  sys.path.append('..')
-  from Common.config import locations,telescopes,rootserver,runningOnServer,logger
-except Exception as e:
-  print(e)
-  raise(e)
+sys.path.append('.')
+sys.path.append('..')
+from Common.config import locations,telescopes,rootserver,runningOnServer,logger
 
 import powerBoxStatus
 import skyAlertStatus
@@ -20,14 +16,6 @@ import imageStatus
 import schedulerStatus
 import allSkyStatus
 
-def handle_exception(exc_type, exc_value, exc_traceback):
-  if issubclass(exc_type, KeyboardInterrupt):
-    sys.__excepthook__(exc_type, exc_value, exc_traceback)
-    return
-  logger.critical("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
-  print(sys.exc_info())
-
-sys.excepthook = handle_exception
 
 
 doc, tag, text = Doc().tagtext()

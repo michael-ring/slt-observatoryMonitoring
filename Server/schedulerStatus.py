@@ -4,13 +4,9 @@ from yattag import Doc
 from pathlib import Path
 import sys
 
-try:
-  sys.path.append('.')
-  sys.path.append('..')
-  from Common.config import locations, telescopes, rootserver,runningOnServer,logger
-except:
-  print(e)
-  raise(e)
+sys.path.append('.')
+sys.path.append('..')
+from Common.config import locations, telescopes, rootserver,runningOnServer,logger
 
 import skyPlot
 

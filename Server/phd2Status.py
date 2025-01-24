@@ -1,10 +1,17 @@
 #!/usr/bin/env python3
 from PIL import Image
 from PIL import ImageDraw
+import sys
 import json
+from pathlib import Path
+
+sys.path.append('.')
+sys.path.append('..')
+from Common.config import rootserver,runningOnServer,logger
 
 
 def plotCalibration(calibration):
+  logger.info("Plotting Calibration Data for phd2")
   Direction = 0
   dx = 2
   dy = 3
@@ -34,8 +41,14 @@ def plotCalibration(calibration):
     im.show()
 
 
-def genDiv():
-  phd2Data = json.load(open('../Temp/phdStatus.json'))
+def genDiv(telescopeName):
+  if runningOnServer():
+    with open(Path(f'/home/{rootserver['sshuser']}/{telescopeName}-data/phd2Status.json')) as f:
+      phd2Data = json.load(f)
+  else:
+    with open(Path(__file__).parent.parent / f'Test/{telescopeName}-data/phd2Status.json') as f:
+      phd2Data = json.load(f)
+
   if phd2Data == []:
     return ""
   plotCalibration(phd2Data['calibration'])
@@ -43,4 +56,4 @@ def genDiv():
 
 
 if __name__ == '__main__':
-  genDiv()
+  genDiv('slt')

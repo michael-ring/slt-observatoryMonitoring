@@ -4,14 +4,9 @@ import datetime
 import PIL.Image
 from pathlib import Path
 
-try:
-  sys.path.append('.')
-  sys.path.append('..')
-  from Common.config import logger,telescopes, locations, rootserver,runningOnServer
-except Exception as e:
-  print(e)
-  raise(e)
-
+sys.path.append('.')
+sys.path.append('..')
+from Common.config import logger,telescopes, locations, rootserver,runningOnServer
 from Common import locationData
 
 def getAllSkyFrames(telescopeName,overrideDateTime=None,startTime=None,endTime=None):

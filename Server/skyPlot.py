@@ -10,12 +10,9 @@ import datetime
 from dateutil import tz
 from datetime import datetime, timedelta
 
-try:
-  from Common.config import locations, telescopes
-except:
-  print("locations configuration is missing in config.py")
-  print(e)
-  raise(e)
+sys.path.append('.')
+sys.path.append('..')
+from Common.config import locations, telescopes
 
 
 def getLocationDateTime(_location):

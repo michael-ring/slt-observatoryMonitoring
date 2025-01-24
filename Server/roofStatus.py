@@ -5,14 +5,9 @@ import platform
 from yattag import Doc
 from pathlib import Path
 
-try:
-  sys.path.append('.')
-  sys.path.append('..')
-  from Common.config import telescopes, rootserver,runningOnServer
-except:
-  print("telescopes configuration is missing in config.py")
-  print(e)
-  raise(e)
+sys.path.append('.')
+sys.path.append('..')
+from Common.config import telescopes, rootserver,runningOnServer
 
 
 def genDiv(telescopeName):

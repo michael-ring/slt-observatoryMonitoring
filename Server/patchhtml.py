@@ -2,14 +2,9 @@
 from pathlib import Path
 import sys
 
-try:
-  sys.path.append('.')
-  sys.path.append('..')
-  from Common.config import rootserver,runningOnServer
-except:
-  print("rootserver configuration is missing in config.py")
-  print(e)
-  raise(e)
+sys.path.append('.')
+sys.path.append('..')
+from Common.config import rootserver,runningOnServer
 
 
 if runningOnServer():
