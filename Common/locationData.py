@@ -98,7 +98,7 @@ def getWeatherdata(location):
   else:
     start_utc = (datetime.combine(locationDateTime, time(hour=12, minute=0, second=0, tzinfo=locationDateTime.tzinfo)) - timedelta(hours=-24)).astimezone(tz.gettz('UTC')).strftime("%Y-%m-%dT%H:%M:%SZ")
   url = f"https://weatherkit.apple.com/api/v1/weather/{location['language']}/{location['latitude']}/{location['longitude']}?dataSets={datasets}&countryCode={location['country']}&timezone={location['timezone']}&hourlyStart={start_utc}"
-  response = requests.get(url, headers={'Authorization': f'Bearer {weatherkit['token']}'})
+  response = requests.get(url, headers={'Authorization': f"Bearer {weatherkit['token']}"})
   weatherdata = response.json()
   weatherdata['currentWeather']['asOf'] = datetime.strptime(weatherdata['currentWeather']['asOf'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=tz.gettz('UTC')).astimezone(tz.gettz(location['timezone']))
 

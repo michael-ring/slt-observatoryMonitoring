@@ -15,7 +15,7 @@ def findMostRecentFitsFiles(count=200):
   fileset = dict()
   returnset=[]
   basedir = Path(telescope['imagebasedir'])
-  logger.info(f'Searching for fits files in {telescope['imagebasedir']}')
+  logger.info(f"Searching for fits files in {telescope['imagebasedir']}")
   files = basedir.glob("????-??-??/**/*.fits")
   for file in files:
     fileDateRegex = re.compile(r"\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}")
