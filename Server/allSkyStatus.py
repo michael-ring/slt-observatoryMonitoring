@@ -53,7 +53,7 @@ def renderVideo(telescopeName):
     frames=[]
     for key,img in activeFiles.items():
       try:
-        frames.append(PIL.Image.open(img).resize((360,int(360*imgRatio))))
+        frames.append(PIL.Image.open(img).resize((500,int(500*imgRatio))))
       except:
         logger.exception(f"Could not load/render file {img}, ignoring")
         pass
