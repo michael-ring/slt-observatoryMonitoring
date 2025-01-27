@@ -38,7 +38,7 @@ def renderVideo(telescopeName):
   if len(activeFiles)>1:
     firstImg=Path(next(iter(activeFiles.values())))
     imgSize=PIL.Image.open(firstImg).size
-    imgRatio=imgSize[0]/imgSize[1]
+    imgRatio=imgSize[1]/imgSize[0]
     outputMovie=firstImg.with_name('allsky.webp')
     outputThumbMovie=firstImg.with_name('allsky-thumb.webp')
     frames=[]
