@@ -42,14 +42,17 @@ def genDiv(telescopeName):
   for dataset in powerBoxData:
     timestamp = next(iter(dataset.keys()))
     timestamps.append(parser.parse(timestamp).astimezone(tz.gettz(localtz)))
-    temperatures.append(float(dataset[timestamp]['temperature']))
-    dewpoints.append(float(dataset[timestamp]['dewpoint']))
-    if dataset[timestamp]['probe1temperature'] != "-127.00":
-      probe1temperatures.append(float(dataset[timestamp]['probe1temperature']))
-    if dataset[timestamp]['probe2temperature'] != "-127.00":
-      probe2temperatures.append(float(dataset[timestamp]['probe2temperature']))
-    #probe3temperatures.append(float(dataset[timestamp]['probe3temperature']))
-  #minutes = mdates.drange(start_time, start_time + timedelta(days=1), timedelta(minutes=10))
+    try:
+      temperatures.append(float(dataset[timestamp]['temperature']))
+      dewpoints.append(float(dataset[timestamp]['dewpoint']))
+      if dataset[timestamp]['probe1temperature'] != "-127.00":
+        probe1temperatures.append(float(dataset[timestamp]['probe1temperature']))
+      if dataset[timestamp]['probe2temperature'] != "-127.00":
+        probe2temperatures.append(float(dataset[timestamp]['probe2temperature']))
+      #probe3temperatures.append(float(dataset[timestamp]['probe3temperature']))
+    except:
+      logger.exception()
+
   px = 1 / plt.rcParams['figure.dpi']
   plt.subplots(figsize=(width * px, height * px))
 
