@@ -51,6 +51,7 @@ def genDiv(telescopeName):
         probe2temperatures.append(float(dataset[timestamp]['probe2temperature']))
       #probe3temperatures.append(float(dataset[timestamp]['probe3temperature']))
     except Exception as e:
+      logger.error(f"dataset is {dataset}")
       logger.exception("powerboxdata incomplete")
 
   px = 1 / plt.rcParams['figure.dpi']
