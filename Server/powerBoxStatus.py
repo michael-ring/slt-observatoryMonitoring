@@ -50,8 +50,8 @@ def genDiv(telescopeName):
       if dataset[timestamp]['probe2temperature'] != "-127.00":
         probe2temperatures.append(float(dataset[timestamp]['probe2temperature']))
       #probe3temperatures.append(float(dataset[timestamp]['probe3temperature']))
-    except:
-      logger.exception()
+    except Exception as e:
+      logger.exception("powerboxdata incomplete")
 
   px = 1 / plt.rcParams['figure.dpi']
   plt.subplots(figsize=(width * px, height * px))
