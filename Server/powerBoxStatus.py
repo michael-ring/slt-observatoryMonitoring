@@ -40,9 +40,9 @@ def genDiv(telescopeName):
   #probe3temperatures = []
 
   for dataset in powerBoxData:
-    if 'temperature' not in dataset:
-      continue
     timestamp = next(iter(dataset.keys()))
+    if 'temperature' not in dataset[timestamp]:
+      continue
     timestamps.append(parser.parse(timestamp).astimezone(tz.gettz(localtz)))
     try:
       temperatures.append(float(dataset[timestamp]['temperature']))
