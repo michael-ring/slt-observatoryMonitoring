@@ -10,7 +10,7 @@ loggingFile=Path(__file__).parent.parent / "monitoring.log"
 
 logger = logging.getLogger(__name__)
 #logHandler = handlers.TimedRotatingFileHandler(loggingFile, atTime=datetime.time.fromisoformat("12:00:00"), when='D',backupCount=3,encoding="utf-8")
-logHandler = handlers.RotatingFileHandler(loggingFile, maxBytes=5sl000000,backupCount=3,encoding="utf-8")
+logHandler = handlers.RotatingFileHandler(loggingFile, maxBytes=5000000,backupCount=3,encoding="utf-8")
 formatter = logging.Formatter("%(asctime)s [%(levelname)s] [%(filename)s:%(lineno)d] %(message)s")
 logHandler.setFormatter(formatter)
 logHandler.setLevel(logging.INFO)
