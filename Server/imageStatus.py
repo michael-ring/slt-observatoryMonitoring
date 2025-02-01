@@ -109,6 +109,8 @@ def genDiv(telescopeName):
       with tag('tbody', id='selector'):
         for imageDate,data in imageData.items():
           issueList = []
+          if 'RotatorPosition' not in data:
+            data['RotatorPosition'] = 'Unknown'
           # Work around issue that with_suffix does create issues when ° is in the filename
           imgStem = str(Path(f'{telescopeName}-images') / PureWindowsPath(data['FileName']).stem)
           realImageName = PureWindowsPath(data['FileName']).name
