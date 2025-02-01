@@ -110,11 +110,10 @@ def genDiv(telescopeName):
       with tag('tbody', id='selector'):
         for imageDate,data in imageData.items():
           issueList = []
-          logging.info(f"working on image {data['FileName']}")
           if 'RotatorPosition' not in data:
             data['RotatorPosition'] = 'Unknown'
           if 'ADUMedian' not in data:
-            logging.info("Incomplete Metadata, ignoring image")
+            logging.info(f"Incomplete Metadata, ignoring image {data['FileName']}")
             continue
           # Work around issue that with_suffix does create issues when ° is in the filename
           imgStem = str(Path(f'{telescopeName}-images') / PureWindowsPath(data['FileName']).stem)
