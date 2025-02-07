@@ -9,6 +9,14 @@
       "bucket": "slt"
     }
   },
+  "discord": {
+    "vst": {
+      "webhook": "put your webhook url here"
+    },
+    "slt": {
+      "webhook": "put your webhook url here"
+    }
+  },
   "rootserver": {
     "name": "slt-observatory.space",
     "basedir": "/var/www/slt-observatory.space/",
@@ -96,23 +104,21 @@
       "roofstatusdir": "//74.84.11.58/sfro-customer/roof/building-5/",
       "weatherstatusdir": "//74.84.11.58/sfro-customer/weather/",
       "powerbox": "WBProV3-vst",
-      "powerboxstatus": "COM7:19200",
-      "sshkey": "c:/Users/Michael Ring/id_rsa",
-      "nodename": "nina-askar"
+      "sshkey": "$HOME/.ssh/id_rsa",
+      "nodename": "Put your windows computer name here"
     },
     "slt": {
-      "testing": true,
-      "fullname": "SLT Telescope Test",
+      "fullname": "SLT Telescope",
       "location": "Starfront Observatory",
       "imagebasedir": "$HOME/devel/slt-observatoryMonitoring/Test/",
       "allskybasedir": "$HOME/devel/slt-observatoryMonitoring/Test/AllSky/",
       "phdlogbasedir": "$HOME/devel/slt-observatoryMonitoring/Test/PHD2/",
       "ninalogbasedir": "$HOME/devel/slt-observatoryMonitoring/Test/Nina/",
       "aflogsbasedir": "$HOME/devel/slt-observatoryMonitoring/Test/AutoFocus/",
-      "statusfiles": "$HOME/devel/slt-observatoryMonitoring/",
       "schedulerdb": "$HOME/devel/slt-observatoryMonitoring/schedulerdb.sqlite",
+      "statusfiles": "$HOME/devel/slt-observatoryMonitoring/",
       "sshkey": "$HOME/.ssh/id_rsa",
-      "nodename": "MacBookPro14.local"
+      "nodename": "Put your windows computer name here"
     }
   },
   "locations": {

@@ -7,3 +7,4 @@ fits2image
 rclone_python
 pyserial
 astropy
+discord

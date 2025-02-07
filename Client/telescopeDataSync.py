@@ -7,9 +7,11 @@ sys.path.append('.')
 sys.path.append('..')
 from Common.config import logger,telescope
 from Common.config import idrive
+import discordHelper
 
 
 def sync():
+  discordHelper.sendDiscordMessage("Starting Sync to Cloud")
   directories = Path(telescope['imagebasedir']).glob("????-??-??")
   for directory in directories:
     if directory.is_dir():
@@ -21,6 +23,7 @@ def sync():
         rcloneUploadDir = idrive[telescope['shortname']]['bucket']+'/'+targetName+'/'+targetDate
         print(f"Syncing {targetName} to {rcloneUploadDir}")
         rclone.copy(str(directory / targetName), rcloneUser+":/"+rcloneUploadDir)
+  discordHelper.sendDiscordMessage("Sync to Cloud done")
 
 
 if __name__ == '__main__':

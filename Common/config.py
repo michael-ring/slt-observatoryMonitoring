@@ -118,3 +118,13 @@ else:
     if 'powerbox' in telescope:
       logging.error(f"powerbox is defined for telescope {telescope['shortname']} but no powerboxes found")
       raise SystemExit(1)
+
+  if 'discord' in config:
+    if telescope['shortname'] in config['discord']:
+      discordWebHook=config['discord'][telescope['shortname']]['webhook']
+    else:
+      logging.warning(f"discord configuration for telescope['shortname'] is missing in config.json, sending messages to discord will not be available")
+      discordWebHook = None
+  else:
+    logging.warning("discord configuration for telescope['shortname'] is missing in config.json, sending messages to discord will not be available")
+    discordWebHook = None
