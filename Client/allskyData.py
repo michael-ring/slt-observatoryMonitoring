@@ -63,7 +63,7 @@ def findAllSkyFiles(requiredDates=None):
   files.sort(key=os.path.getctime)
   for file in files:
     timestamp=datetime.fromtimestamp(file.stat().st_ctime)
-    if (timestamp - lastTimestamp).total_seconds() >=600.0:
+    if (timestamp - lastTimestamp).total_seconds() >=300.0:
       lastTimestamp = timestamp
       result.append(file)
   logger.info(f"Found {len(result)} AllSky Files")

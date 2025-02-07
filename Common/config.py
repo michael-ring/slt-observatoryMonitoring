@@ -9,11 +9,12 @@ import logging.handlers as handlers
 loggingFile=Path(__file__).parent.parent / "monitoring.log"
 
 logger = logging.getLogger(__name__)
-logHandler = handlers.TimedRotatingFileHandler(loggingFile, atTime=datetime.time.fromisoformat("12:00:00"), when='D',backupCount=3,encoding="utf-8")
+#logHandler = handlers.TimedRotatingFileHandler(loggingFile, atTime=datetime.time.fromisoformat("12:00:00"), when='D',backupCount=3,encoding="utf-8")
+logHandler = handlers.RotatingFileHandler(loggingFile, maxBytes=5000000,backupCount=3,encoding="utf-8")
 formatter = logging.Formatter("%(asctime)s [%(levelname)s] [%(filename)s:%(lineno)d] %(message)s")
 logHandler.setFormatter(formatter)
-logHandler.setLevel(logging.DEBUG)
-logging.basicConfig(handlers=[logHandler],level=logging.DEBUG)
+logHandler.setLevel(logging.INFO)
+logging.basicConfig(handlers=[logHandler],level=logging.INFO)
 console_handler = logging.StreamHandler()
 console_handler.setFormatter(formatter)
 console_handler.setLevel(logging.ERROR)

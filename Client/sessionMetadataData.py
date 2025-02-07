@@ -67,15 +67,16 @@ def targetStatus():
   result=[]
   tempresult={}
   for item in data:
-    fitsHeader = imageData.extractFitsHeaders(item['FileName'])
-    if fitsHeader.get('IMAGETYP') == 'LIGHT':
-      if 'READOUTM' in fitsHeader:
-        key = f"{fitsHeader['OBJECT']}-{fitsHeader['EXPOSURE']}-{fitsHeader['FILTER']}-{fitsHeader['GAIN']}-{fitsHeader['READOUTM']}"
-      else:
-        key = f"{fitsHeader['OBJECT']}-{fitsHeader['EXPOSURE']}-{fitsHeader['FILTER']}-{fitsHeader['GAIN']}"
+    try:
+      fitsHeader = imageData.extractFitsHeaders(item['FileName'])
+      if fitsHeader.get('IMAGETYP') == 'LIGHT':
+        if 'READOUTM' in fitsHeader:
+          key = f"{fitsHeader['OBJECT']}-{fitsHeader['EXPOSURE']}-{fitsHeader['FILTER']}-{fitsHeader['GAIN']}-{fitsHeader['READOUTM']}"
+        else:
+          key = f"{fitsHeader['OBJECT']}-{fitsHeader['EXPOSURE']}-{fitsHeader['FILTER']}-{fitsHeader['GAIN']}"
 
-      if key not in tempresult:
-        tempresult[key]={
+        if key not in tempresult:
+          tempresult[key]={
                      'desired': -1,
                      'acquired': 0,
                      'targetname': fitsHeader['OBJECT'],
@@ -93,12 +94,14 @@ def targetStatus():
                      'exposure': fitsHeader['EXPOSURE'],
                      'filtername': fitsHeader['FILTER'],
                      }
-      if 'READOUTM' in fitsHeader:
-        tempresult[key]['readoutmode'] = fitsHeader['READOUTM']
-      else:
-        tempresult[key]['readoutmode'] = None
+        if 'READOUTM' in fitsHeader:
+          tempresult[key]['readoutmode'] = fitsHeader['READOUTM']
+        else:
+          tempresult[key]['readoutmode'] = None
 
-      tempresult[key]['acquired'] += 1
+        tempresult[key]['acquired'] += 1
+    except:
+      logger.exception(f"Failed to extract fits data from {item['FileName']}")
   for item in tempresult:
     result.append(tempresult[item])
   return result

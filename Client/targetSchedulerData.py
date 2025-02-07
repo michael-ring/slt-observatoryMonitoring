@@ -10,14 +10,14 @@ from Common.config import logger,telescope
 
 
 def query(queryString):
-  logger.info(f"Query: {queryString}")
+  logger.debug(f"Query: {queryString}")
   con = sqlite3.connect(telescope['schedulerdb'])
   con.row_factory = sqlite3.Row
   data = con.execute(queryString)
   result = (data.fetchall())
   unpacked = [{k: item[k] for k in item.keys()} for item in result]
   con.close()
-  logger.info(f"ResultCount: {len(unpacked)}")
+  logger.debug(f"ResultCount: {len(unpacked)}")
   return unpacked
 
 
