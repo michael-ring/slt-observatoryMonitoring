@@ -2,4 +2,4 @@
 import powerBoxData
 import discordHelper
 powerBoxData.shutdown()
-discordHelper.sendDiscordMessage("PowerBox initialized")
+discordHelper.sendDiscordMessage("PowerBox shut down")
