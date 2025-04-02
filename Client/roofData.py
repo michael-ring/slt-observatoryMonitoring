@@ -32,7 +32,7 @@ def getRoofStatus():
     if content.find("OPEN") != -1:
       roofStatus = "open"
   else:
-    logger.error("RoofStatus file {Path(telescope['roofstatusdir']) / 'RoofStatusFile.txt'} not found")
+    logger.error(f"RoofStatus file {Path(telescope['roofstatusdir']) / 'RoofStatusFile.txt'} not found")
   logger.info("RoofStatus: " + roofStatus)
   return roofStatus
 
