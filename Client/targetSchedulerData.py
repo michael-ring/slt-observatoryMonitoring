@@ -144,7 +144,6 @@ SELECT
   t.ra as ra,
   t.dec as dec,
   t.rotation as rotation,
-  t.overrideExposureOrder as overrideexposureorder,
   p.name as projectname,
   p.description as description,
   p.state as projectstate,
@@ -170,8 +169,14 @@ def lastImages():
   lastAcquiredDatesCount = 0
   data = query("""
 SELECT 
-  p.name as projectname, p.state as projectstate, t.name as targetname,
-  a.acquireddate as acquireddate ,a.filtername as filtername ,a.accepted as accepted,a.rejectreason as rejectreason, a.metadata as metadata
+  p.name as projectname, 
+  p.state as projectstate, 
+  t.name as targetname,
+  a.acquireddate as acquireddate ,
+  a.filtername as filtername ,
+  a.accepted as accepted,
+  a.rejectreason as rejectreason,
+  a.metadata as metadata
 FROM 
   acquiredimage a,project p, target t 
 WHERE 
