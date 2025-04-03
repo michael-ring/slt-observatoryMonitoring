@@ -174,8 +174,6 @@ SELECT
   t.name as targetname,
   a.acquireddate as acquireddate ,
   a.filtername as filtername ,
-  a.accepted as accepted,
-  a.rejectreason as rejectreason,
   a.metadata as metadata
 FROM 
   acquiredimage a,project p, target t 
