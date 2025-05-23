@@ -24,7 +24,10 @@ for source in basedir.glob("*.html"):
       start = content.find(f"<!-- include ")
       end = content.find(" -->", start)
       sourceFile = content[start+13:end]
-      newContent = (basedir / sourceFile).read_text()
+      if (basedir / sourceFile).exists():
+        newContent = (basedir / sourceFile).read_text()
+      else:
+        newcontent = "<br/>"
       content = content[:start] + newContent + content[end+4:]
 
     source.write_text(content)

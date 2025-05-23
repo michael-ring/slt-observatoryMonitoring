@@ -184,7 +184,7 @@ if not runningOnServer():
 #doc.asis(imageStatus.genDiv('vst'))
 
 if runningOnServer():
-  for server in ['vst','slt']:
+  for server in ['vst','slt','speedy']:
     try:
       logger.info(f'running script roofstatus for {server}')
       doc.asis(roofStatus.genDiv(server))
@@ -206,12 +206,6 @@ if runningOnServer():
       logger.exception(e)
       traceback.format_exc()
       pass
-    try:
-      logger.info(f'running script allSkyStatus for {server}')
-      allSkyStatus.renderVideo(server)
-    except Exception as e:
-      logger.exception(e)
-      traceback.format_exc()
     try:
       logger.info(f'running script schedulerStatus for {server}')
       doc.asis(schedulerStatus.genDiv(server))
@@ -240,12 +234,6 @@ if runningOnServer():
   try:
     logger.info(f'running script imageStatus for cdk14')
     doc.asis(imageStatus.genDiv('cdk14'))
-  except Exception as e:
-    logger.exception(e)
-    traceback.format_exc()
-  try:
-    logger.info(f'running script allSkyStatus for cdk14')
-    allSkyStatus.renderVideo('cdk14')
   except Exception as e:
     logger.exception(e)
     traceback.format_exc()

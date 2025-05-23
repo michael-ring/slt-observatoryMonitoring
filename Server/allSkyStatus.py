@@ -9,14 +9,15 @@ sys.path.append('..')
 from Common.config import logger,telescopes, locations, rootserver,runningOnServer
 from Common import locationData
 
-def getAllSkyFrames(telescopeName,overrideDateTime=None,startTime=None,endTime=None):
+def getAllSkyFrames(locationName,overrideDateTime=None,startTime=None,endTime=None):
   if runningOnServer():
-    allSkyFiles=list((Path(rootserver['uploadsdir']) / f"{telescopeName}-images").glob("allsky-*[0-9].jpg"))
+    allSkyFiles=list((Path(rootserver['uploadsdir']) / f"{locations[locationName]['locationcode']}-allsky").glob("allsky-*[0-9].jpg"))
+    print(Path(rootserver['uploadsdir']) / f"{locations[locationName]['locationcode']}-allsky")
   else:
-    allSkyFiles=list((Path(rootserver['uploadsdir']) / f"{telescopeName}-images").glob("allsky-*[0-9].jpg"))
-  logger.info(f"{len(allSkyFiles)} allsky frames found for {telescopeName}")
+    allSkyFiles=list((Path(rootserver['uploadsdir']) / f"{locations[locationName]['locationcode']}-allsky").glob("allsky-*[0-9].jpg"))
+  logger.info(f"{len(allSkyFiles)} allsky frames found for {locationName}")
   if startTime==None or endTime==None:
-    sunStatus=locationData.getSunData(locations[telescopes[telescopeName]['location']],overrideDateTime)
+    sunStatus=locationData.getSunData(locations[locationName],overrideDateTime)
     if sunStatus['alt'] >=-6:
       startTime=sunStatus['previoustwilightset']
       endTime=sunStatus['previoustwilightrise']
@@ -30,11 +31,11 @@ def getAllSkyFrames(telescopeName,overrideDateTime=None,startTime=None,endTime=N
     if fileDate >= startTime and fileDate <= endTime:
       activeFiles[fileDate]=allSkyFile
   activeFiles=dict(sorted(activeFiles.items()))
-  logger.info(f"{len(activeFiles)} allsky frames matching {startTime} to {endTime} found for {telescopeName}")
+  logger.info(f"{len(activeFiles)} allsky frames matching {startTime} to {endTime} found for {locationName}")
   return activeFiles
 
-def renderVideo(telescopeName):
-  activeFiles=getAllSkyFrames(telescopeName)
+def renderVideo(locationName):
+  activeFiles=getAllSkyFrames(locationName)
   if len(activeFiles)>1:
     firstImg=Path(next(iter(activeFiles.values())))
     imgSize=PIL.Image.open(firstImg).size
@@ -60,8 +61,7 @@ def renderVideo(telescopeName):
     frames[0].save(outputThumbMovie, "webp", save_all=True, append_images=frames[1:],duration=10)
     logger.info(f"Rendered allsky video {outputThumbMovie.name}")
   else:
-    logger.error(f"Not enough frames found for telescope {telescopeName}, not rendering video")
+    logger.error(f"Not enough frames found for location {locationName}, not rendering video")
 if __name__ == '__main__':
-  renderVideo('slt')
-
-
+  renderVideo('Starfront Observatory')
+  renderVideo('Deep Sky Chile')

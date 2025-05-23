@@ -162,4 +162,4 @@ def generateData(locationName):
 if __name__ == '__main__':
   generateData('Gantrisch')
   generateData('Starfront Observatory')
-  generateData('Prairie Skies Astro Ranch')
+  generateData('Deep Sky Chile')

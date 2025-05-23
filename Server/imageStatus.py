@@ -8,7 +8,7 @@ from datetime import datetime,timedelta
 
 sys.path.append('.')
 sys.path.append('..')
-from Common.config import telescopes,rootserver,logger,runningOnServer
+from Common.config import locations,telescopes,rootserver,logger,runningOnServer
 import Server.allSkyStatus
 
 
@@ -83,8 +83,7 @@ def genDiv(telescopeName):
       ninaData[itemDate]=ninaItem
 
   logger.info(f'Count of Nina Datasets in timeframe {firstImageDate} - {lastImageDate} : {len(_ninaData)}')
-
-  allSkyImages=Server.allSkyStatus.getAllSkyFrames(telescopeName,startTime=firstImageDate,endTime=lastImageDate+timedelta(hours=1))
+  allSkyImages=Server.allSkyStatus.getAllSkyFrames(telescopes[telescopeName]['location'],startTime=firstImageDate,endTime=lastImageDate+timedelta(hours=1))
   hasAllSkyImages=len(allSkyImages) > 0
 
   doc, tag, text = Doc().tagtext()

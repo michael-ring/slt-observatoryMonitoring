@@ -24,7 +24,10 @@ def sky_object_plot(_objectra, _objectdec, _location, targetFileName=None):
   width=512
   height=512
   # identify location in geocentric coordinates
-  observation_location = EarthLocation.from_geodetic(_location['longitude'], _location['latitude'], _location['elevation']*u.m)
+  observation_location = EarthLocation.from_geodetic(float(_location['longitude'])*u.deg, float(_location['latitude'])*u.deg, _location['elevation']*u.m)
+
+  print(f"RA: {_objectra} DEC:{_objectdec}")
+  print(f"LAT: {observation_location.lat} LON: {observation_location.lon} {_location['locationcode']}")
 
   start_time = datetime.now(tz=tz.gettz('UTC')).astimezone(tz.gettz(_location['timezone']))
   if start_time.replace(hour=12, minute=0, second=0, microsecond=0) < start_time:
@@ -33,6 +36,7 @@ def sky_object_plot(_objectra, _objectdec, _location, targetFileName=None):
     start_time = start_time.replace(hour=12, minute=0, second=0, microsecond=0)  - timedelta(hours=24)
 
   start_time_utc = start_time.astimezone(tz.gettz('utc'))
+  print(start_time)
   # splitting 24h into 10min intervals
   time_int = np.arange(0, 24 * 60, 10) * u.min
   #time_int = np.arange(0, 12 * 60, 10) * u.min
