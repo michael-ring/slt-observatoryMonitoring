@@ -4,3 +4,4 @@ call  "%HOMEDRIVE%%HOMEPATH%\devel\slt-observatoryMonitoring\venv\Scripts\activa
 set PYTHONPATH=%PYTHONPATH%;"%HOMEDRIVE%%HOMEPATH%\devel\slt-observatoryMonitoring\"
 mkdir "%HOMEDRIVE%%HOMEPATH%\devel\slt-observatoryMonitoring\Temp" 2>NUL
 python.exe  "%HOMEDRIVE%%HOMEPATH%\devel\slt-observatoryMonitoring\Client\validateTargetSchedulerData.py"
+pause
