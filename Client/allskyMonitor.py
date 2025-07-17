@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import os
 import sys
 from pathlib import Path
 from datetime import datetime
@@ -8,7 +9,7 @@ sys.path.append('.')
 sys.path.append('..')
 from Common.config import logger,telescope
 
-
+os.chdir(Path(__file__).parent)
 logfile = Path( '/var/log/allsky.log' )
 with logfile.open(encoding="utf-8") as f:
   contents = f.readlines()
