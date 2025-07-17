@@ -10,12 +10,8 @@ from Common.config import logger,telescope
 
 
 logfile = Path( '/var/log/allsky.log' )
-logfile = Path( '../allsky.log' )
 with logfile.open(encoding="utf-8") as f:
   contents = f.readlines()
-print(contents[-3])
-print(contents[-2])
-print(contents[-1])
 
 lastdatestr=contents[-1].split(" ")[0][:19]
 lastdate=datetime.fromisoformat(lastdatestr)
