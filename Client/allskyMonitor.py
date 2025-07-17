@@ -22,6 +22,6 @@ if currentdate > lastdate+timedelta(minutes=3):
   logger.info('contents[-3]')
   logger.info('contents[-2]')
   logger.info('contents[-1]')
-  subprocess.run(split('/usr/bin/sudo /usr/bin/systemctl restart allsky', shell=True))
+  subprocess.run('/usr/bin/sudo /usr/bin/systemctl restart allsky'.split(' '))
 
 
