@@ -11,6 +11,7 @@ import discordHelper
 
 
 def sync():
+  rcloneUser = idrive[telescope['shortname']]['username']
   discordHelper.sendDiscordMessage("Starting Sync to Cloud")
   directories = Path(telescope['imagebasedir']).glob("????-??-??")
   for directory in directories:
@@ -19,10 +20,14 @@ def sync():
       for targetDir in targetDirs:
         targetName = targetDir.name
         targetDate = directory.name
-        rcloneUser = idrive[telescope['shortname']]['username']
         rcloneUploadDir = idrive[telescope['shortname']]['bucket']+'/'+targetName+'/'+targetDate
         print(f"Syncing {targetName} to {rcloneUploadDir}")
         rclone.copy(str(directory / targetName), rcloneUser+":/"+rcloneUploadDir)
+  rcloneUploadDir = Path(idrive[telescope['shortname']]['bucket'])
+  rcloneUploadDir = rcloneUploadDir.parent / "_cache"
+  print(f"Syncing _cache to {rcloneUploadDir}")
+  rclone.copy(str(Path(telescope['imagebasedir']) / "_cache"), rcloneUser+":/"+str(rcloneUploadDir))
+
   discordHelper.sendDiscordMessage("Sync to Cloud done")
 
 
