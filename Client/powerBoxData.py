@@ -3,6 +3,7 @@ import sys
 import time
 import serial
 import jsonLogHelper
+import win32com.client
 
 sys.path.append('.')
 sys.path.append('..')
@@ -16,100 +17,69 @@ def generateJson():
 
 
 def getPowerBoxStatus():
-  port=powerbox['port']
-  speed=powerbox['speed']
+  ascomid=powerbox['ascomid']
   powerBoxStatus={}
   try:
-    logger.info(f"Connecting to power box serial {port} {speed}")
-    powerBoxStatus['port']=port
-    ser = serial.Serial(port, speed, timeout=1)
-    data=ser.readline().decode('utf-8')
-    if not data.startswith(powerbox['identifier']):
-      data = ser.readline().decode('utf-8')
-    logger.info(f"Initial serial data: {data}")
-    data=data.split('A')
+    logger.info(f"Connecting to power box via Ascom {ascomid}")
+    switch = win32com.client.Dispatch(ascomid)
+    switch.Connected = True
   except:
     logger.exception("Failed to connect to power box")
     return {}
-  ser.close()
-  if len(data) >= 22:
-    logger.info(f"complete dataset found")
-    powerBoxStatus['model']=data[0]
-    powerBoxStatus['firmwareversion']=data[1]
-    powerBoxStatus['probe1temperature']=data[2]
-    powerBoxStatus['probe2temperature']=data[3]
-    powerBoxStatus['probe3temperature']=data[4]
-    powerBoxStatus['humidity']=data[5]
-    powerBoxStatus['temperature']=data[6]
-    powerBoxStatus['dewpoint']=f"{float(data[6])-((100-float(data[5]))/5):.2f}"
-    powerBoxStatus['inputcurrent']=data[7]
-    powerBoxStatus['output19vcurrent']=data[8]
-    powerBoxStatus['adjustableoutputcurrent']=data[9]
-    powerBoxStatus['inputvoltage']=data[10]
-    powerBoxStatus['usb31status']=data[11]
-    powerBoxStatus['usb32status']=data[12]
-    powerBoxStatus['usb33status']=data[13]
-    powerBoxStatus['usb213status']=data[14]
-    powerBoxStatus['usb246status']=data[15]
-    powerBoxStatus['dc34status']=data[16]
-    powerBoxStatus['dc5status']=data[17]
-    powerBoxStatus['dc6status']=data[18]
-    powerBoxStatus['dc7status']=data[19]
-    powerBoxStatus['dc89status']=data[20]
-    powerBoxStatus['dc10']=data[21]
-    powerBoxStatus['dc34voltage']=int(data[22])/10
-  else:
-    logger.error("incomplete dataset found")
+  powerBoxStatus['model']=switch.Name
+  for switchid in range(switch.MaxSwitch):
+    if switch.MaxSwitchValue(switchid) == 1.0:
+      powerBoxStatus[switch.GetSwitchName(switchid)]=switch.GetSwitch(switchid)
+    if switch.MaxSwitchValue(switchid) == 255.0:
+      powerBoxStatus[switch.GetSwitchName(switchid)]=switch.GetSwitchValue(switchid)
   return powerBoxStatus
 
 
 def initialize():
-  port=powerbox['port']
-  speed=powerbox['speed']
+  ascomid=powerbox['ascomid']
   try:
-    logger.info(f"Connecting to power box serial {port} {speed}")
-    ser = serial.Serial(port, speed, timeout=1)
-    data=ser.readline().decode('utf-8')
-    print(data)
-    if not data.startswith(powerbox['identifier']):
-      data = ser.readline().decode('utf-8')
-    logger.info(f"Initial serial data: {data}")
+    switch = win32com.client.Dispatch(ascomid)
+    switch.Connected = True
   except:
-    print('Exception, is Serial Port connected?')
     logger.exception("Failed to connect to power box")
     return {}
   for code in powerbox['init']:
-    logger.info(f"Sending code {code}")
-    print(f"Init Code: {code}")
-    ser.write((str(code)+'\r\n').encode())
-    time.sleep(1)
-    data=ser.readline().decode('utf-8')
-    time.sleep(1)
-    data=ser.readline().decode('utf-8')
-  ser.close()
+    print(f"{code}->{powerbox['init'][code]}")
+    logger.info(f"Sending {code}->{powerbox['init'][code]}")
+    for switchid in range(switch.MaxSwitch):
+      if switch.GetSwitchName(switchid).startswith(code):
+        if switch.MaxSwitchValue(switchid) == 1.0:
+          if powerbox['init'][code] == "On":
+            switch.SetSwitch(switchid,True)
+          else:
+            switch.SetSwitch(switchid,False)
+        if switch.MaxSwitchValue(switchid) == 255.0:
+          if powerbox['init'][code] == "On":
+            switch.SetSwitchValue(switchid,255)
+          else:
+            switch.SetSwitch(switchid,powerbox['init'][code])
+
   print(getPowerBoxStatus())
 
 
 def shutdown():
-  port=powerbox['port']
-  speed=powerbox['speed']
+  ascomid=powerbox['ascomid']
   try:
-    ser = serial.Serial(port, speed, timeout=1)
-    data=ser.readline().decode('utf-8')
-    print(data)
-    if not data.startswith(powerbox['identifier']):
-      data = ser.readline().decode('utf-8')
+    switch = win32com.client.Dispatch(ascomid)
+    switch.Connected = True
   except:
-    print('Exception, is Serial Port connected?')
+    logger.exception("Failed to connect to power box")
     return {}
-  for code in powerbox['shutdown']:
-    print(f"Shutdown Code: {code}")
-    ser.write((str(code)+'\r\n').encode())
-    time.sleep(1)
-    data=ser.readline().decode('utf-8')
-    time.sleep(1)
-    data=ser.readline().decode('utf-8')
-  ser.close()
+  for code in powerbox['init']:
+    print(f"{code}->Off")
+    logger.info(f"Sending {code}->Off")
+    for switchid in range(switch.MaxSwitch):
+      if switch.GetSwitchName(switchid).startswith(code):
+        if switch.MaxSwitchValue(switchid) == 1.0:
+          switch.SetSwitch(switchid,False)
+        if switch.MaxSwitchValue(switchid) == 255.0:
+            switch.SetSwitchValue(switchid,0)
+
   print(getPowerBoxStatus())
 
 

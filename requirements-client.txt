@@ -8,3 +8,4 @@ rclone_python
 pyserial
 astropy
 discord
+pywin32
