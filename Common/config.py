@@ -92,6 +92,7 @@ else:
         break
   if telescope=={}:
     logging.error(f"telescope configuration matching node {nodeName} is missing in config.json")
+    print(f"telescope configuration matching node {nodeName} is missing in config.json")
     raise SystemExit(1)
 
   locations=config['locations']
@@ -124,8 +125,8 @@ else:
     if telescope['shortname'] in config['discord']:
       discordWebHook=config['discord'][telescope['shortname']]['webhook']
     else:
-      logging.warning(f"discord configuration for telescope['shortname'] is missing in config.json, sending messages to discord will not be available")
+      logging.warning(f"discord configuration for {telescope['shortname']} is missing in config.json, sending messages to discord will not be available")
       discordWebHook = None
   else:
-    logging.warning("discord configuration for telescope['shortname'] is missing in config.json, sending messages to discord will not be available")
+    logging.warning(f"discord configuration for {telescope['shortname']} is missing in config.json, sending messages to discord will not be available")
     discordWebHook = None
