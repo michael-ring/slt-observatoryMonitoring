@@ -1,4 +1,5 @@
 C:
+call "%HOMEDRIVE%%HOMEPATH%\devel\pyBlink\createCache.bat
 cd "%HOMEDRIVE%%HOMEPATH%\devel\slt-observatoryMonitoring\"
 call  "%HOMEDRIVE%%HOMEPATH%\devel\slt-observatoryMonitoring\venv\Scripts\activate.bat"
 set PYTHONPATH=%PYTHONPATH%;"%HOMEDRIVE%%HOMEPATH%\devel\slt-observatoryMonitoring\"
