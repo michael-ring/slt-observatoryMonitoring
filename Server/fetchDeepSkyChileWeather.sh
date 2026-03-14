@@ -1,4 +1,4 @@
 #!/bin/sh
 cd $HOME/devel/slt-observatoryMonitoring/
-. ./.venv/bin/activate
+. ./venv/bin/activate
 python3 Server/fetchDeepSkyChileWeather.py
