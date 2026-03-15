@@ -70,7 +70,7 @@ def store_weather_data(data):
     ''')
     
     # Get timestamp
-    timestamp = datetime.now(timezone.utc).isoformat()
+    timestamp = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
     
     weather = data.get('weather', {})
     
