@@ -17,7 +17,7 @@ if [ -f $FILENAME ]; then
 fi
 
 FILENAME=/home/sltupload/deepskychile-allsky/allsky-$(TZ=America/Santiago date '+%Y%m%d_%H%M').jpg
-wget "https://weather.deepskychile.com/cameras/ImageLastFTP_AllSKY_lowres.jpg" -q -O $FILENAME
+wget "https://weather.deepskychile.com/cameras/ImageLastFTP_AllSKY.jpg" -q -O $FILENAME
 if [ -s $FILENAME ]; then
   #convert $FILENAME -sigmoidal-contrast 5,0% $FILENAME
   echo ""

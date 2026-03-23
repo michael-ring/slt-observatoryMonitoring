@@ -49,7 +49,7 @@ def renderVideo(locationName):
       except:
         logger.exception(f"Could not load/render file {img}, ignoring")
         pass
-    frames[0].save(outputMovie, "webp", save_all=True, append_images=frames[1:],duration=10)
+    frames[0].save(outputMovie, "webp", save_all=True, append_images=frames[1:],duration=10000//len(frames))
     logger.info(f"Rendered allsky video {outputMovie.name}")
     frames=[]
     for key,img in activeFiles.items():
@@ -58,7 +58,7 @@ def renderVideo(locationName):
       except:
         logger.exception(f"Could not load/render file {img}, ignoring")
         pass
-    frames[0].save(outputThumbMovie, "webp", save_all=True, append_images=frames[1:],duration=10)
+    frames[0].save(outputThumbMovie, "webp", save_all=True, append_images=frames[1:],duration=10000//len(frames))
     logger.info(f"Rendered allsky video {outputThumbMovie.name}")
   else:
     logger.error(f"Not enough frames found for location {locationName}, not rendering video")
