@@ -137,12 +137,12 @@ table, th, td {
                   targetdec = item3['dec']
                   break
               if runningOnServer():
-                fileName=Path(f'{rootserver['basedir']}/images/{telescopeName}-images/status-{telescopeName}.schedulerStatus.{targetName}.png')
+                fileName=Path(f'{rootserver['basedir']}/images/{telescopeName}-images/status-{telescopeName}.schedulerStatus.{targetName.replace("/","-")}.png')
               else:
-                fileName=Path(__file__).parent.parent / f'Test/status-{telescopeName}.schedulerStatus.{targetName}.png'
+                fileName=Path(__file__).parent.parent / f'Test/status-{telescopeName}.schedulerStatus.{targetName.replace("/","-")}.png'
               skyPlot.sky_object_plot(targetra,targetdec,locations[telescope['location']],fileName)
               if runningOnServer():
-                doc.stag('img',src=f'images/{telescopeName}-images/status-{telescopeName}.schedulerStatus.{targetName}.png',style='width:256px; height:256px')
+                doc.stag('img',src=f'images/{telescopeName}-images/status-{telescopeName}.schedulerStatus.{targetName.replace("/","-")}.png',style='width:256px; height:256px')
               else:
                 doc.stag('img',src=str(fileName),style='width:256px; height:256px')
 
