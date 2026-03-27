@@ -8,4 +8,7 @@ rclone_python
 pyserial
 astropy
 discord
-pywin32
+opencv-python
+platformdirs
+auto_stretch
+py7zr
