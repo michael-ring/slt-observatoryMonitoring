@@ -4,12 +4,16 @@ import sqlite3
 sys.path.append('.')
 sys.path.append('..')
 from Common.config import logger,telescope
+from Client.targetSchedulerData import getProfileId
 
-def query(queryString):
+def query(queryString, params=None):
   logger.debug(f"Query: {queryString}")
   con = sqlite3.connect(telescope['schedulerdb'])
   con.row_factory = sqlite3.Row
-  data = con.execute(queryString)
+  if params:
+    data = con.execute(queryString, params)
+  else:
+    data = con.execute(queryString)
   result = (data.fetchall())
   unpacked = [{k: item[k] for k in item.keys()} for item in result]
   con.close()
@@ -17,6 +21,7 @@ def query(queryString):
   return unpacked
 
 def queryProject():
+  profileId = getProfileId()
   return query("""
                   SELECT p.id                    as projectid,
                          p.name                  as name,
@@ -45,35 +50,37 @@ def queryProject():
                          target t
                   WHERE 
                           p.Id = t.projectId
+                    AND
+                          p.profileid = ?
                   ORDER BY 
                           p.name
-                  """)
+                  """, (profileId,))
 
-def queryRules():
-  return query(f"""
+def queryRules(projectid):
+  return query("""
                   SELECT 
                          r.name                  as rulename, 
                          r.weight                as ruleweight 
                   FROM 
                          ruleweight r
                   WHERE
-                         r.projectid = {data['projectid']}
+                         r.projectid = ?
                   ORDER BY
                          r.Id
-""")
+""", (projectid,))
 
-def queryExposures():
-  return query(f"""
+def queryExposures(targetid):
+  return query("""
                   SELECT 
                          e.desired               as desired, 
                          et.filtername           as filtername 
                   FROM 
                          exposureplan e, exposuretemplate et
                   WHERE
-                         e.targetId = {data['targetid']}
+                         e.targetId = ?
                  AND
                          e.exposureTemplateId = et.Id
-  """)
+  """, (targetid,))
 
 lastproject = ""
 
@@ -104,6 +111,10 @@ for index,data in enumerate(dataset):
     if panelproject and data['ismosaic'] == 0:
       print("  WARNING: project has more than one target but isMosaic is set to False")
 
+    ruleweights = {}
+    for row in queryRules(data['projectid']):
+      ruleweights[row['rulename']] = row['ruleweight']
+
     if 'L' in activefilters or 'RGB' in activefilters or 'O' == activefilters:
       if data['priority'] != 2:
         print("  ERROR: priority for Broadband Targets must be 2")
@@ -126,9 +137,6 @@ for index,data in enumerate(dataset):
       if data[value] > 0:
         print(f"  WARNING: unusual number {data[value]} for {value}")
 
-    ruleweights = {}
-    for row in queryRules():
-      ruleweights[row['rulename']] = row['ruleweight']
     for rule in ruleweights:
       if rule == 'Setting Soonest':
         if ruleweights[rule] != 50.0:
@@ -147,7 +155,7 @@ for index,data in enumerate(dataset):
         if ruleweights[rule] != 0.0:
           print(f"  WARNING: Unusual setting of {ruleweights[rule]} found for {rule}")
 
-  exposures = queryExposures()
+  exposures = queryExposures(data['targetid'])
   for key,value in enumerate(exposures):
     exposures[key]['filtershortname'] = exposures[key]['filtername']
     if exposures[key]['filtername'] == 'Sii':
